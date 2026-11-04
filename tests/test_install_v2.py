@@ -167,7 +167,7 @@ class InstallV2Tests(unittest.TestCase):
         self.assertEqual(after["python_executable"], config["python_executable"])
         self.assertEqual(after["drive"], config["drive"])
         self.assertEqual(after["ocr"]["memory_limit_mb"], 1024)
-        self.assertEqual(after["ocr"]["worker_lock"], str(runtime / ".ocr-worker.lock"))
+        self.assertEqual(after["ocr"]["worker_lock"], str((runtime / ".ocr-worker.lock").resolve()))
         self.assertTrue(Path(after["ocr"]["python_executable"]).is_file())
         self.assertFalse(Path(after["ocr"]["model_manifest"]).exists())
 

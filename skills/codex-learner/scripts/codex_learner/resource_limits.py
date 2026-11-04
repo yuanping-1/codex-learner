@@ -113,12 +113,23 @@ class _WindowsJob:
         finally:
             self.kernel.CloseHandle(process)
 
-    def peak_memory(self):
+    def read_limits(self):
+        """Read the actual kernel settings and the unmodified historical peak."""
         limits = self.limit_type()
-        if self.kernel.QueryInformationJobObject(self.handle, 9, self.ctypes.byref(limits),
-                                                 self.ctypes.sizeof(limits), None):
-            return int(limits.PeakJobMemoryUsed)
-        return None
+        if not self.kernel.QueryInformationJobObject(self.handle, 9, self.ctypes.byref(limits),
+                                                     self.ctypes.sizeof(limits), None):
+            raise self.ctypes.WinError(self.ctypes.get_last_error())
+        return {"limit_flags": int(limits.BasicLimitInformation.LimitFlags),
+                "memory_limit_bytes": int(limits.JobMemoryLimit),
+                "peak_job_memory_used_bytes": int(limits.PeakJobMemoryUsed)}
+
+    def verify_limits(self, memory_limit):
+        limits = self.read_limits()
+        required = 0x200 | 0x2000
+        if (limits["limit_flags"] & required != required
+                or limits["memory_limit_bytes"] != memory_limit):
+            raise OSError("Windows Job Object memory/kill-on-close limits failed readback verification")
+        return limits
 
     def terminate(self):
         if self.handle:
@@ -138,19 +149,28 @@ def _tail(stream, limit=RETURN_LOG_BYTES):
 
 
 def _sample_tree(process, psutil, known):
-    """Sum RSS, keeping identities for cleanup after a parent has exited."""
+    """Sum RSS and Windows PrivateUsage, remembering identities for cleanup.
+
+    PrivateUsage is currently committed private memory, not the working set or
+    a historical peak. This is a sampled process-tree sum, not a job counter.
+    https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters_ex
+    """
     try:
         processes = [process] + process.children(recursive=True)
     except psutil.NoSuchProcess:
         processes = []
     total = 0
+    private_commit = 0 if os.name == "nt" else None
     for item in processes:
         try:
             known[item.pid] = (item, item.create_time())
-            total += item.memory_info().rss
+            memory = item.memory_info()
+            total += memory.rss
+            if private_commit is not None:
+                private_commit += memory.private
         except psutil.NoSuchProcess:
             continue
-    return total
+    return total, private_commit
 
 
 def _stop_tree(proc, job, known, psutil):
@@ -208,8 +228,14 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
     stdin; use request files/argv. ``status`` is completed, timeout, memory_limit,
     output_limit, monitoring_failed or job_setup_failed. A completed process may
     have a nonzero returncode. ``hard_limit_enforced`` is true only after an
-    actual Windows job assignment succeeds; its limit counts committed memory,
+    actual Windows job assignment and kernel limit readback succeed; its limit counts committed memory,
     while ``peak_rss_bytes`` is the sampled sum of process-tree resident memory.
+    ``peak_commit_bytes`` is retained as a compatibility alias for the raw
+    ``peak_job_memory_used_bytes`` historical Windows counter. It must not be
+    used as a limit-compliance assertion: real Windows runs have reported a
+    peak above the limit even while rejecting the oversized allocation. The
+    separate ``peak_sampled_private_commit_bytes`` sums current PrivateUsage
+    values from observed processes and may miss activity between samples.
     Cleanup evidence covers the launcher and all descendants observed by the
     sampler; it compares both PID and creation time and ignores dead/zombie
     processes. It is not a claim to detect arbitrary unobserved daemon escapes.
@@ -230,6 +256,8 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
     started = time.monotonic()
     status, detail, peak, peak_commit = "completed", None, 0, None
     hard, job, known = False, None, {}
+    job_limits, job_query_error = None, None
+    current_private_commit, peak_private_commit, private_samples = None, None, 0
     with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
         proc = subprocess.Popen(
             [sys.executable, "-c", _LAUNCHER, json.dumps(list(command))],
@@ -242,6 +270,7 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
                 try:
                     job = _WindowsJob(memory_limit)
                     job.attach(proc.pid)
+                    job_limits = job.verify_limits(memory_limit)
                     hard = True
                 except OSError as exc:
                     status = "job_setup_failed"
@@ -252,11 +281,15 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
             proc.stdin.close()
             while status == "completed" and proc.poll() is None:
                 try:
-                    current = _sample_tree(process, psutil, known)
+                    current, private_commit = _sample_tree(process, psutil, known)
                 except psutil.AccessDenied as exc:
                     status, detail = "monitoring_failed", str(exc)
                     break
                 peak = max(peak, current)
+                if private_commit is not None:
+                    current_private_commit = private_commit
+                    peak_private_commit = max(peak_private_commit or 0, private_commit)
+                    private_samples += 1
                 if current > memory_limit:
                     status = "memory_limit"
                     detail = "Sampled process-tree RSS exceeded the configured memory limit."
@@ -272,7 +305,10 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
             if proc.stdin and not proc.stdin.closed:
                 proc.stdin.close()
             if job is not None:
-                peak_commit = job.peak_memory()
+                try:
+                    peak_commit = job.read_limits()["peak_job_memory_used_bytes"]
+                except OSError as exc:
+                    job_query_error = str(exc)
             # Clean up descendants even after a successful command exits.
             try:
                 _stop_tree(proc, job, known, psutil)
@@ -288,6 +324,16 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
         return {"status": status, "returncode": proc.returncode,
                 "stdout": stdout, "stderr": stderr, "detail": detail,
                 "peak_rss_bytes": peak, "peak_commit_bytes": peak_commit,
+                "peak_job_memory_used_bytes": peak_commit,
+                "initial_peak_job_memory_used_bytes": (
+                    job_limits["peak_job_memory_used_bytes"] if job_limits else None),
+                "job_memory_limit_bytes": job_limits["memory_limit_bytes"] if job_limits else None,
+                "job_limit_flags": job_limits["limit_flags"] if job_limits else None,
+                "job_limit_verified": job_limits is not None,
+                "job_query_error": job_query_error,
+                "last_sampled_private_commit_bytes": current_private_commit,
+                "peak_sampled_private_commit_bytes": peak_private_commit,
+                "private_commit_sample_count": private_samples,
                 "hard_limit_enforced": hard,
                 "hard_limit_kind": "windows_job_commit" if hard else None,
                 "memory_limit_bytes": memory_limit,

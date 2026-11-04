@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import tempfile
@@ -50,7 +51,7 @@ class ResourceLimitTests(unittest.TestCase):
         self.assertEqual(result["returncode"], 0)
         self.assertTrue(result["output_truncated"])
         self.assertLessEqual(len(result["stdout"].encode()), RETURN_LOG_BYTES)
-        self.assertTrue(result["stdout"].endswith("tail-marker\n"))
+        self.assertTrue(result["stdout"].endswith("tail-marker" + os.linesep))
 
     def test_timeout_kills_descendant(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -86,13 +87,69 @@ class ResourceLimitTests(unittest.TestCase):
 
     @unittest.skipUnless(os.name == "nt", "Requires a real Windows Job Object")
     def test_windows_job_rejects_over_budget_allocation(self):
+        # Use VirtualAlloc directly so a rejected native commitment is visible
+        # independently of Python's allocator and the supervisor's RSS check.
         result = self.run_python(
-            "try:\n data=bytearray(256*1024*1024)\nexcept MemoryError:\n print('allocation-denied')",
+            """import ctypes, json, time
+from ctypes import wintypes
+import psutil
+kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+kernel.VirtualAlloc.argtypes = [ctypes.c_void_p, ctypes.c_size_t, wintypes.DWORD, wintypes.DWORD]
+kernel.VirtualAlloc.restype = ctypes.c_void_p
+kernel.VirtualFree.argtypes = [ctypes.c_void_p, ctypes.c_size_t, wintypes.DWORD]
+kernel.VirtualFree.restype = wintypes.BOOL
+process = psutil.Process()
+report = {'baseline_private_bytes': process.memory_info().private}
+small = kernel.VirtualAlloc(None, 16*1024*1024, 0x3000, 0x04)
+report['small_allocation_succeeded'] = bool(small)
+try:
+    report['before_rejection_private_bytes'] = process.memory_info().private
+    time.sleep(0.3)
+    ctypes.set_last_error(0)
+    large = kernel.VirtualAlloc(None, 256*1024*1024, 0x3000, 0x04)
+    report['allocation_denied'] = not large
+    report['allocation_error'] = ctypes.get_last_error()
+    report['after_rejection_private_bytes'] = process.memory_info().private
+    if large:
+        kernel.VirtualFree(large, 0, 0x8000)
+    time.sleep(0.3)
+finally:
+    if small:
+        kernel.VirtualFree(small, 0, 0x8000)
+print(json.dumps(report))
+""",
             memory_limit=128*1024*1024)
+        self.assertEqual(result["status"], "completed", result)
+        self.assertEqual(result["returncode"], 0, result)
         self.assertTrue(result["hard_limit_enforced"])
         self.assertEqual(result["hard_limit_kind"], "windows_job_commit")
-        self.assertIn("allocation-denied", result["stdout"])
-        self.assertLessEqual(result["peak_commit_bytes"], result["memory_limit_bytes"])
+        self.assertTrue(result["job_limit_verified"])
+        self.assertEqual(result["job_memory_limit_bytes"], 128*1024*1024)
+        self.assertEqual(result["job_limit_flags"] & 0x2200, 0x2200)
+        self.assertIsNone(result["job_query_error"])
+        report = json.loads(result["stdout"])
+        self.assertTrue(report["small_allocation_succeeded"], report)
+        self.assertTrue(report["allocation_denied"], report)
+        self.assertNotEqual(report["allocation_error"], 0)
+        self.assertGreaterEqual(report["before_rejection_private_bytes"]
+                                - report["baseline_private_bytes"], 16*1024*1024)
+        self.assertLessEqual(report["after_rejection_private_bytes"],
+                             report["before_rejection_private_bytes"] + 2*1024*1024)
+        self.assertGreater(result["private_commit_sample_count"], 1)
+        self.assertGreater(result["peak_sampled_private_commit_bytes"], 16*1024*1024)
+        self.assertLessEqual(result["peak_sampled_private_commit_bytes"], 128*1024*1024)
+        self.assertLessEqual(result["initial_peak_job_memory_used_bytes"], 128*1024*1024)
+        self.assertGreater(result["peak_job_memory_used_bytes"], 0)
+        self.assertEqual(result["peak_commit_bytes"], result["peak_job_memory_used_bytes"])
+        self.assertTrue(result["cleanup_verified"])
+        # Preserve both counters in real Windows CI output. The historical job
+        # peak is evidence, not a substitute for current successful commitment.
+        report.update({key: result[key] for key in (
+            "job_memory_limit_bytes", "job_limit_flags", "job_limit_verified",
+            "initial_peak_job_memory_used_bytes", "peak_job_memory_used_bytes",
+            "peak_sampled_private_commit_bytes",
+            "last_sampled_private_commit_bytes", "private_commit_sample_count")})
+        print("Windows Job Object evidence: " + json.dumps(report, sort_keys=True))
 
     @unittest.skipUnless(os.name == "nt", "Exercises the Windows-specific fail-closed gate")
     def test_windows_failed_job_setup_does_not_start_command(self):
@@ -103,6 +160,19 @@ class ResourceLimitTests(unittest.TestCase):
             self.assertEqual(result["status"], "job_setup_failed")
             self.assertFalse(result["hard_limit_enforced"])
             self.assertFalse(marker.exists())
+
+    @unittest.skipUnless(os.name == "nt", "Exercises the Windows-specific readback gate")
+    def test_windows_failed_limit_readback_does_not_start_command(self):
+        with tempfile.TemporaryDirectory() as temp:
+            marker = Path(temp) / "must-not-exist"
+            with mock.patch("codex_learner.resource_limits._WindowsJob.verify_limits",
+                            side_effect=OSError("readback mismatch")):
+                result = self.run_python(f"from pathlib import Path; Path({str(marker)!r}).touch()")
+            self.assertEqual(result["status"], "job_setup_failed")
+            self.assertFalse(result["hard_limit_enforced"])
+            self.assertFalse(result["job_limit_verified"])
+            self.assertFalse(marker.exists())
+            self.assertTrue(result["cleanup_verified"])
 
 
 if __name__ == "__main__":

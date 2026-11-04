@@ -1,16 +1,16 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-11-04T10:43:31.262112+00:00",
+  "checked_at": "2026-11-04T10:54:55.783036+00:00",
   "environment": "Linux-6.18.57-x86_64-with-glibc2.41",
   "python": "3.12.14",
   "core": {
     "command": "python -m unittest discover -s tests -v",
-    "ran": 140,
+    "ran": 141,
     "passed": 138,
-    "skipped": 2,
-    "skip_reason": "Requires real Windows Job Object",
+    "skipped": 3,
+    "skip_reason": "Windows Job Object allocation and setup/readback gates",
     "failed": 0,
-    "log_sha256": "bffe43d6f555535723ff95f8e105a50a1ce5f8b40078697519c1af585efb5ee1"
+    "log_sha256": "487a8f567b24470a4756cb9d195c80f9ccaaaf60cdace31870c945c8a595a650"
   },
   "browser": {
     "command": "python -m unittest discover -s tests/browser -v",
@@ -30,5 +30,18 @@
     "user Windows clean install and upgrade",
     "Docling model inference",
     "Codex/Drive whole-machine memory"
-  ]
+  ],
+  "windows_ci_initial": {
+    "url": "https://github.com/yuanping-1/codex-learner/actions/runs/41816190304",
+    "source_commit": "15288550ad2daf4714ad21f28c78d3845967ea4b",
+    "result": "failed, corrected before next CI",
+    "findings": [
+      "tests compared Windows short/long paths as strings",
+      "test omitted UTF-8 decoding",
+      "test assumed LF-only subprocess output",
+      "historical PeakJobMemoryUsed is not a current-commit compliance assertion"
+    ],
+    "allocation_was_denied": true,
+    "budget_was_not_raised": true
+  }
 }

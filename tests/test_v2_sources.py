@@ -48,7 +48,7 @@ class StructuralSourceTests(unittest.TestCase):
             with patch.object(Path, 'read_bytes', side_effect=AssertionError('whole file read')):
                 prepared = prepare_source({'path': str(path)})
             try:
-                self.assertEqual(prepared['_original'].read_text(), '逐字来源\nsecond line')
+                self.assertEqual(prepared['_original'].read_text(encoding='utf-8'), '逐字来源\nsecond line')
                 self.assertNotIn('data', prepared)
                 self.assertNotIn('text', prepared['segments'][0])
                 self.assertEqual(prepared['segments'][0]['_text_path'].read_text(), '逐字来源')

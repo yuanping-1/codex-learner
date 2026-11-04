@@ -169,7 +169,7 @@ class ArchiveTests(CourseCase):
             release_course(self.library, "sample-course", result["path"], verification)
         release_course(self.library, "sample-course", result["path"], verification, confirmed=True)
         self.assertEqual(archived_courses(self.library)[0]["course_id"], "sample-course")
-        self.assertEqual(archived_courses(self.library)[0]["drive_paths"], [drive_copy["path"]])
+        self.assertEqual(archived_courses(self.library)[0]["drive_paths"], [str(Path(drive_copy["path"]).resolve())])
         self.assertEqual(archived_courses(self.library)[0]["cloud_sync"], "user_declared_download_verified")
         self.assertTrue(Path(result["path"]).is_file())
         self.assertTrue(Path(verification["path"]).is_file())

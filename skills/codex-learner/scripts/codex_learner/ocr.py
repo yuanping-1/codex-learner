@@ -128,6 +128,10 @@ def _run_ocr_locked(source_path, source_sha256, config, *, page_numbers=None, fo
                           timeout=timeout, memory_limit=memory_mb * 1024 ** 2, env=environment)
     except RuntimeError as exc:
         raise LearnerError("ocr_supervisor_missing", str(exc)) from exc
+    memory_evidence = {key: run.get(key) for key in (
+        "hard_limit_kind", "job_memory_limit_bytes", "job_limit_flags", "job_limit_verified",
+        "initial_peak_job_memory_used_bytes", "peak_job_memory_used_bytes", "job_query_error",
+        "peak_sampled_private_commit_bytes", "last_sampled_private_commit_bytes", "private_commit_sample_count")}
     if run["status"] != "completed" or run["returncode"] != 0:
         completed = 0
         try:
@@ -171,4 +175,4 @@ def _run_ocr_locked(source_path, source_sha256, config, *, page_numbers=None, fo
             "surviving_process_ids": run.get("surviving_process_ids", []),
             "hard_limit_enforced": run["hard_limit_enforced"], "memory_limit_bytes": memory_mb * 1024 ** 2,
             "elapsed_seconds": run["elapsed_seconds"], "resumed_pages": result.get("resumed_pages", 0),
-            "versions": result.get("versions", {})}}
+            "versions": result.get("versions", {}), **memory_evidence}}
