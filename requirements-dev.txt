@@ -1,0 +1,3 @@
+-r requirements-pdf.txt
+# Browser tests only; never required by the installed learner.
+playwright==1.62.0

@@ -1,0 +1,67 @@
+<style>
+  .learner { overflow-wrap: anywhere; }
+  .learner-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .learner-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+  .learner-fields { display: grid; gap: .75rem; }
+  .learner-field { display: grid; gap: .4rem; min-width: 0; }
+  .learner-status { min-height: 1.5em; }
+  .learner-course-list { display: grid; gap: .5rem; padding-inline-start: 1.3rem; }
+  .learner-heading { margin-block-end: .4rem; }
+  .learner-meta { margin-block-start: 0; }
+  @media (min-width: 680px) {
+    .learner-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+    .learner-exercises { grid-column: 1 / -1; }
+  }
+</style>
+<main class="learner" id="learner" aria-labelledby="course-title">
+  <h2 id="course-title" class="learner-heading"></h2>
+  <p id="snapshot-description" class="learner-meta text-muted"></p>
+  <p id="host-status" role="status"></p>
+  <div class="learner-layout">
+    <nav aria-label="课程目录">
+      <h3>课程目录</h3>
+      <ol id="chapter-list" class="learner-course-list"></ol>
+    </nav>
+    <section aria-labelledby="chapter-title">
+      <h3 id="chapter-title">当前章节</h3>
+      <p id="lecture-position"></p>
+      <div class="learner-actions" id="lecture-actions"></div>
+      <p id="navigation-status" class="learner-status" role="status" aria-live="polite"></p>
+    </section>
+    <section class="learner-exercises" aria-labelledby="exercise-title">
+      <h3 id="exercise-title">练习与复盘</h3>
+      <p>完整讲解和反馈显示在聊天中。这里的输入在提交并收到记录回执前仍是草稿。</p>
+      <div class="learner-fields">
+        <div class="learner-field">
+          <label class="form-label" for="question-select">题目</label>
+          <select class="form-select" id="question-select"></select>
+        </div>
+        <p id="question-prompt"></p>
+        <p id="receipt"></p>
+        <div class="learner-field">
+          <label class="form-label" for="answer">你的回答</label>
+          <textarea class="form-control" id="answer" rows="6" aria-describedby="draft-status" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <p class="learner-status" id="draft-status" role="status" aria-live="polite">草稿，未正式保存。</p>
+      <div class="learner-actions">
+        <button class="btn btn-primary" id="submit-answer" type="button">提交答案到聊天</button>
+        <button class="btn" id="request-hint" type="button">请求提示</button>
+        <button class="btn" id="request-solution" type="button">查看答案</button>
+        <button class="btn" id="review" type="button">查看复盘</button>
+      </div>
+      <p class="learner-status" id="cache-status" role="status"></p>
+      <details id="recovery" hidden>
+        <summary>复制请求到聊天，继续处理</summary>
+        <p>保留下面的完整文本；重试同一次提交请使用相同文本。</p>
+        <div class="learner-field">
+          <label class="form-label" for="recovery-text">完整请求</label>
+          <textarea class="form-control" id="recovery-text" readonly rows="8"></textarea>
+        </div>
+      </details>
+      <ul id="assessment-summary"></ul>
+    </section>
+  </div>
+</main>
+<script type="application/json" id="learner-snapshot">{{SNAPSHOT}}</script>
+<script>{{SCRIPT}}</script>

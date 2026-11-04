@@ -1,0 +1,2 @@
+# Optional at runtime when pdftotext is available; needed for portable PDF import.
+pypdf==6.10.0
