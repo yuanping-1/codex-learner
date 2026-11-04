@@ -40,9 +40,10 @@ OCR 测试使用自行编写的中英数字扫描页；10/100 页使用重复同
 - [大量历史与多版本](evidence/v0.2/history-benchmark.json)
 - [大旧库增量迁移](evidence/v0.2/migration-benchmark.json)
 - [最终 OCR 代码哈希、逐次资源与清理](evidence/v0.2/ocr-linux-validation.json)
+- [Windows Job Object 实际限额与分配结果](evidence/v0.2/windows-job-validation.json)
 - [依赖版本锁解析](evidence/v0.2/dependency-lock-validation.json)
 
-首轮 Windows CI 暴露短路径、CRLF 和测试编码差异，以及历史 Job 内存计数的错误断言。修订保留原始历史计数，新增内核限额读回、当前 PrivateUsage 采样、小额成功/超额拒绝验证，未增加预算；以后续 CI 运行记录作为修订版 Windows 结果。
+首轮 Windows CI 暴露短路径、CRLF 和测试编码差异，以及历史 Job 内存计数的错误断言。修订保留原始历史计数，新增内核限额读回、当前 PrivateUsage 采样、小额成功/超额拒绝验证，未增加预算；Windows Python 3.10/3.12 已分别验证 16 MiB 原生提交成功、256 MiB 在 128 MiB 内核限额下被拒绝、失败前后当前提交量不增长，并保留历史峰值原值；完整矩阵结果另见最终包外记录。
 
 ## 尚未取得的交付证据
 

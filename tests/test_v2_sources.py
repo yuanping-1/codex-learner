@@ -51,7 +51,7 @@ class StructuralSourceTests(unittest.TestCase):
                 self.assertEqual(prepared['_original'].read_text(encoding='utf-8'), '逐字来源\nsecond line')
                 self.assertNotIn('data', prepared)
                 self.assertNotIn('text', prepared['segments'][0])
-                self.assertEqual(prepared['segments'][0]['_text_path'].read_text(), '逐字来源')
+                self.assertEqual(prepared['segments'][0]['_text_path'].read_text(encoding='utf-8'), '逐字来源')
                 stage = prepared['_stage']
             finally:
                 cleanup_prepared_source(prepared)
@@ -99,7 +99,7 @@ class StructuralSourceTests(unittest.TestCase):
                               ('python_executable', 'model_dir', 'model_manifest', 'cache_dir')}}
                 prepared = prepare_source({'path': str(path)}, configured)
             try:
-                self.assertEqual(prepared['segments'][0]['_text_path'].read_text(), 'native page text')
+                self.assertEqual(prepared['segments'][0]['_text_path'].read_text(encoding='utf-8'), 'native page text')
                 self.assertFalse(prepared['segments'][0]['verified'])
                 worker.assert_called_once()
             finally:
