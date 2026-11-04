@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "checked_at": "2026-11-04T10:43:31.262112+00:00",
+  "environment": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "core": {
+    "command": "python -m unittest discover -s tests -v",
+    "ran": 140,
+    "passed": 138,
+    "skipped": 2,
+    "skip_reason": "Requires real Windows Job Object",
+    "failed": 0,
+    "log_sha256": "bffe43d6f555535723ff95f8e105a50a1ce5f8b40078697519c1af585efb5ee1"
+  },
+  "browser": {
+    "command": "python -m unittest discover -s tests/browser -v",
+    "ran": 18,
+    "passed": 18,
+    "host": "simulated window.openai, Chromium",
+    "log_sha256": "a3a6a73738cb4096d24293a42c6267cecff6f0173961ef05980682b41a491f86"
+  },
+  "targeted_followup": {
+    "archive_tests": 22,
+    "reason": "Persist registered Drive locations without deleting external ZIP/downloads",
+    "passed": 22
+  },
+  "not_validated": [
+    "native Codex client 0.2.0 end-to-end",
+    "actual Google Drive upload and independent web download",
+    "user Windows clean install and upgrade",
+    "Docling model inference",
+    "Codex/Drive whole-machine memory"
+  ]
+}

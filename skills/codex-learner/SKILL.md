@@ -7,7 +7,7 @@ description: 在 Codex 对话中按用户资料建立课程、整章讲解、章
 
 先读取本 Skill 目录内的 config.json 和 [操作接口](references/operations.md)。配置中的 library_root 是唯一正式课程库；换工作目录不能创建另一套库。库不存在、不可访问、损坏或 schema 未知时报告具体问题，保留原文件，不自动重置。
 
-使用配置中的 python_executable（旧配置没有时使用 Python 3.10+），运行本 Skill 目录内 scripts/learner.py。命令中的脚本路径必须是绝对路径；使用固定配置或绝对 --library 路径。先执行 doctor、list，再按稳定 course_id 选择课程。有多个同名课程或用户只说“继续”且目标不唯一时，请用户选择。不要把 ID 当成课程标题展示。
+使用配置中的 python_executable（旧配置没有时使用 Python 3.10+），运行本 Skill 目录内 scripts/learner.py。命令中的脚本路径必须是绝对路径；使用固定配置或绝对 --library 路径。先执行 doctor、list，再按稳定 course_id 选择课程。schema 2 的 show 是正文引用清单，使用 read 定向读取原答/来源页/讲义片段，history/retests 分页复盘；不要一次展开全部历史正文。有多个同名课程或用户只说“继续”且目标不唯一时，请用户选择。不要把 ID 当成课程标题展示。
 
 每个云端开发任务已有隔离工作区；使用现有检出，除非用户明确要求，不创建 Git worktree。学习器实际安装目标是用户本机；不得声称当前云任务的文件能在另一台电脑自动同步。
 
@@ -38,7 +38,7 @@ description: 在 Codex 对话中按用户资料建立课程、整章讲解、章
 - 反馈发出前保存 Assessment，并明确反馈提供的帮助程度 none/hint/solution。主动索要提示或解法时先 record_help 再展示内容。同题后续作答继承已登记帮助；一般讲义学习不自动算作具体题目的提示。
 - 用户明确补报作答前用过帮助时，用 record_help 关联 target_submission_id，保留真实登记时间和原因。现在才索要答案不能反向更改之前的作答。指向不明时先明确是哪次。
 - 当前状态以 review 派生结果为准：逐作答选择有效评价，按原答接收顺序逐必要项汇总，再汇总目标。只说“本次练习达标”，不声称长期掌握；不生成掌握百分比。
-- 新情境复测使用新 question_id，retest_context 记录前序教学、间隔与情境。新题不重置整章。修改题意升级 question_version，修改实质讲义/目标升级 content_version。旧资料和作答保留，adopt_content 必须由用户明确选择采用新版。
+- 新情境复测使用新 question_id，retest_context={baseline_submission_id,kind:delayed|transfer,context} 记录真实基线和情境，间隔由原答时间计算，不接受自报间隔。新题不重置整章。修改题意升级 question_version，修改实质讲义/目标升级 content_version。旧资料和作答保留，adopt_content 必须由用户明确选择采用新版。
 - 评分应用错误：新增 Assessment 并以 supersedes 指向当前评价，写 correction_reason。评分依据错误：replace_rubric 明确受影响项，立即使相关证据待重评，再逐项复评。旧作答的晚到反馈不能覆盖较新作答。
 - 旧面板新提交属于已替换版本时，保留 pending_content_review。请用户选择仅按旧题评价（resolve_history）或作为新题重新提交。不能自动移植答案或达标记录。
 
@@ -58,4 +58,17 @@ description: 在 Codex 对话中按用户资料建立课程、整章讲解、章
 
 检查损坏记录的 backup-info，向用户展示恢复版本、时间与可能损失范围。只有用户选择后才能 restore --confirm；保留损坏原件。不要把此步骤概括为所有常规写入都需确认。
 
-本版本的自动化结果见仓库 docs/acceptance.md。原生面板回传、真实新对话发现与 Windows 运行验收未通过前，不宣称整套学习器已完成验收。先在隔离样例库跑 T0；用户实际打开不同工作目录的新对话，选择本 Skill，核对同一课程和完整原答。不要擅自替用户创建新对话。
+本版本的自动化结果见仓库 docs/acceptance-v0.2.md；docs/acceptance.md 是旧版历史证据。原生面板回传、真实新对话发现与 Windows 运行验收未通过前，不宣称整套学习器已完成验收。先在隔离样例库跑 T0；用户实际打开不同工作目录的新对话，选择本 Skill，核对同一课程和完整原答。不要擅自替用户创建新对话。
+
+
+## 0.2.0 本机低内存与历史归档
+
+基础环境与 OCR 独立；OCR/model/cache 放在 Skill、课程库及 Drive 之外，默认预算 2048 MiB，只计算 OCR 进程组。普通文字先提取，扫描页逐页 OCR；公式、表格、缺图、OCR 和迁移的 legacy_claim 结果保持待核对，不能因为工具有文本输出就设置可信。复杂页 Docling 只按明确选页和配置运行，超限保存原页定位与停止原因，不抬预算绕过验收。
+
+同一答案重试必须保留原 ID/负载；用户重新作答才生成新 ID 并以 replaces_submission_id 关联原答。进入新面板后同题已有原答须明确重新作答，不能把新 ID 当成旧请求的重试。讲解阶段默认只显示继续、确认和跳过，提前聊天作答仅保存，不推进讲解。
+
+schema 1 只读。先 migrate --preview 展示容量、数量及旧清单哈希，用户选定后执行 --expected-sha256 ... --confirm。迁移不删除旧 ID、时间、原答、帮助、评价或去重历史，也不自动提升来源可信度。已有迁移授权时不用重复询问，先完成可核对的预览和验证。
+
+Drive 只接收整门历史课程的闭合版本包，活跃库保持普通本地磁盘。按 archive-create → archive-copy → 官方客户端同步 → 用户从网页重新下载 → archive-confirm-download 执行。复制成功只能报告本地副本已生成、云端同步未确认。不得把原包、流式目录或缓存文件冒充云端回读；核验回执中的 network_provenance=user_declared 不能表述成自动观测到了网络上传/下载。
+
+只有用户明确选择“归档并释放本地副本”，且独立取回校验通过，才 archive-release --confirm。待评价、待重评、正在运行的任务不能释放。恢复先验证完整包和所有引用，再放到普通本地课程目录；冲突不覆盖、不创建空课程冒充旧记录。上传/配额/断网失败保留本地课程。不要清理官方客户端缓存或创建公开分享链接。

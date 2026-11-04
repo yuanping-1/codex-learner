@@ -6,6 +6,10 @@ import re
 from datetime import datetime, timezone
 
 
+SCHEMA_VERSION = 2
+READ_SCHEMAS = (1, 2)
+
+
 class LearnerError(Exception):
     def __init__(self, code, message, **details):
         super().__init__(message)
@@ -59,9 +63,30 @@ def read_json(path):
         raise LearnerError("invalid_json", f"Invalid JSON: {path}", path=str(path)) from exc
 
 
+def has_body(record, field, nonempty=False):
+    # Inspect raw keys: validation must not hydrate every historical body.
+    if field in record:
+        value = dict.__getitem__(record, field)
+        return isinstance(value, str) and (bool(value.strip()) if nonempty else True)
+    ref = dict.get(record, field + "_ref")
+    return (isinstance(ref, dict) and isinstance(ref.get("path"), str)
+            and isinstance(ref.get("sha256"), str)
+            and bool(re.fullmatch("[0-9a-f]{64}", ref["sha256"]))
+            and (not nonempty or ref.get("byte_length", 1) > 0))
+
+
+def body_hash(record, field):
+    if field in record:
+        value = dict.__getitem__(record, field)
+        return hashlib.sha256(value.encode("utf-8")).hexdigest()
+    ref = dict.get(record, field + "_ref")
+    require(isinstance(ref, dict), f"Missing body: {field}", "corrupt_state")
+    return ref["sha256"]
+
+
 def validate_state(state, course_id=None):
     require(isinstance(state, dict), "Course state is not an object.", "corrupt_state")
-    require(state.get("schema_version") == 1, "Unsupported course schema; no automatic migration.",
+    require(state.get("schema_version") in READ_SCHEMAS, "Unsupported course schema; no automatic migration.",
             "unsupported_schema")
     identifier(state.get("course_id"))
     if course_id is not None:
@@ -85,7 +110,7 @@ def validate_state(state, course_id=None):
     for sid, sub in state["submissions"].items():
         require(sub.get("submission_id") == sid and sub.get("course_id") == state["course_id"],
                 "Submission identity mismatch.", "corrupt_state")
-        require(isinstance(sub.get("answer"), str) and type(sub.get("received_revision")) is int,
+        require(has_body(sub, "answer") and type(sub.get("received_revision")) is int,
                 "Invalid submission.", "corrupt_state")
     try:
         validate_links(state)
@@ -103,7 +128,8 @@ def validate_links(state):
         valid(isinstance(references, list) and bool(references), "Missing source references.")
         for ref in references:
             source = state["sources"][ref["source_id"]]
-            valid(any(s["locator"] == ref["locator"] and s["verified"] and s["text"].strip()
+            valid(any(s["locator"] == ref["locator"] and has_body(s, "text", nonempty=True)
+                      and (state["schema_version"] == 2 or s["verified"])
                       for s in source["segments"]), "Unverified or missing source location.")
 
     checks_by_content = {}
@@ -113,7 +139,7 @@ def validate_links(state):
               "Invalid source artifact.")
         locators = [s["locator"] for s in source["segments"]]
         valid(len(set(locators)) == len(locators), "Duplicate source locators.")
-        valid(all(isinstance(s["text"], str) and type(s["verified"]) is bool for s in source["segments"]),
+        valid(all(has_body(s, "text") and type(s["verified"]) is bool for s in source["segments"]),
               "Invalid source segment.")
     for cid, chapter in state["chapters"].items():
         valid(chapter["current_version"] in chapter["versions"], "Adopted content is missing.")
@@ -128,7 +154,7 @@ def validate_links(state):
             parts = [p["part_id"] for p in content["parts"]]
             valid(parts and len(set(parts)) == len(parts), "Invalid lecture parts.")
             for part in content["parts"]:
-                valid(isinstance(part["text"], str) and bool(part["text"].strip()), "Invalid lecture text.")
+                valid(has_body(part, "text", nonempty=True), "Invalid lecture text.")
                 refs(part["source_refs"])
             cp = content["checkpoint"]
             confirmed, skipped = cp["confirmed"], cp["skipped"]
@@ -178,9 +204,10 @@ def validate_links(state):
         valid(set(assessment["results"]) == set(q["checks"])
               and set(assessment["invalidated_checks"]) <= set(q["checks"]), "Invalid assessment checks.")
         for result in assessment["results"].values():
-            valid(result["outcome"] in ("meets", "needs_work", "uncertain") and bool(result["reason"]),
+            valid(result["outcome"] in ("meets", "needs_work", "uncertain") and has_body(result, "reason", nonempty=True),
                   "Invalid assessment result.")
             refs(result["source_refs"])
     for operation in state["operations"].values():
         valid(bool(re.fullmatch("[0-9a-f]{64}", operation["fingerprint"]))
-              and operation["receipt"]["course_id"] == state["course_id"], "Invalid operation record.")
+              and (("receipt_ref" in operation and has_body(operation, "receipt"))
+                   or ("receipt" in operation and operation["receipt"]["course_id"] == state["course_id"])), "Invalid operation record.")

@@ -6,41 +6,77 @@ import uuid
 from pathlib import Path
 
 from .common import now, require
-from .views import course_summary
+from .views import chapter_summary, effective_assessment, effective_help
+
+
+def brief_retest(value):
+    """Only the small, recorded retest context belongs in a panel snapshot."""
+    if not isinstance(value, dict):
+        return None
+    result = {key: value[key] for key in ("kind", "baseline_received_at", "elapsed_seconds")
+              if key in value}
+    context = value.get("context")
+    if isinstance(context, str):
+        result["context"] = context[:400]
+        result["context_truncated"] = len(context) > 400
+    return result or None
 
 
 def public_snapshot(state):
     """仅公开题干、作答状态和导航；不把评分依据嵌入未作答面板。"""
+    position = state["position"]
+    current_id = position["chapter_id"] if position else None
     chapters = []
+    current = None
     for cid in state["chapter_order"]:
         chapter = state["chapters"][cid]
         version = chapter["current_version"]
         content = chapter["versions"][version]
-        chapters.append({"chapter_id": cid, "title": content["title"], "content_version": version,
-                         "checkpoint": content["checkpoint"],
-                         "parts": [{"part_id": p["part_id"]} for p in content["parts"]]})
+        entry = {"chapter_id": cid, "title": content["title"], "content_version": version}
+        if cid == current_id:
+            entry.update(checkpoint=content["checkpoint"],
+                         parts=[{"part_id": p["part_id"]} for p in content["parts"]])
+            current = entry
+        chapters.append(entry)
     questions = []
-    for qid, question in state["questions"].items():
-        for chapter in chapters:
-            qversion = question["active_versions"].get(chapter["content_version"])
+    if current and current["checkpoint"]["stage"] == "exercises":
+        for qid, question in state["questions"].items():
+            qversion = question["active_versions"].get(current["content_version"])
             if qversion is None:
                 continue
             q = question["versions"][qversion]
-            if q["chapter_id"] != chapter["chapter_id"]:
+            if q["chapter_id"] != current_id:
                 continue
             submissions = [s for s in state["submissions"].values()
                            if s["question_id"] == qid and s["content_version"] == q["content_version"]
                            and s["question_version"] == qversion]
             latest = max(submissions, key=lambda s: s["received_revision"]) if submissions else None
+            receipt = None
+            if latest:
+                receipt = {k: latest[k] for k in ("submission_id", "status", "received_at")}
+                receipt["help"] = effective_help(state, latest)
+                assessment = effective_assessment(state, latest["submission_id"])
+                if assessment and assessment.get("invalidated_checks"):
+                    receipt["status"] = "pending_reassessment"
+                receipt["retest"] = brief_retest(latest.get("retest"))
             questions.append({"question_id": qid, "question_version": qversion,
                               "chapter_id": q["chapter_id"], "content_version": q["content_version"],
-                              "prompt": q["prompt"], "latest": {
-                                  k: latest[k] for k in ("submission_id", "status", "received_at")
-                              } if latest else None})
+                              "prompt": q["prompt"], "latest": receipt,
+                              "retest_context": brief_retest(q.get("retest_context"))})
+    summary = {"chapters": []}
+    if current_id:
+        current_summary = chapter_summary(state, current_id)
+        # Long feedback and historical answers stay in the read-only review interface.
+        for goal in current_summary["goals"]:
+            goal["checks"] = [{key: check[key] for key in (
+                "check_id", "label", "status", "help", "unassessed_reason") if key in check}
+                for check in goal["checks"]]
+        summary["chapters"].append(current_summary)
     return {"panel_id": uuid.uuid4().hex, "course_id": state["course_id"], "title": state["title"],
-            "state_revision": state["state_revision"], "snapshot_at": now(), "position": state["position"],
-            "chapters": chapters, "outline": state.get("outline", []), "questions": questions,
-            "summary": course_summary(state)}
+            "state_revision": state["state_revision"], "snapshot_at": now(), "position": position,
+            "chapters": chapters, "outline": [
+                {key: entry[key] for key in ("chapter_id", "title")}
+                for entry in state.get("outline", [])], "questions": questions, "summary": summary}
 
 
 def render(state, output, fragment=False):

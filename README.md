@@ -1,81 +1,81 @@
 # Codex 对话学习器
 
-在 Codex 聊天中围绕资料整章学习、练习、反馈和续学。学习记录保存在你本机的固定课程库。
+在本机 Codex 中按资料学习、练习、反馈和跨对话续学。**0.2.0 候选版采用本机轻量课程库＋独立逐页 OCR＋Google Drive 历史归档**，无需服务器。云端只用于开发。
 
-**当前为 0.1.0 验收候选：Windows 43 项核心测试、E01 原生特殊文本保存、E03 新对话恢复均通过；2026-11-04 已完成正确修订的本机安装和原生 UI 复验。** 删除排队消息可取消，保留原稿和提交 ID 重试；缩短或清空草稿后缓存警告消失。最新为 4 份作答、4 份评价、修订号 15。真实发送失败恢复与综合教学验收尚未完成，整套仍为验收候选。开发环境是 Linux 云环境，目标运行环境是你的本机 Codex。详情见 [最新本机验收证据](docs/local-ui-acceptance-2026-11-04.md)。
+日常核心按需读取正文；默认 OCR 进程组预算为 **2048 MiB（2 GiB）**，不包含 Codex、浏览器或 Drive 客户端。Drive 用于节省长期磁盘空间，不代替运行内存。实际验收范围见 [0.2.0 验收记录](docs/acceptance-v0.2.md)；旧版本本机验收不能代替新包验收。
 
-此前实际调用旧脚本的问题已解决：修订包内脚本、已安装脚本及新面板内嵌脚本哈希一致，本机复验通过，原配置及隔离库全部 10 个文件保持不变。已有核心测试和 E01 未重跑。[本机版本核对与修订复验](docs/local-ui-recheck.md)保留为已执行流程，无需重复。
+## 安装与升级
 
-本版包括来源归档、分段讲解检查点、原答先保存、反馈与帮助记录、逐项证据汇总、版本隔离、重复提交去重、备份恢复及交互面板。没有常驻 Web 后台、独立模型服务或云同步。
+基础环境支持 Python 3.10–3.12；独立 OCR 环境固定 Python 3.12。先下载并解压发布包，在项目根目录运行。以下以 PowerShell 为例：
 
-## 在 Windows 本机安装并验收
+```powershell
+python -m pip install -r requirements-base.txt
+$learnerLibrary = Join-Path $env:USERPROFILE "Documents\Codex\learning-library"
+python scripts/install_skill.py --library "$learnerLibrary"
+```
 
-需要 Python 3.10+，以及支持对话内可视化的 Codex 客户端。Codex CLI/IDE 不提供所需面板渲染。解压安装包，在项目根目录打开 PowerShell。
+默认 Skill 安装到用户目录 `.agents/skills/codex-learner`；课程库必须位于普通本地磁盘，不能放入 Skill、虚拟环境或 Drive 同步目录。首次安装器只初始化明确指定的新库，安装不会上传、迁移或清理课程。
 
-先使用独立样例库，避免验收答案进入个人学习记录：
+升级沿用现有库、Python、OCR 内存和 Drive 配置，不重新指定 `--library`：
 
-~~~powershell
-python -m pip install -r requirements-pdf.txt
+```powershell
+python scripts/install_skill.py --backup-and-replace
+```
+
+旧 Skill 会保留备份。然后用实际安装路径执行 `doctor`，核对版本、文件清单哈希、解释器、模型和配置。schema 1 课程只读，升级步骤见 [迁移与使用说明](docs/v0.2-upgrade.md)。
+
+### 可选 OCR
+
+模型与环境放在 Skill、课程库、Drive 之外。先预览，再显式安装和预取经过 SHA-256 校验的模型：
+
+```powershell
+python scripts/install_ocr.py
+python scripts/install_ocr.py --python "C:\Path\To\Python312\python.exe" --install --prefetch
+```
+
+默认 RapidOCR＋pypdfium2，CPU 两线程、一个工作进程、每次一页。模型只在扫描页需要时加载，完成任务后进程退出。原件上限 32 MiB；默认 150 DPI、最长边 2000 像素、最多 300 万像素。读取文字层或 OCR 成功仍需按来源类型核对，表格、公式、图片和扫描结果不会自动变成可信评分依据。超预算、超时或提取超限明确停止，已完成页可从检查点继续。
+
+Docling 为单独的可选复杂页环境，需要明确选择页面和离线模型清单；未验证其所有模型都能在 2 GiB 下运行，超限保留原件供核对。
+
+## 学习与记录
+
+在 Codex 中选择 **codex-learner**，说“打开学习器，用这些资料建立课程”或“继续某课程”。先讲解本章，确认末段或明确跳过后再练习。聊天中提前作答可以保存，不推进讲解阶段。
+
+- 原答先保存，再写评价。反馈中断后恢复待评价记录。
+- 同一请求重试沿用 ID；重新作答使用新 ID 并关联原答。
+- 首次练习、延迟复测、新情境复测分别展示，间隔由实际记录时间计算。
+- schema 2 清单保存关系和正文引用；原答、讲义、反馈按需读取，回执复用正文。
+- 本机断网时，已取回课程和历史记录可读；未取回的历史归档需联网下载。
+
+静态网页及模拟宿主测试不代表真实 Codex 客户端验收通过。
+
+## Google Drive 归档
+
+使用官方 Drive 桌面客户端的**流式**私有目录。活跃库与 Drive 分离，Drive 接收已闭合的版本化 ZIP。
+
+顺序固定为：**生成一致快照 → 流式打包并校验 → 复制到 Drive → 确认客户端同步 → 从 Drive 网页另行下载 → 学习器重新校验 → 用户明确释放本地课程**。
+
+复制成功只会显示 `sync_unconfirmed`。独立下载核验记录明确说明网络来源是用户声明，程序不会把同步目录或原包充当云端回读。释放后保留轻量索引；恢复先下载到本地、检查完整性和路径，再启用课程。同 ID 课程不会被静默覆盖。待评价、待重评或有运行任务的课程不能释放。
+
+完整命令和失败恢复见 [归档操作说明](docs/v0.2-upgrade.md#google-drive-历史归档)。
+
+## 开发与测试
+
+```bash
+python -m venv .venv
+# 激活该环境后：
+python -m pip install -r requirements-base.txt -r requirements-dev.txt
 python -m unittest discover -s tests -v
-$learnerSample = Join-Path $env:USERPROFILE "Documents\Codex\codex-learner-acceptance\sample-library"
-python scripts/create_demo.py --library "$learnerSample"
-python scripts/install_skill.py --library "$learnerSample"
-~~~
+python -m playwright install chromium
+python -m unittest discover -s tests/browser -v
+python scripts/benchmark_memory.py --output artifacts/memory.json
+python scripts/package.py
+```
 
-安装器默认将 Skill 放入用户目录下的 .agents/skills/codex-learner，保存课程库绝对路径和 Python 路径，不修改全局 Codex 配置。相同内容重复安装不会改写文件；已有不同 Skill 会停止并保留原件。确需替换时使用 --backup-and-replace，旧版备份在 .agents/skill-backups，课程库不会被删除。
+安装包按清单打包，不包含课程、配置、凭据、缓存或模型。发布证据须绑定最终 ZIP 哈希；原生客户端、真实 Drive 传输和干净 Windows 安装结果分别记录。
 
-随后在本机 Codex 显式选择 **codex-learner**，发送：
-
-> 使用配置中的隔离样例库，打开“比例与单位 · 验收样例”。先确认当前客户端可渲染交互面板，显示第一题面板供我提交答案。
-
-提交包含中文、换行和引号的一份答案，核对回执与原答。然后由你在另一个工作目录新开一条 Codex 对话，选择同一 Skill，说：
-
-> 继续“比例与单位 · 验收样例”，核对上一份完整原答、当前章节和待处理反馈。
-
-如果原生渲染或回传不可用，按 [验收记录](docs/acceptance.md) 记为未通过；不要把静态 HTML 或复制请求当作原生验收通过。
-
-T0 通过后，可切换到原计划中的正式课程库：
-
-~~~powershell
-$learnerLibrary = Join-Path $env:USERPROFILE "Documents\Codex\2026-10-26\codex\outputs\learning-library"
-python scripts/install_skill.py --library "$learnerLibrary" --backup-and-replace
-~~~
-
-正式使用时说“打开学习器，用这些资料建立课程”或“继续某课程”，并在聊天中提供资料。Skill 先归档来源并建立目录，完整讲完一章后再练习。普通“继续”会恢复未确认片段；明确“本段已读”才推进检查点。评价区分本次练习达标、在帮助下完成、待补强和未评估。
-
-## Linux/macOS 与开发验证
-
-安装器支持其他本地系统；需要指定绝对或可解析的本地目录。例如：
-
-~~~bash
-python3 scripts/install_skill.py --library "$HOME/Documents/codex-learning-library"
-~~~
-
-本机文件锁不承诺多设备或网络盘协同。开发测试：
-
-~~~bash
-python3 -m unittest discover -s tests -v
-python3 -m pip install -r requirements-dev.txt
-python3 -m playwright install chromium
-python3 -m unittest discover -s tests/browser -v
-~~~
-
-核心使用 Python 标准库。pypdf 用于 PDF 读取；有 pdftotext 时也可读取 PDF。Playwright 只用于浏览器测试。扫描页、图表和公式需要实际核对，提取失败会明确记录。DOCX 保留段落/表格位置；网页须先归档实际读取的 HTML 和 URL，不把链接当作已保存全文。
-
-生成可分发安装包：
-
-~~~bash
-python3 scripts/package.py
-~~~
-
-安装包包含源码、Skill、安装脚本、样例和测试，不包含本机配置、课程记录或缓存。
-
-## 资料与接口
-
-- [完整原计划 v2.2](docs/plan-v2.2.md)
-- [实现结构及环境调整](docs/implementation.md)
-- [E01–E25 验收记录](docs/acceptance.md)
-- [记录接口与 JSON 请求](skills/codex-learner/references/operations.md)
+- [0.2.0 迁移、OCR 和归档操作](docs/v0.2-upgrade.md)
+- [0.2.0 验收记录](docs/acceptance-v0.2.md)
+- [完整原计划](docs/plan-v2.2.md)
+- [记录接口](skills/codex-learner/references/operations.md)
 - [教学 Skill](skills/codex-learner/SKILL.md)
-
-所有正式写入以脚本回读为准。答案保存和反馈保存分两步；旧面板、重试及更正不会静默覆盖原答。状态损坏时先检查备份，只有用户选择后恢复，并保留原文件。

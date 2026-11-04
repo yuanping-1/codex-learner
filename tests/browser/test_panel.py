@@ -12,7 +12,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from support import CourseCase, ROOT
-from codex_learner.panel import render
+from codex_learner.panel import render, public_snapshot
+from create_demo import seed
 from playwright.sync_api import sync_playwright
 
 MOCK = """
@@ -29,6 +30,8 @@ window.openai = {
 class BrowserTests(CourseCase):
     def setUp(self):
         super().setUp()
+        # Existing answer tests explicitly start in exercises; separate tests cover lecture gating.
+        self.apply("begin_exercises", chapter_id="chapter-1", content_version="v1", skip_remaining=True)
         class QuietHandler(SimpleHTTPRequestHandler):
             def log_message(self, format, *args):
                 pass
@@ -83,7 +86,7 @@ class BrowserTests(CourseCase):
         self.assertIn("尚未确认", page.locator("#draft-status").inner_text())
         receipt = self.engine.apply(request)
         self.assertEqual(receipt["result"]["answer"], answer)
-        page.get_by_role("button", name="提交答案到聊天").click()
+        page.get_by_role("button", name="重试本次", exact=True).click()
         self.assertEqual(self.captured_request(page), request)
         self.assertTrue(self.engine.apply(self.captured_request(page))["duplicate"])
         page.get_by_label("题目", exact=True).select_option(index=1)
@@ -124,7 +127,7 @@ window.openai.sendFollowUpMessage = async request => {
         self.assertIn("重试", status)
         self.assertNotIn("等待处理", status)
         self.assertNotIn("请求已取消", status)
-        page.locator("#submit-answer").click()
+        page.locator("#retry-answer").click()
         self.assertEqual(self.captured_request(page), request)
         page.evaluate("window.pendingRequests.splice(0)")
         self.assertEqual(self.library.load("sample-course"), before)
@@ -230,3 +233,131 @@ window.openai.setWidgetState = state => new Promise((resolve, reject) => {
         from codex_learner.common import LearnerError
         with self.assertRaises(LearnerError):
             render(self.library.load("sample-course"), path)
+
+    def test_lecture_requires_confirmation_before_default_exercises(self):
+        seed(self.library, course_id="lecture-course")
+        state = self.library.load("lecture-course")
+        page, _ = self.open_panel(state=state)
+        self.assertFalse(page.locator("#exercise-section").is_visible())
+        self.assertTrue(page.locator("#review").is_visible())
+        self.assertEqual(public_snapshot(state)["questions"], [])
+        # Explicit answers from chat remain accepted without advancing the teaching stage.
+        self.engine.apply(self.request("submit_answer", course_id="lecture-course", **self.context,
+                                       submission_id="early-chat-answer", answer="主动提前作答"))
+        state = self.library.load("lecture-course")
+        self.assertEqual(state["chapters"]["chapter-1"]["versions"]["v1"]["checkpoint"]["stage"], "lecture")
+        for button in ("继续讲解", "本段已读", "继续讲解", "末段已读，开始练习"):
+            page, _ = self.open_panel(state=self.library.load("lecture-course"))
+            page.get_by_role("button", name=button, exact=True).click()
+            self.engine.apply(self.captured_request(page))
+        state = self.library.load("lecture-course")
+        checkpoint = state["chapters"]["chapter-1"]["versions"]["v1"]["checkpoint"]
+        self.assertEqual(checkpoint["stage"], "exercises")
+        self.assertEqual(checkpoint["confirmed"], ["part-1", "part-2"])
+        self.assertEqual(checkpoint["skipped"], [])
+        page, _ = self.open_panel(state=state)
+        self.assertTrue(page.locator("#exercise-section").is_visible())
+        self.assertIn("主动提前作答", state["submissions"]["early-chat-answer"]["answer"])
+
+    def test_explicit_skip_opens_exercises_without_confirming_lecture(self):
+        seed(self.library, course_id="skip-course")
+        page, _ = self.open_panel(state=self.library.load("skip-course"))
+        page.get_by_role("button", name="跳过剩余讲解，开始练习", exact=True).click()
+        self.engine.apply(self.captured_request(page))
+        state = self.library.load("skip-course")
+        checkpoint = state["chapters"]["chapter-1"]["versions"]["v1"]["checkpoint"]
+        self.assertEqual(checkpoint["confirmed"], [])
+        self.assertEqual(checkpoint["skipped"], ["part-1", "part-2"])
+        page, _ = self.open_panel(state=state)
+        self.assertTrue(page.locator("#submit-answer").is_enabled())
+
+    def test_retry_and_reanswer_preserve_ids_and_confirmed_predecessors(self):
+        page, _ = self.open_panel()
+        page.locator("#answer").fill("同一份原答")
+        page.locator("#submit-answer").click()
+        original = self.captured_request(page)
+        self.assertNotIn("replaces_submission_id", original)
+        self.engine.apply(original)
+        page.locator("#retry-answer").click()
+        self.assertEqual(self.captured_request(page), original)
+        self.assertTrue(self.engine.apply(self.captured_request(page))["duplicate"])
+        previous = original
+        for answer in ("同一份原答", "更正后的原答"):
+            updated, _ = self.open_panel()
+            self.assertTrue(updated.locator("#answer").is_disabled())
+            updated.get_by_role("button", name="重新作答", exact=True).click()
+            updated.locator("#answer").fill(answer)
+            updated.locator("#submit-answer").click()
+            request = self.captured_request(updated)
+            self.assertNotEqual(request["submission_id"], previous["submission_id"])
+            self.assertEqual(request["replaces_submission_id"], previous["submission_id"])
+            self.engine.apply(request)
+            previous = request
+        submissions = self.library.load("sample-course")["submissions"]
+        self.assertEqual(len(submissions), 3)
+        self.assertEqual(submissions[original["submission_id"]]["answer"], "同一份原答")
+
+    def test_cancelled_draft_does_not_become_a_saved_predecessor(self):
+        page, _ = self.open_panel(MOCK + """
+window.openai.sendFollowUpMessage = async request => {
+  window.sentRequests.push(request);
+  return {cancelled: true};
+};
+""")
+        page.locator("#answer").fill("取消的草稿")
+        page.locator("#submit-answer").click()
+        cancelled = self.captured_request(page)
+        page.locator("#retry-answer").click()
+        self.assertEqual(self.captured_request(page), cancelled)
+        page.locator("#answer").fill("取消后修改的草稿")
+        page.locator("#submit-answer").click()
+        changed = self.captured_request(page)
+        self.assertNotEqual(changed["submission_id"], cancelled["submission_id"])
+        self.assertNotIn("replaces_submission_id", changed)
+        self.assertEqual(self.library.load("sample-course")["submissions"], {})
+
+    def test_cached_retry_restores_the_same_request_without_writing_on_load(self):
+        page, path = self.open_panel()
+        page.locator("#answer").fill("保留的待发送原答")
+        page.locator("#submit-answer").click()
+        request = self.captured_request(page)
+        cached = page.evaluate("window.cachedStates.at(-1)")
+        context = self.browser.new_context()
+        self.addCleanup(context.close)
+        restored = context.new_page()
+        restored.add_init_script(MOCK + "\nwindow.openai.widgetState = " + json.dumps(cached) + ";")
+        restored.goto("http://127.0.0.1:" + str(self.server.server_port) + "/" + path.name)
+        self.assertEqual(restored.locator("#answer").input_value(), request["answer"])
+        self.assertEqual(restored.evaluate("window.cachedStates.length"), 0)
+        restored.locator("#retry-answer").click()
+        self.assertEqual(self.captured_request(restored), request)
+
+    def test_snapshot_omits_other_chapter_bodies_and_full_history(self):
+        self.submit(sid="historical", answer="HISTORICAL_ANSWER_NOT_FOR_PANEL")
+        self.assess("historical", feedback="HISTORICAL_FEEDBACK_NOT_FOR_PANEL",
+                    results={"compute": {"outcome": "meets", "reason": "LONG_REASON_NOT_FOR_PANEL",
+                                         "source_refs": self.refs}})
+        state = self.library.load("sample-course")
+        state["questions"]["q3"]["versions"]["qv1"]["prompt"] = "OTHER_CHAPTER_PROMPT_NOT_FOR_PANEL"
+        state["outline"][1]["goals"] = "OTHER_CHAPTER_GOALS_NOT_FOR_PANEL"
+        snapshot = public_snapshot(state)
+        self.assertEqual({q["question_id"] for q in snapshot["questions"]}, {"q1", "q2"})
+        self.assertEqual([c["chapter_id"] for c in snapshot["summary"]["chapters"]], ["chapter-1"])
+        self.assertNotIn("checkpoint", snapshot["chapters"][1])
+        encoded = json.dumps(snapshot)
+        for marker in ("HISTORICAL_ANSWER_NOT_FOR_PANEL", "HISTORICAL_FEEDBACK_NOT_FOR_PANEL",
+                       "LONG_REASON_NOT_FOR_PANEL", "OTHER_CHAPTER_PROMPT_NOT_FOR_PANEL",
+                       "OTHER_CHAPTER_GOALS_NOT_FOR_PANEL"):
+            self.assertNotIn(marker, encoded)
+
+    def test_retest_background_and_recorded_help_are_visible(self):
+        self.submit(sid="retest-answer")
+        state = self.library.load("sample-course")
+        state["questions"]["q1"]["versions"]["qv1"]["retest_context"] = {
+            "kind": "delayed", "context": "一周后复测同一目标"}
+        state["submissions"]["retest-answer"]["retest"] = {"elapsed_seconds": 604800}
+        page, _ = self.open_panel(state=state)
+        self.assertIn("延迟复测", page.locator("#question-background").inner_text())
+        self.assertIn("一周后", page.locator("#question-background").inner_text())
+        self.assertIn("604800 秒", page.locator("#question-background").inner_text())
+        self.assertEqual(page.locator("#answer-help").inner_text(), "本次未记录帮助")

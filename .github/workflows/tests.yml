@@ -1,5 +1,13 @@
 name: Learner checks
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ocr_smoke:
+        description: Run isolated PDF/crop/OCR protocol smoke (no model downloads)
+        type: boolean
+        default: false
 jobs:
   records:
     strategy:
@@ -12,8 +20,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install -r requirements-pdf.txt
+      - run: python -m pip install -r requirements-base.txt
       - run: python -m unittest discover -s tests -v
+      - run: python scripts/package.py --output artifacts/ci-package.zip
   browser:
     runs-on: ubuntu-latest
     steps:
@@ -24,3 +33,26 @@ jobs:
       - run: python -m pip install -r requirements-dev.txt
       - run: python -m playwright install --with-deps chromium
       - run: python -m unittest discover -s tests/browser -v
+  ocr-smoke:
+    if: github.event_name != 'workflow_dispatch' || inputs.ocr_smoke
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m venv .ocr-ci
+      - name: Check isolated PDF rendering and OCR protocol without fetching models
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            ocr_python=".ocr-ci/Scripts/python.exe"
+          else
+            ocr_python=".ocr-ci/bin/python"
+          fi
+          "$ocr_python" -m pip install -r requirements-base.txt -r requirements-ocr.txt
+          "$ocr_python" -c "import rapidocr, pypdfium2, onnxruntime, psutil; from importlib.metadata import version; print({name:version(name) for name in ('rapidocr','pypdfium2','onnxruntime','psutil')})"
+          "$ocr_python" -m unittest discover -s tests -p test_ocr.py -v

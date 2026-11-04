@@ -1,6 +1,6 @@
 # 记录接口
 
-Python 3.10+。核心使用标准库；PDF 需要 pypdf 或 pdftotext。配置文件在 Skill 根目录，包含 schema_version=1、绝对 library_root 和可选 python_executable。
+Python 3.10–3.12。基础环境安装 requirements-base.txt；OCR 使用独立 Python 3.12 环境。配置文件在 Skill 根目录，包含 schema_version=1、绝对 library_root 和可选 python_executable。
 
 从任意目录调用（把路径换成本 Skill 的实际绝对路径）：
 
@@ -104,13 +104,13 @@ checks 为本内容版本中必要 check_id 列表。rubric 示例：
 }
 ~~~
 
-完整 JSON 写入文件再调用 apply；不要把 answer 放进 shell 命令。面板重试同一次作答保持同一 ID。重新作答使用新 ID。
+完整 JSON 写入文件再调用 apply；不要把 answer 放进 shell 命令。面板重试同一次作答保持同一 ID 和负载。重新作答使用新 ID，replaces_submission_id 关联同题已有原答，帮助历史保留。讲解阶段的聊天提前作答不会推进阶段。
 
 results 按题目覆盖的全部 check_id 组织，每项必须含 outcome（meets/needs_work/uncertain）、reason、source_refs。assess 的 feedback_help 必须明确为 none/hint/solution；它影响后续同题作答，不反向改变原答帮助快照。脚本不评价语义，只校验和保存 Codex 的判断。
 
 ## 读取与恢复
 
-show 返回正式状态、原答、完整评价历史和来源摘录；review 返回当前章节、检查点、各项证据状态、待处理记录。课程列表可重建；损坏条目会显示错误，不静默隐藏。
+schema 2 的 show 只返回正式紧凑清单与正文引用；read 按提交 ID/来源定位/讲义片段读取正文，history/retests 分页读取；review 返回章节、检查点、证据状态和待处理记录。课程列表可重建；损坏条目会显示错误，不静默隐藏。
 
 所有写入均在短时本地文件锁内重读合并，保存上一有效版本，通过临时文件替换后回读。Linux/macOS 使用 flock，Windows 使用 msvcrt；不支持多设备并发共享目录。
 
@@ -118,3 +118,51 @@ show 返回正式状态、原答、完整评价历史和来源摘录；review �
     python /absolute/skill/scripts/learner.py restore --course COURSE_ID --backup-sha256 HASH --confirm
 
 第二条命令必须在用户选择该备份后执行。恢复保留现有原文件，返回备份时间与可能缺失范围。commit_uncertain 表示写入可能已成功，重试同一请求；id_conflict 表示同 ID 数据不同，不能直接覆盖。
+
+
+## 0.2.0 读取、核验与资源控制
+
+所有正文引用含 path、sha256、byte_length 和 encoding；course.json 不再重复嵌入正文。读取失败时返回具体错误，不能用空内容继续教学。列表和面板只读取摘要/当前章，history 默认元数据分页，include-bodies 明确读取当前页。
+
+    learner.py read --course COURSE_ID --submission SUBMISSION_ID
+    learner.py read --course COURSE_ID --source SOURCE_ID --locator page:3
+    learner.py read --course COURSE_ID --chapter CHAPTER_ID --part PART_ID
+    learner.py history --course COURSE_ID --page 1 --page-size 20
+    learner.py history --course COURSE_ID --page 1 --include-bodies
+    learner.py retests --course COURSE_ID --kind transfer
+    learner.py export --course COURSE_ID --output /absolute/full.json
+
+`verify_source` 可附 expected_source_sha256 与 expected_segment_hashes（locator→SHA-256），防止用旧页面印象核验新正文。它追加 source_verifications 事件，不覆盖旧核验记录。迁移后的 legacy_claim 来源须逐定位复核，旧 verified 声明不自动升为可信证据。
+
+复测题使用新 question_id，retest_context 结构如下，不接受人为指定已过天数：
+
+```json
+{"baseline_submission_id":"first-answer","kind":"delayed","context":"隔日用新数据解释同一原理"}
+```
+
+kind 可为 delayed 或 transfer；基线必须来自同章、同内容版本且覆盖相同检验项。提交时根据基线与新原答的 received_at 计算 elapsed_seconds。旧的任意 retest_context 保留为 legacy_unclassified，不伪造时间证据。
+
+### 解析参数
+
+import_source 的普通来源字段不变，另支持：
+
+- profile：auto/native/rapidocr/docling。已配置的默认轻量 OCR 在扫描页运行，文字层优先；Docling 需明确选页。
+- page_range：[first,last]（1-based，含首尾）；或 page_numbers：[1,3] 显式页列表，ocr_pages 为兼容别名，与范围互斥。原页号不因过滤而重排。
+- memory_budget_mb：不超过配置值及 2048 MiB；配置默认为 2048。预算不能自动提高。
+- resume：沿用匹配原件/模型/参数哈希的完成页检查点；变化后的输入不能复用旧结果。
+- crop：{page_no,rect:[left,bottom,right,top],dpi}，原 PDF 坐标，仅 RapidOCR 单页，dpi=72–300（默认150）；从原 PDF 局部重新渲染，仍受像素上限限制。
+- 旧参数 ocr=true、force_ocr 和 ocr_pages 保持兼容。页号必须为正整数，resume/force_ocr 必须为布尔值。
+
+OCR Python、离线模型、缓存位置来自运行配置，不混入操作指纹。运行结束退出模型进程；失败保留检查点、停止原因和资源数据，不能把部分结果声明为全文完成。普通导入也有提取量、页面/段落和时间上限，超限明确报错。
+
+### 显式迁移与历史归档
+
+    learner.py migrate --course COURSE_ID --preview
+    learner.py migrate --course COURSE_ID --expected-sha256 HASH --confirm
+    learner.py archive-create --course COURSE_ID --output /absolute/course-r42.zip
+    learner.py archive-copy --archive /absolute/course-r42.zip --drive-directory /absolute/private-drive
+    learner.py archive-confirm-download --archive /absolute/course-r42.zip --download /absolute/web-download/course-r42.zip --sha256 HASH --source-declaration web_download --output /absolute/verification.json
+    learner.py archive-release --course COURSE_ID --archive /absolute/course-r42.zip --verification /absolute/verification.json --confirm
+    learner.py archive-restore --archive /absolute/web-download/course-r42.zip --sha256 HASH --confirm
+
+迁移/释放/恢复仅对用户明确选择的课程执行。复制到 Drive 不是云端同步证明；没有网络观测能力时，网页重新下载的来源由用户声明，程序只验证独立文件、哈希和内容。归档释放拒绝待评/待重评/运行任务/未归档文件，保留轻量索引。详情见发布包 docs/v0.2-upgrade.md。

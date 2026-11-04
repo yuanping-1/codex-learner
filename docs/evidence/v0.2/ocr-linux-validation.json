@@ -1,0 +1,352 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "benchmark_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "fixture": "Self-authored scanned page repeated for 10/100-page scaling; not a diverse accuracy benchmark",
+  "windows_job_tested": false,
+  "code_sha256": {
+    "ocr.py": "95954d9d07d6c15305f1c43a27144a606b2dc4c49a9233aa0b01cf8b0ba6d7fe",
+    "ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+    "resource_limits.py": "b659445e28ab485c348e4f8939bce0ffe6ef4dffeb2a68b6ea71e381c91fc2d9"
+  },
+  "benchmark_sha256": "55d73b5df71a2ccfe211ca5e520e809ac98579ee7280fa703e87d839e170f1a7",
+  "results": [
+    {
+      "kind": "page_scaling",
+      "file": "fixture-10.pdf",
+      "pages": 10,
+      "source_sha256": "47e51751a659f1cb1b5fb11ddf8a6a6c6c044a454983c4608d1dfaafcc8c61c3",
+      "source_bytes": 77373,
+      "wall_seconds": 12.864561347000745,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "47e51751a659f1cb1b5fb11ddf8a6a6c6c044a454983c4608d1dfaafcc8c61c3",
+        "protocol_version": 1,
+        "peak_rss_bytes": 606744576,
+        "peak_commit_bytes": null,
+        "completed_pages": 10,
+        "source_page_count": 10,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34835132416,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19594,
+          19595
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 12.8212748320002,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位 验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nRepeated page",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1754,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 2.0833333333333335,
+        "rotation_degrees": 0,
+        "width_pixels": 1241
+      }
+    },
+    {
+      "kind": "page_scaling",
+      "file": "fixture-100.pdf",
+      "pages": 100,
+      "source_sha256": "9dcc8cf8d329944914ef195d0a28a40c5285ea5fbbd0f420a31b465ffd29f7f9",
+      "source_bytes": 94758,
+      "wall_seconds": 104.17581007300032,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "9dcc8cf8d329944914ef195d0a28a40c5285ea5fbbd0f420a31b465ffd29f7f9",
+        "protocol_version": 1,
+        "peak_rss_bytes": 623689728,
+        "peak_commit_bytes": null,
+        "completed_pages": 100,
+        "source_page_count": 100,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34681491456,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19615,
+          19616
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 104.10679717600033,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位 验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nRepeated page",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1754,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 2.0833333333333335,
+        "rotation_degrees": 0,
+        "width_pixels": 1241
+      }
+    },
+    {
+      "kind": "consecutive_document",
+      "file": "consecutive-A.pdf",
+      "pages": 1,
+      "source_sha256": "11fd1cc646d1f2c8ef2c784ac9b78e34209f761c19b36eceb639c91bb67bb21a",
+      "source_bytes": 77227,
+      "wall_seconds": 2.259539759999825,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "11fd1cc646d1f2c8ef2c784ac9b78e34209f761c19b36eceb639c91bb67bb21a",
+        "protocol_version": 1,
+        "peak_rss_bytes": 480563200,
+        "peak_commit_bytes": null,
+        "completed_pages": 1,
+        "source_page_count": 1,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34560049152,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19847,
+          19848
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 2.2354134790002718,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位 验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nSeparate document A",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1754,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 2.0833333333333335,
+        "rotation_degrees": 0,
+        "width_pixels": 1241
+      }
+    },
+    {
+      "kind": "consecutive_document",
+      "file": "consecutive-B.pdf",
+      "pages": 1,
+      "source_sha256": "5dac9cc67a231166d7c2be7933021f39898d2fb1438ce4503dfdd8c20796b3b8",
+      "source_bytes": 77279,
+      "wall_seconds": 1.9550117399994633,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "5dac9cc67a231166d7c2be7933021f39898d2fb1438ce4503dfdd8c20796b3b8",
+        "protocol_version": 1,
+        "peak_rss_bytes": 501985280,
+        "peak_commit_bytes": null,
+        "completed_pages": 1,
+        "source_page_count": 1,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34001154048,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19865,
+          19866
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 1.9273770489999151,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位 验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nSeparate document B",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1754,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 2.0833333333333335,
+        "rotation_degrees": 0,
+        "width_pixels": 1241
+      }
+    },
+    {
+      "kind": "consecutive_document",
+      "file": "consecutive-C.pdf",
+      "pages": 1,
+      "source_sha256": "ca5339d900af100129621d3386fa7418b4ceb47b7e2da303301f21dbba9c8701",
+      "source_bytes": 77159,
+      "wall_seconds": 2.0552445090006586,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "ca5339d900af100129621d3386fa7418b4ceb47b7e2da303301f21dbba9c8701",
+        "protocol_version": 1,
+        "peak_rss_bytes": 481517568,
+        "peak_commit_bytes": null,
+        "completed_pages": 1,
+        "source_page_count": 1,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34618830848,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19875,
+          19876
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 2.028602938000404,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位 验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nSeparate document C",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1754,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 2.0833333333333335,
+        "rotation_degrees": 0,
+        "width_pixels": 1241
+      }
+    },
+    {
+      "kind": "original_pdf_crop",
+      "file": "fixture-base.pdf",
+      "pages": 1,
+      "source_sha256": "b85bb3f9695be48f6d88d2d2bc47742a40cb577ee4b7fa2c7e6ff63b077814e1",
+      "source_bytes": 75732,
+      "wall_seconds": 2.3568532939998477,
+      "run": {
+        "provider": "rapidocr",
+        "model_version": "rapidocr-3.10.0-defaults",
+        "model_manifest_sha256": "1c2a0c0ffcb652401562fc57cf3a4a0bb11c23d038be3a7f61a3e64cbf204b50",
+        "source_sha256": "b85bb3f9695be48f6d88d2d2bc47742a40cb577ee4b7fa2c7e6ff63b077814e1",
+        "protocol_version": 1,
+        "peak_rss_bytes": 588386304,
+        "peak_commit_bytes": null,
+        "completed_pages": 1,
+        "source_page_count": 1,
+        "unfinished": false,
+        "available_memory_bytes_at_start": 34119888896,
+        "core_reserve_bytes": 268435456,
+        "observed_process_ids": [
+          19885,
+          19886
+        ],
+        "cleanup_verified": true,
+        "surviving_process_ids": [],
+        "hard_limit_enforced": false,
+        "memory_limit_bytes": 2147483648,
+        "elapsed_seconds": 2.3298395849997178,
+        "resumed_pages": 0,
+        "versions": {
+          "onnxruntime": "1.23.2",
+          "pypdfium2": "5.14.0",
+          "rapidocr": "3.10.0"
+        }
+      },
+      "sample_text": "比例与单位验收样例\n100 m in 20 seconds\nAverage speed = 5 m/s\n36 km/h = 10 m/s\nOCR requires visual review\nRepeated page",
+      "all_pending_review": true,
+      "geometry": {
+        "coordinate_system": "top-left-pixels",
+        "crop_box_points": [
+          0.0,
+          0.0,
+          595.2000122070312,
+          841.9199829101562
+        ],
+        "height_pixels": 1472,
+        "original_page_no": 1,
+        "page_height_points": 841.9199829101562,
+        "page_width_points": 595.2000122070312,
+        "render_scale": 3.7735849056603774,
+        "requested_crop_rect_points": [
+          20,
+          390,
+          550,
+          780
+        ],
+        "rotation_degrees": 0,
+        "width_pixels": 2000
+      }
+    }
+  ],
+  "rss_ratio_100_to_10": 1.0279279826639933,
+  "complete": true
+}

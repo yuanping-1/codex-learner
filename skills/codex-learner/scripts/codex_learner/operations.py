@@ -1,11 +1,12 @@
 """Explicit business operations; generated lesson and grading text stays data."""
 
 import copy
+from contextlib import nullcontext
 
-from .common import LearnerError, digest, identifier, nonempty, now, require
-from .sources import archive_source, check_references, prepare_source
-from .storage import write_artifact
-from .views import HELP_LEVELS, current_submission, effective_assessment, effective_help
+from .common import LearnerError, body_hash, digest, identifier, nonempty, now, require
+from .sources import archive_source, check_references, cleanup_prepared_source, prepare_source, segment_text
+from .storage import course_task, file_sha256, read_receipt, write_artifact
+from .views import HELP_LEVELS, RETEST_KINDS, current_submission, effective_assessment, effective_help, elapsed_seconds
 
 
 def context(state, request):
@@ -43,7 +44,7 @@ def add_help(state, event_id, question_id, level, source, target=None, reason=No
         "recorded_revision": state["state_revision"]}
 
 
-def validate_rubric(state, rubric, checks):
+def validate_rubric(state, rubric, checks, directory=None):
     require(isinstance(rubric, dict) and rubric.get("verified") is True,
             "A rubric must be checked against its sources before publication.", "unverified_rubric")
     require(isinstance(rubric.get("criteria"), dict) and set(rubric["criteria"]) == set(checks),
@@ -52,12 +53,37 @@ def validate_rubric(state, rubric, checks):
         for field in ("required", "alternatives", "critical_errors"):
             nonempty(criteria.get(field), f"rubric {field}")
     nonempty(rubric.get("reference_answer"), "reference_answer")
-    check_references(state, rubric.get("source_refs"))
+    check_references(state, rubric.get("source_refs"), directory)
+
+
+def validate_retest_context(state, request, checks):
+    context = request.get("retest_context")
+    if context is None:
+        return None
+    require(isinstance(context, dict), "retest_context must be a structured object.", "invalid_retest")
+    require(set(context) == {"baseline_submission_id", "kind", "context"},
+            "Retests require a baseline, kind, and context; elapsed time is computed from saved timestamps.",
+            "invalid_retest")
+    require(context["kind"] in RETEST_KINDS, "Retest kind must be delayed or transfer.", "invalid_retest")
+    nonempty(context["context"], "retest context")
+    baseline = state["submissions"].get(context["baseline_submission_id"])
+    require(baseline is not None, "Retest baseline submission is unknown.", "invalid_retest")
+    require(baseline["chapter_id"] == request["chapter_id"]
+            and baseline["content_version"] == request["content_version"],
+            "Retests must use a baseline from the same chapter and content version.", "invalid_retest")
+    require(baseline["question_id"] != request["question_id"],
+            "A retest needs a new question ID; repeating an existing question keeps its help history.",
+            "invalid_retest")
+    baseline_question = state["questions"][baseline["question_id"]]["versions"][baseline["question_version"]]
+    require(set(checks) <= set(baseline_question["checks"]),
+            "Retest checks must be covered by the selected baseline.", "invalid_retest")
+    return copy.deepcopy(context)
 
 
 class Engine:
-    def __init__(self, library):
+    def __init__(self, library, runtime_config=None):
         self.library = library
+        self.runtime_config = runtime_config or {}
 
     def apply(self, request):
         require(isinstance(request, dict), "Request must be a JSON object.")
@@ -66,21 +92,30 @@ class Engine:
         require(handler is not None, "Unknown operation.")
         identifier(request.get("operation_id"))
         identifier(request.get("course_id"))
-        try:
-            if action == "import_source":
-                # 原文件已移动时，同一导入请求的重试仍可返回已归档的结果。
-                existing = self.library.load(request["course_id"])["operations"].get(request["operation_id"])
-                if existing:
-                    require(existing["fingerprint"] == digest(request), "Operation ID conflict.", "id_conflict")
-                    return {**existing["receipt"], "duplicate": True}
-            prepared = prepare_source(request) if action == "import_source" else None
-            return self.library.transact(
-                request, lambda state, directory: handler(state, directory, request, prepared),
-                create=action == "create_course")
-        except KeyError as exc:
-            raise LearnerError("invalid_request", f"Missing required field: {exc.args[0]}") from exc
-        except (TypeError, AttributeError) as exc:
-            raise LearnerError("invalid_request", "Invalid field structure; preserve and correct the request.") from exc
+        task = (course_task(self.library, request["course_id"], request["operation_id"])
+                if action == "import_source" else nullcontext())
+        with task:
+            prepared = None
+            try:
+                if action == "import_source":
+                    # 原文件已移动时，同一导入请求的重试仍可返回已归档的结果。
+                    saved = self.library.load(request["course_id"])
+                    existing = saved["operations"].get(request["operation_id"])
+                    if existing:
+                        require(existing["fingerprint"] == digest(request), "Operation ID conflict.", "id_conflict")
+                        return {**read_receipt(saved, request["operation_id"], self.library.course_dir(request["course_id"])),
+                                "duplicate": True}
+                profile_config = "docling" if request.get("profile") == "docling" else "ocr"
+                prepared = prepare_source(request, ocr_config=self.runtime_config.get(profile_config)) if action == "import_source" else None
+                return self.library.transact(
+                    request, lambda state, directory: handler(state, directory, request, prepared),
+                    create=action == "create_course")
+            except KeyError as exc:
+                raise LearnerError("invalid_request", f"Missing required field: {exc.args[0]}") from exc
+            except (TypeError, AttributeError) as exc:
+                raise LearnerError("invalid_request", "Invalid field structure; preserve and correct the request.") from exc
+            finally:
+                cleanup_prepared_source(prepared)
 
     def op_create_course(self, state, directory, r, prepared):
         state["title"] = nonempty(r.get("title"), "title")
@@ -105,14 +140,39 @@ class Engine:
         require(source is not None, "Unknown source.", "unknown_target")
         nonempty(r.get("evidence"), "visual verification evidence")
         locators = r.get("locators")
-        require(isinstance(locators, list) and locators, "Specify reviewed locators.")
+        require(isinstance(locators, list) and locators and all(isinstance(value, str) for value in locators)
+                and len(set(locators)) == len(locators), "Specify unique reviewed locators.")
+        original = directory / source["path"]
+        require(original.resolve().is_relative_to(directory.resolve()), "Source path escaped the course.", "invalid_path")
+        require(file_sha256(original) == source["sha256"], "The archived original changed.", "artifact_corrupt")
+        if r.get("expected_source_sha256") is not None:
+            require(r["expected_source_sha256"] == source["sha256"], "Source changed since review.", "verification_conflict")
+        expected = r.get("expected_segment_hashes")
+        if expected is not None:
+            require(isinstance(expected, dict) and set(expected) == set(locators),
+                    "Expected segment hashes must cover exactly the reviewed locators.")
+        segments, hashes = [], {}
         for locator in locators:
             segment = next((s for s in source["segments"] if s["locator"] == locator), None)
-            require(segment is not None and bool(segment["text"].strip()),
+            require(segment is not None and bool(segment_text(segment, directory).strip()),
                     "Empty or missing text requires a separately archived transcription.")
+            hashes[locator] = body_hash(segment, "text")
+            if expected is not None:
+                require(expected[locator] == hashes[locator], "Source text changed since review.", "verification_conflict")
+            segments.append(segment)
+        event_id = r["operation_id"]
+        events = state.setdefault("source_verifications", {})
+        require(event_id not in events, "Verification event already exists.", "id_conflict")
+        events[event_id] = {"event_id": event_id, "source_id": r["source_id"], "source_sha256": source["sha256"],
+                            "locators": list(locators), "segment_hashes": hashes, "evidence": r["evidence"],
+                            "recorded_at": now(), "recorded_revision": state["state_revision"]}
+        for segment in segments:
             segment["verified"] = True
-            segment["verification"] = {"evidence": r["evidence"], "recorded_at": now()}
-        return {"source_id": r["source_id"], "verified_locators": locators}
+            segment["verification_status"] = "verified"
+            segment["legacy_claim"] = False
+            segment["verification_event_id"] = event_id
+        return {"source_id": r["source_id"], "verified_locators": locators,
+                "verification_event_id": event_id, "source_sha256": source["sha256"], "segment_hashes": hashes}
 
     def op_publish_content(self, state, directory, r, prepared):
         chapter_id, version_id = identifier(r["chapter_id"]), identifier(r["content_version"])
@@ -140,9 +200,12 @@ class Engine:
             require(part_id not in part_ids, "Duplicate lecture part.")
             part_ids.add(part_id)
             text = nonempty(part.get("text"), "lecture text")
-            check_references(state, part.get("source_refs"))
-            artifact = write_artifact(directory, f"lectures/{chapter_id}/{version_id}/{part_id}.md", text.encode("utf-8"))
-            saved_parts.append({**copy.deepcopy(part), **artifact})
+            check_references(state, part.get("source_refs"), directory)
+            encoded = text.encode("utf-8")
+            artifact = write_artifact(directory, f"lectures/{chapter_id}/{version_id}/{part_id}.md", encoded)
+            body = {**artifact, "byte_length": len(encoded), "encoding": "utf-8"}
+            saved_parts.append({**{key: copy.deepcopy(value) for key, value in part.items()
+                                  if key not in ("text", "text_ref")}, **artifact, "text_ref": body})
         if not chapter:
             chapter = {"title": title, "current_version": version_id, "versions": {}}
             state["chapters"][chapter_id] = chapter
@@ -224,11 +287,13 @@ class Engine:
         known = {c["check_id"] for goal in content["goals"] for c in goal["checks"]}
         require(isinstance(checks, list) and checks and len(set(checks)) == len(checks) and set(checks) <= known,
                 "Question checks must refer to this content's required checks.")
-        validate_rubric(state, r.get("rubric"), checks)
+        validate_rubric(state, r.get("rubric"), checks, directory)
+        retest_context = validate_retest_context(state, r, checks)
         data = {key: r[key] for key in ("chapter_id", "content_version", "question_id", "question_version")}
         data.update(prompt=nonempty(r.get("prompt"), "question prompt"), checks=checks,
                     current_rubric=rubric_version, rubrics={rubric_version: copy.deepcopy(r["rubric"])},
-                    retest_context=r.get("retest_context"), published_at=now())
+                    retest_context=retest_context, retest_schema_version=1 if retest_context else None,
+                    published_at=now())
         if not question:
             question = {"active_versions": {}, "versions": {}}
             state["questions"][qid] = question
@@ -259,6 +324,11 @@ class Engine:
                    help_snapshot="none", evaluation_scope="current",
                    status="pending_content_review" if old_version else "pending_assessment",
                    replaces_submission_id=previous)
+        if version.get("retest_schema_version") == 1:
+            retest = validate_retest_context(state, {**r, "retest_context": version["retest_context"]}, version["checks"])
+            baseline = state["submissions"][retest["baseline_submission_id"]]
+            sub["retest"] = {**retest, "baseline_received_at": baseline["received_at"],
+                             "elapsed_seconds": elapsed_seconds(baseline["received_at"], sub["received_at"])}
         sub["help_snapshot"] = effective_help(state, sub)
         state["submissions"][sid] = sub
         return {"submission_id": sid, "status": sub["status"], "answer": answer, "help": sub["help_snapshot"]}
@@ -288,7 +358,7 @@ class Engine:
         for result in results.values():
             require(result.get("outcome") in ("meets", "needs_work", "uncertain"), "Unknown assessment outcome.")
             nonempty(result.get("reason"), "assessment reason")
-            check_references(state, result.get("source_refs"))
+            check_references(state, result.get("source_refs"), directory)
         existing = effective_assessment(state, sid)
         require(r.get("supersedes") == (existing["assessment_id"] if existing else None),
                 "Corrections must reference the currently effective assessment.", "assessment_conflict")
@@ -312,7 +382,7 @@ class Engine:
         _, _, _, question = question_context(state, r)
         new_version = identifier(r["rubric_version"])
         require(new_version not in question["rubrics"], "Rubric versions are immutable.", "id_conflict")
-        validate_rubric(state, r.get("rubric"), question["checks"])
+        validate_rubric(state, r.get("rubric"), question["checks"], directory)
         affected = r.get("affected_checks")
         require(isinstance(affected, list) and affected and set(affected) <= set(question["checks"]),
                 "Name affected checks.")

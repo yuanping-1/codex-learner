@@ -1,0 +1,11 @@
+# Complete base dependency closure, pinned for CPython 3.10 and 3.12.
+# Linux CPython 3.12 resolver checked; native Windows installs run in CI.
+# Version lock, not a wheel hash lock. Models are not dependencies of this environment.
+beautifulsoup4==4.14.3
+ijson==3.4.0.post0
+markdown-it-py==4.0.0
+mdurl==0.1.2
+psutil==7.2.2
+pypdf==6.10.0
+soupsieve==2.8.3
+typing-extensions==4.16.0

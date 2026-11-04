@@ -41,6 +41,29 @@ class RecordTests(CourseCase):
         self.assertEqual(error.exception.code, "id_conflict")
         self.assertEqual(self.library.load("sample-course")["submissions"]["same"]["answer"], request["answer"])
 
+
+    def test_interrupted_task_cleanup_never_clears_a_running_owner(self):
+        import os
+        import psutil
+        from codex_learner.storage import cleanup_task
+        directory = self.library.course_dir("sample-course")
+        marker = directory / ".task-running-interrupted.json"
+        before = (directory / "course.json").read_bytes()
+        marker.write_text(json.dumps({"pid": os.getpid(), "process_created_at": psutil.Process().create_time()}))
+        with self.assertRaises(LearnerError) as error:
+            cleanup_task(self.library, "sample-course", marker.name, confirmed=True)
+        self.assertEqual(error.exception.code, "busy")
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(0.1)"])
+        born = psutil.Process(child.pid).create_time()
+        child.wait(timeout=5)
+        marker.write_text(json.dumps({"pid": child.pid, "process_created_at": born}))
+        with self.assertRaises(LearnerError):
+            cleanup_task(self.library, "sample-course", marker.name)
+        self.assertTrue(marker.exists())
+        cleanup_task(self.library, "sample-course", marker.name, confirmed=True)
+        self.assertFalse(marker.exists())
+        self.assertEqual((directory / "course.json").read_bytes(), before)
+
     def test_unknown_target_preserves_other_courses(self):
         seed(self.library, "another-course")
         before = self.library.load("sample-course")
@@ -181,14 +204,19 @@ class RecordTests(CourseCase):
                                         "--library", str(self.library.root), "apply", "--request", str(path)],
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8")
             processes.append((process, request))
+        retry_requests = []
         for process, request in processes:
             stdout, stderr = process.communicate(timeout=15)
             if process.returncode:
                 self.assertEqual(process.returncode, 2, stderr)
                 self.assertEqual(json.loads(stderr)["error"], "busy")
-                self.engine.apply(request)
+                retry_requests.append(request)
             else:
                 self.assertTrue(json.loads(stdout)["ok"])
+        # Drain both processes before retrying: the successful writer can still
+        # hold its short integrity-check lock when the busy peer exits first.
+        for request in retry_requests:
+            self.engine.apply(request)
         self.assertEqual(set(self.library.load("sample-course")["submissions"]), {"parallel-0", "parallel-1"})
 
     def test_cli_new_process_and_different_cwd_restore_same_record(self):
@@ -202,10 +230,10 @@ class RecordTests(CourseCase):
         elsewhere = self.root / "another-working-directory"
         elsewhere.mkdir()
         result = subprocess.run([sys.executable, str(destination / "scripts/learner.py"),
-                                 "show", "--course", "sample-course"], cwd=elsewhere,
+                                 "read", "--course", "sample-course", "--submission", "persistent"], cwd=elsewhere,
                                 capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(json.loads(result.stdout)["result"]["submissions"]["persistent"]["answer"], "跨进程恢复\n完整原答")
+        self.assertEqual(json.loads(result.stdout)["result"]["answer"], "跨进程恢复\n完整原答")
 
     def test_installer_preserves_existing_skill_and_requires_deliberate_replace(self):
         destination = self.root / "user/.agents/skills/codex-learner"

@@ -1,0 +1,63 @@
+{
+  "scope": "Linux CPython 3.12 pip dry-run dependency resolution; not a native Windows installation",
+  "locks": {
+    "requirements-base.lock": "a845606318b132ff7ec92633bebd4061017a007775951b53e8ade438912052fb",
+    "requirements-ocr-py312.lock": "11da48a764bceb80049df5cb393ecdf1aa7e2080df872c8495f7f9f3e812f476"
+  },
+  "results": {
+    "base": {
+      "python": "3.12.14",
+      "platform_system": "Linux",
+      "dependencies": {
+        "pypdf": "6.10.0",
+        "beautifulsoup4": "4.14.3",
+        "markdown-it-py": "4.0.0",
+        "psutil": "7.2.2",
+        "ijson": "3.4.0.post0",
+        "mdurl": "0.1.2",
+        "soupsieve": "2.8.3",
+        "typing_extensions": "4.16.0"
+      }
+    },
+    "ocr": {
+      "python": "3.12.14",
+      "platform_system": "Linux",
+      "dependencies": {
+        "pypdfium2": "5.14.0",
+        "rapidocr": "3.10.0",
+        "onnxruntime": "1.23.2",
+        "psutil": "7.2.2",
+        "numpy": "2.3.5",
+        "omegaconf": "2.4.0",
+        "opencv-python-headless": "5.0.0.93",
+        "pyclipper": "1.4.0",
+        "PyYAML": "6.0.3",
+        "shapely": "2.2.0",
+        "six": "1.17.0",
+        "coloredlogs": "15.0.1",
+        "colorlog": "6.12.0",
+        "flatbuffers": "25.12.19",
+        "packaging": "26.3",
+        "pillow": "12.3.0",
+        "protobuf": "7.36.2",
+        "requests": "2.34.2",
+        "sympy": "1.14.0",
+        "tqdm": "4.70.1",
+        "certifi": "2026.7.22",
+        "charset-normalizer": "3.5.2",
+        "humanfriendly": "10.0",
+        "idna": "3.18",
+        "mpmath": "1.3.0",
+        "urllib3": "2.8.0"
+      }
+    }
+  },
+  "native_windows_validated": false,
+  "ocr_models": "separate SHA-256 model manifest",
+  "lock_type": "exact version constraints; wheel hash locking not claimed",
+  "base_python310_cross_resolver": {
+    "passed": true,
+    "method": "Linux host pip --python-version 3.10 --only-binary=:all:; not CPython3.10 execution",
+    "packages": 8
+  }
+}
