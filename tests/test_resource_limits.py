@@ -426,6 +426,8 @@ print(json.dumps({"warmup": warmup_evidence, "closed_pipe_wrapper_probe": wrappe
                     self.assertEqual(warmup["run"]["returncode"], 0, report)
                     self.assertTrue(warmup["run"]["cleanup_verified"], report)
                     self.assertTrue(warmup["owned_handles_closed"], report)
+                    wrapper_probe = report["closed_pipe_wrapper_probe"]
+                    self.assertLessEqual(wrapper_probe["wrapper_released"], wrapper_probe["before"], report)
                     self.assertEqual(len(report["measurements"]), 3)
                     for evidence in report["measurements"]:
                         result = evidence["run"]
@@ -445,8 +447,14 @@ print(json.dumps({"warmup": warmup_evidence, "closed_pipe_wrapper_probe": wrappe
                         self.assertTrue(result["cleanup_verified"], report)
                         self.assertEqual(result["surviving_process_ids"], [], report)
                         self.assertTrue(evidence["owned_handles_closed"], report)
-                        self.assertLessEqual(evidence["handles_after"], evidence["handles_before"], report)
-                        self.assertLessEqual(evidence["handles_after"], warmup["handles_after"], report)
+                        # The diagnostic intentionally retains closed wrappers;
+                        # Windows BufferedWriter owns a synchronization handle
+                        # until deallocation (independently measured above).
+                        # Compare after releasing only those test-owned refs,
+                        # with zero allowance for growth in real native handles.
+                        released = evidence["handles_after_releasing_captured_instances"]
+                        self.assertLessEqual(released, evidence["handles_before"], report)
+                        self.assertLessEqual(released, warmup["handles_after_releasing_captured_instances"], report)
                     print("Windows suspended venv evidence: " + json.dumps(report, sort_keys=True))
 
     @unittest.skipUnless(os.name == "nt", "Exercises the Windows-specific fail-closed gate")

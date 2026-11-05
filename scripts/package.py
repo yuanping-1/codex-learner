@@ -51,7 +51,8 @@ def allowed(name):
         return path.suffix in {".html", ".js", ".css"}
     if name.startswith("docs/evidence/v0.2/"):
         return path.name in {"memory-benchmark.json", "history-benchmark.json", "migration-benchmark.json",
-                             "ocr-linux-validation.json", "dependency-lock-validation.json", "windows-job-validation.json", "test-summary.json"}
+                             "ocr-linux-validation.json", "revised-ocr-linux-validation.json",
+                             "dependency-lock-validation.json", "windows-job-validation.json", "test-summary.json"}
     if name.startswith(("skills/codex-learner/references/", "docs/")):
         return path.suffix == ".md"
     if name.startswith("examples/"):
