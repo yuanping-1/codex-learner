@@ -15,9 +15,12 @@ class OperationProfile:
     """Inclusive phase timings and application-level I/O, not physical disk I/O."""
 
     def __init__(self, library):
-        # Classification must not perform the filesystem work being measured.
-        # In particular, never add a resolve/stat for every application open.
+        # Resolve only the root, before probes/timing start. Windows temp roots
+        # can use an 8.3 alias while product paths contain the expanded root.
+        # Per-open classification remains lexical, without resolve/stat calls.
         self.library = os.path.normcase(os.path.abspath(os.fsdecode(library)))
+        self.resolved_library = os.path.normcase(os.path.abspath(os.fsdecode(Path(library).resolve())))
+        self.library_prefixes = tuple(sorted({self.library, self.resolved_library}, key=len, reverse=True))
         self.phases = {}
         self.calls = {}
         self.phase_calls = {}
@@ -76,12 +79,13 @@ class OperationProfile:
         if not isinstance(file, (str, bytes, Path)):
             return None
         path = os.path.normcase(os.path.abspath(os.fsdecode(file)))
-        try:
-            if os.path.commonpath((self.library, path)) != self.library:
-                return None
-        except ValueError:  # Different Windows drives.
-            return None
-        return Path(os.path.relpath(path, self.library)).as_posix()
+        for root in self.library_prefixes:
+            try:
+                if os.path.commonpath((root, path)) == root:
+                    return Path(os.path.relpath(path, root)).as_posix()
+            except ValueError:  # Different Windows drives or UNC namespaces.
+                continue
+        return None
 
     def __enter__(self):
         from codex_learner import blobs, storage
@@ -291,7 +295,8 @@ class OperationProfile:
             "phase_io_inclusive": self.phase_io,
             "application_files": self.files,
             "sha256": self.hashes,
-            "file_classification": "Lexical absolute paths under the library; no resolve/stat for classification. Symlink aliases are not followed. Integer descriptors and custom PathLike objects are not assigned to a file.",
+            "file_classification_roots": {"supplied": self.library, "resolved": self.resolved_library},
+            "file_classification": "The library root is resolved once before probes/timing start. Supplied and resolved root prefixes map to one relative file key; per-open classification is lexical with no resolve/stat. Windows normcase folds casing. Short-root and UNC forms are supported only through those captured prefixes; other network aliases, mapped drives and aliases below the root are not inferred or resolved. Integer descriptors and custom PathLike objects are not assigned to a file.",
             "call_scope": "Open, SHA-256, json.loads, Path.resolve, Path.stat/Path.lstat and Python-visible os.stat/os.lstat calls are process-wide during the operation. Path.open is observed directly, including Python 3.10 cached accessors; its delegation to io.open counts once at the outer Path.open entry. Read timings cover wrapped library streams only. artifact_path_safety covers blobs/storage entry points. Failures propagate unchanged and are counted. Read/UTF-8 counters describe successful returns, excluding unencodable text from UTF-8 byte totals.",
             "limits": "Probes add overhead; use separate unprofiled samples for latency and memory acceptance. Phase and call timings are nested/inclusive, not additive: artifact_path includes resolve/metadata, resolve can include metadata, Path metadata can include os metadata, and enclosing timers include nested probe overhead. Per-phase call timings overlap when phases nest. Metadata counters cover Python-visible calls, not every OS syscall; cached/native APIs can bypass os probes (including Python 3.10 pathlib accessors), so absent os counters do not imply zero metadata cost. File reads count returned bytes/characters; text UTF-8 bytes may differ from on-disk bytes after newline decoding. These are application calls, not OS/physical disk I/O; they do not establish a physical-disk bottleneck. Hash counts include request/receipt hashing. JSON timings cover json.loads, excluding surrounding decode and lazy materialization. Uninstrumented work is not assigned to a phase.",
         }

@@ -23,6 +23,57 @@ from codex_learner.common import LearnerError
 
 
 class HistoryProfileTests(unittest.TestCase):
+    def test_root_resolution_occurs_once_before_probes_and_prefixes_share_keys(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "alias"
+            canonical = Path(temporary) / "canonical"
+            with patch.object(Path, "resolve", return_value=canonical) as resolve:
+                probe = OperationProfile(root)
+            self.assertEqual(resolve.call_count, 1)
+            with probe:
+                with patch.object(Path, "resolve", side_effect=AssertionError("per-file resolve")):
+                    self.assertEqual(probe.file_key(root / "nested/body.json"), "nested/body.json")
+                    self.assertEqual(probe.file_key(canonical / "nested/body.json"), "nested/body.json")
+                    self.assertIsNone(probe.file_key(Path(temporary) / "alias-other/body.json"))
+                    self.assertIsNone(probe.file_key(Path(temporary) / "canonical-other/body.json"))
+            self.assertNotIn("path_resolve", probe.report()["call_timings_inclusive"])
+
+    def test_root_alias_and_resolved_absolute_path_count_one_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            real = Path(temporary) / "real-library"
+            real.mkdir()
+            alias = Path(temporary) / "alias-library"
+            try:
+                alias.symlink_to(real, target_is_directory=True)
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest(f"Directory symlinks unavailable: {exc}")
+            payload = b"same body\r\n"
+            (real / "body.txt").write_bytes(payload)
+            resolved_body = (real / "body.txt").resolve()
+            with OperationProfile(alias) as probe:
+                with patch.object(Path, "resolve", side_effect=AssertionError("per-open resolve")):
+                    self.assertEqual((alias / "body.txt").read_bytes(), payload)
+                    self.assertEqual(resolved_body.read_bytes(), payload)
+            report = probe.report()
+        self.assertEqual(set(report["application_files"]), {"body.txt"})
+        self.assertEqual(report["application_files"]["body.txt"]["opens"], 2)
+        self.assertEqual(report["call_timings_inclusive"]["read"]["calls"], 2)
+        self.assertNotIn("path_resolve", report["call_timings_inclusive"])
+
+    @unittest.skipUnless(os.name == "nt", "Windows path namespace protocol")
+    def test_windows_short_case_and_known_unc_prefixes(self):
+        for supplied, canonical in (
+            (r"C:\Users\RUNNER~1\AppData\Local\Temp\library", r"C:\Users\runneradmin\AppData\Local\Temp\library"),
+            (r"\\SERVER\Share\alias", r"\\?\UNC\server\share\canonical"),
+        ):
+            with self.subTest(supplied=supplied):
+                with patch.object(Path, "resolve", return_value=Path(canonical)):
+                    probe = OperationProfile(supplied)
+                with patch.object(Path, "resolve", side_effect=AssertionError("per-file resolve")):
+                    self.assertEqual(probe.file_key(supplied + r"\Nested\Body.JSON"), "nested/body.json")
+                    self.assertEqual(probe.file_key(canonical.upper() + r"\nested\body.json"), "nested/body.json")
+                    self.assertIsNone(probe.file_key(r"\\different-server\share\body.json"))
+
     def test_open_classification_never_resolves_and_preserves_exact_reads(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
