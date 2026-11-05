@@ -87,8 +87,9 @@ class OperationProfile:
         from codex_learner import blobs, storage
         from codex_learner.operations import Engine
         profile = self
-        original_builtin, original_io = builtins.open, io.open
+        original_builtin, original_io, original_path_open = builtins.open, io.open, Path.open
         original_sha = hashlib.sha256
+        opening_paths = []
 
         class Stream:
             def __init__(self, stream, row):
@@ -153,10 +154,22 @@ class OperationProfile:
                     raise StopIteration
                 return value
 
-        def tracked_open(original):
+        def tracked_open(original, *, path_entry=False, io_entry=False):
             observed_open = profile.observed("open", original)
             def opened(file, *args, **kwargs):
-                stream = observed_open(file, *args, **kwargs)
+                # Python 3.10 Path.open can call a cached io.open, while newer
+                # versions call the patched module entry point. Observe Path's
+                # real entry in both, and count its io.open delegation only once.
+                # Identity matching avoids evaluating __fspath__ for this guard.
+                if io_entry and any(file is path for path in opening_paths):
+                    return original(file, *args, **kwargs)
+                if path_entry:
+                    opening_paths.append(file)
+                try:
+                    stream = observed_open(file, *args, **kwargs)
+                finally:
+                    if path_entry:
+                        opening_paths.pop()
                 relative = profile.file_key(file)
                 if relative is None:
                     return stream
@@ -204,7 +217,8 @@ class OperationProfile:
                 return result
 
         self.stack.enter_context(patch("builtins.open", tracked_open(original_builtin)))
-        self.stack.enter_context(patch("io.open", tracked_open(original_io)))
+        self.stack.enter_context(patch("io.open", tracked_open(original_io, io_entry=True)))
+        self.stack.enter_context(patch.object(Path, "open", tracked_open(original_path_open, path_entry=True)))
         self.stack.enter_context(patch("hashlib.sha256", Hash))
         # Resolve contains metadata calls; artifact_path contains both. These
         # deliberately remain inclusive, including failed calls and nested probes.
@@ -278,6 +292,6 @@ class OperationProfile:
             "application_files": self.files,
             "sha256": self.hashes,
             "file_classification": "Lexical absolute paths under the library; no resolve/stat for classification. Symlink aliases are not followed. Integer descriptors and custom PathLike objects are not assigned to a file.",
-            "call_scope": "Open, SHA-256, json.loads, Path.resolve, Path.stat/Path.lstat and Python-visible os.stat/os.lstat calls are process-wide during the operation. Read timings cover wrapped library streams only. artifact_path_safety covers blobs/storage entry points. Failures propagate unchanged and are counted. Read/UTF-8 counters describe successful returns, excluding unencodable text from UTF-8 byte totals.",
+            "call_scope": "Open, SHA-256, json.loads, Path.resolve, Path.stat/Path.lstat and Python-visible os.stat/os.lstat calls are process-wide during the operation. Path.open is observed directly, including Python 3.10 cached accessors; its delegation to io.open counts once at the outer Path.open entry. Read timings cover wrapped library streams only. artifact_path_safety covers blobs/storage entry points. Failures propagate unchanged and are counted. Read/UTF-8 counters describe successful returns, excluding unencodable text from UTF-8 byte totals.",
             "limits": "Probes add overhead; use separate unprofiled samples for latency and memory acceptance. Phase and call timings are nested/inclusive, not additive: artifact_path includes resolve/metadata, resolve can include metadata, Path metadata can include os metadata, and enclosing timers include nested probe overhead. Per-phase call timings overlap when phases nest. Metadata counters cover Python-visible calls, not every OS syscall; cached/native APIs can bypass os probes (including Python 3.10 pathlib accessors), so absent os counters do not imply zero metadata cost. File reads count returned bytes/characters; text UTF-8 bytes may differ from on-disk bytes after newline decoding. These are application calls, not OS/physical disk I/O; they do not establish a physical-disk bottleneck. Hash counts include request/receipt hashing. JSON timings cover json.loads, excluding surrounding decode and lazy materialization. Uninstrumented work is not assigned to a phase.",
         }

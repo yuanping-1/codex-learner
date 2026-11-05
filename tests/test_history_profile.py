@@ -131,6 +131,7 @@ class HistoryProfileTests(unittest.TestCase):
 
     def test_errors_propagate_unchanged_and_patches_are_restored_after_failure(self):
         original_open, original_sha, original_resolve = builtins.open, hashlib.sha256, Path.resolve
+        original_path_open = Path.open
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             path = root / "broken.json"
@@ -149,12 +150,20 @@ class HistoryProfileTests(unittest.TestCase):
                     with self.assertRaises(FileNotFoundError) as missing:
                         open(root / "missing", "rb")
                     self.assertEqual(missing.exception.filename, str(root / "missing"))
+                    with self.assertRaises(FileNotFoundError) as path_missing:
+                        (root / "missing").open("rb")
+                    self.assertEqual(path_missing.exception.filename, missing.exception.filename)
+                    # A failed Path.open must release the delegation guard.
+                    with path.open("rb") as stream:
+                        self.assertEqual(stream.read(), data)
                     raise RuntimeError("outside probe")
         self.assertIs(builtins.open, original_open)
         self.assertIs(hashlib.sha256, original_sha)
         self.assertIs(Path.resolve, original_resolve)
+        self.assertIs(Path.open, original_path_open)
         self.assertEqual(probe.report()["call_timings_inclusive"]["json_loads"]["failures"], 1)
-        self.assertEqual(probe.report()["call_timings_inclusive"]["open"]["failures"], 1)
+        self.assertEqual(probe.report()["call_timings_inclusive"]["open"]["failures"], 2)
+        self.assertEqual(probe.report()["call_timings_inclusive"]["open"]["calls"], 4)
 
     def test_nested_clocks_are_inclusive_not_additive(self):
         probe = OperationProfile(ROOT)
