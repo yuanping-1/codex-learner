@@ -1,0 +1,87 @@
+{
+  "checked_at": "2026-11-04T10:28:07.019470+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "learner_version": "0.2.0",
+  "target_budget_mib": 256,
+  "scope": "Isolated Python worker process peak RSS/working set for list, overview review, and a short new submission.",
+  "write_integrity_cost": "Before rotating the backup, a mutation verifies referenced artifacts with streaming hashes; write latency therefore depends on total referenced history bytes.",
+  "fixture_construction_included_in_daily_peak": false,
+  "fixture_construction_in_separate_process": true,
+  "codex_client_measured": false,
+  "google_drive_measured": false,
+  "ocr_provider_measured": false,
+  "fixtures": {
+    "small": {
+      "manifest_bytes": 31629,
+      "body_file_bytes": 24309,
+      "historical_submissions": 8,
+      "historical_assessments": 8,
+      "bytes_per_answer_or_feedback": 1024,
+      "operations": [
+        {
+          "operation": "list",
+          "peak_bytes": 13500416,
+          "peak_mib": 12.875,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.00262,
+          "result_count": 1
+        },
+        {
+          "operation": "review",
+          "peak_bytes": 13500416,
+          "peak_mib": 12.875,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.002483,
+          "result_count": 2
+        },
+        {
+          "operation": "submit",
+          "peak_bytes": 14155776,
+          "peak_mib": 13.5,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.020651,
+          "result_count": 1
+        }
+      ]
+    },
+    "enlarged": {
+      "manifest_bytes": 31677,
+      "body_file_bytes": 134225677,
+      "historical_submissions": 8,
+      "historical_assessments": 8,
+      "bytes_per_answer_or_feedback": 8388608,
+      "operations": [
+        {
+          "operation": "list",
+          "peak_bytes": 13500416,
+          "peak_mib": 12.875,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.002852,
+          "result_count": 1
+        },
+        {
+          "operation": "review",
+          "peak_bytes": 13500416,
+          "peak_mib": 12.875,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.003148,
+          "result_count": 2
+        },
+        {
+          "operation": "submit",
+          "peak_bytes": 15872000,
+          "peak_mib": 15.137,
+          "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+          "elapsed_seconds": 0.146809,
+          "result_count": 1
+        }
+      ]
+    }
+  },
+  "manifest_size_ratio": 1.001518,
+  "comparable_metadata": true,
+  "operations_under_budget": true,
+  "passed": true,
+  "limits": "Synthetic fixed-count history; does not measure full-history export, large new answers, OCR, or arbitrarily growing manifest metadata."
+}

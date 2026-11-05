@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-11-04T10:36:22.089563+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "learner_version": "0.2.0",
+  "target_budget_mib": 256,
+  "fixture": {
+    "construction": "Synthetic bulk operation handlers, then compact, validate_state and verify_artifacts.",
+    "historical_submissions": 1000,
+    "historical_assessments": 1000,
+    "help_events": 1000,
+    "sources": 20,
+    "lecture_versions": 20,
+    "question_versions": 21,
+    "submission_receipts": 1000,
+    "total_operation_receipts": 2082,
+    "idempotent_replay_probes": 2,
+    "manifest_bytes": 2536391,
+    "artifact_bytes": 2876184
+  },
+  "operations": [
+    {
+      "operation": "list",
+      "peak_bytes": 32186368,
+      "peak_mib": 30.695,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 0.106692,
+      "result_count": 1,
+      "serialized_result_bytes": 167
+    },
+    {
+      "operation": "review",
+      "peak_bytes": 32190464,
+      "peak_mib": 30.699,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 0.110973,
+      "result_count": 2,
+      "serialized_result_bytes": 1752
+    },
+    {
+      "operation": "history_page",
+      "peak_bytes": 32137216,
+      "peak_mib": 30.648,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 0.13495,
+      "result_count": 20,
+      "serialized_result_bytes": 32644,
+      "page": 1,
+      "page_size": 20,
+      "include_bodies": false,
+      "history_total": 1000
+    },
+    {
+      "operation": "history_page_with_bodies",
+      "peak_bytes": 32333824,
+      "peak_mib": 30.836,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 0.133524,
+      "result_count": 20,
+      "serialized_result_bytes": 75564,
+      "page": 1,
+      "page_size": 20,
+      "include_bodies": true,
+      "history_total": 1000
+    },
+    {
+      "operation": "submit",
+      "peak_bytes": 53571584,
+      "peak_mib": 51.09,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 1.385134,
+      "result_count": 1,
+      "serialized_result_bytes": 343
+    }
+  ],
+  "passed": true,
+  "fixture_construction_in_separate_process": true,
+  "fixture_construction_in_daily_peak": false,
+  "codex_client_measured": false,
+  "google_drive_measured": false,
+  "ocr_provider_measured": false,
+  "scope": "Independent Python process peak RSS/working set and operation plus JSON serialization time.",
+  "write_integrity_cost": "Writes stream-verify referenced artifacts before backup rotation; latency scales with historical metadata and artifact bytes.",
+  "limits": "Synthetic structure, not real long-term human usage. No full-history export, OCR, native Codex/Drive memory, or unbounded history claim. Timings are single runs, not latency percentiles."
+}

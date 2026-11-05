@@ -1,0 +1,44 @@
+{
+  "source_commit": "797c5cc63cb038bcca549b969ddc34bfa1482cd3",
+  "run_url": "https://github.com/yuanping-1/codex-learner/actions/runs/41817580814",
+  "scope": "Real Windows CI Job Object validation, not Windows OCR model inference or user-machine acceptance",
+  "resource_limits_sha256": "a35892f05e2a868a058d96b15d9b3249708403a100a0a7784b8b0f29f22f1694",
+  "job_object_tests_passed": true,
+  "overall_run": "failed on an unrelated test fixture UTF-8 decoding omission; fixed in the next commit",
+  "results": [
+    {
+      "job": "records (windows-latest, 3.12)",
+      "after_rejection_private_bytes": 27205632,
+      "allocation_denied": true,
+      "allocation_error": 1455,
+      "baseline_private_bytes": 10395648,
+      "before_rejection_private_bytes": 27205632,
+      "initial_peak_job_memory_used_bytes": 409600,
+      "job_limit_flags": 8704,
+      "job_limit_verified": true,
+      "job_memory_limit_bytes": 134217728,
+      "last_sampled_private_commit_bytes": 35147776,
+      "peak_job_memory_used_bytes": 304107520,
+      "peak_sampled_private_commit_bytes": 35147776,
+      "private_commit_sample_count": 7,
+      "small_allocation_succeeded": true
+    },
+    {
+      "job": "records (windows-latest, 3.10)",
+      "after_rejection_private_bytes": 25161728,
+      "allocation_denied": true,
+      "allocation_error": 1455,
+      "baseline_private_bytes": 8351744,
+      "before_rejection_private_bytes": 25161728,
+      "initial_peak_job_memory_used_bytes": 409600,
+      "job_limit_flags": 8704,
+      "job_limit_verified": true,
+      "job_memory_limit_bytes": 134217728,
+      "last_sampled_private_commit_bytes": 31207424,
+      "peak_job_memory_used_bytes": 300167168,
+      "peak_sampled_private_commit_bytes": 31207424,
+      "private_commit_sample_count": 7,
+      "small_allocation_succeeded": true
+    }
+  ]
+}

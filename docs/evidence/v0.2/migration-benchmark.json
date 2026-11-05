@@ -1,0 +1,114 @@
+{
+  "checked_at": "2026-11-04T10:40:13.234193+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "learner_version": "0.2.0",
+  "target_budget_mib": 256,
+  "fixture": {
+    "construction": "Six 4 MiB answers and six 4 MiB feedback bodies; legacy receipts repeat answers. Stream-expanded from v2 metadata, one scalar at a time.",
+    "original_bytes": 75520959,
+    "original_sha256": "3be4d58fe53168ba5804e907aefd643ff8b5f83891a227c863a38063a5547b5b",
+    "previous_sha256": "b718d5b1040755192e2820c6793c762f181ec18e75c974832c2b451e392ec1dc",
+    "submissions": 6,
+    "assessments": 6,
+    "bytes_per_answer_or_feedback": 4194304,
+    "expected_answer_hashes": {
+      "history-0000": "0c6ee403f441cbfe3c6a4ab31eb4af11534f4bca7031620f441e0cbbea518e1d",
+      "history-0001": "0e494a9ff87a8c43d759ffd5fa22010e11b664f06a58a571012701df1098698a",
+      "history-0002": "e4608d065d280fac154105a2ba880292cf42bd85196e882509c929157de1bf79",
+      "history-0003": "d2be386839aedda6d74c8381617f6828599644fdb6d1ba313a5271da2bfc8f45",
+      "history-0004": "eac9b95bcf1598cacf313134195ac9ce46a337e8fd4ef87c9f5c969473d4358a",
+      "history-0005": "11d627cd5c5a0b7c557b4353431330731d72ff4b1593e6affd65b9b1f470c602"
+    }
+  },
+  "operations": [
+    {
+      "operation": "preview",
+      "peak_bytes": 39718912,
+      "peak_mib": 37.879,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 8.191137,
+      "ordinary_load_error": "migration_required",
+      "legacy_full_read_guarded": true,
+      "ijson_calls": 1,
+      "ijson_backend": "yajl2_c",
+      "integrity": {
+        "original_unchanged": true,
+        "previous_unchanged": true
+      },
+      "result": {
+        "course_id": "sample-course",
+        "from_schema": 1,
+        "to_schema": 2,
+        "state_revision": 19,
+        "original_sha256": "3be4d58fe53168ba5804e907aefd643ff8b5f83891a227c863a38063a5547b5b",
+        "original_bytes": 75520959,
+        "manifest_bytes": 27895,
+        "largest_json_scalar_bytes": 4194306,
+        "verified_artifacts": 56,
+        "submission_count": 6,
+        "operation_count": 19,
+        "legacy_verification": "requires_review",
+        "reader": "ijson_incremental",
+        "preview": true,
+        "changed": false
+      }
+    },
+    {
+      "operation": "migrate",
+      "peak_bytes": 39718912,
+      "peak_mib": 37.879,
+      "measurement": "getrusage(RUSAGE_SELF).ru_maxrss",
+      "elapsed_seconds": 8.374109,
+      "ordinary_load_error": "migration_required",
+      "legacy_full_read_guarded": true,
+      "ijson_calls": 1,
+      "ijson_backend": "yajl2_c",
+      "integrity": {
+        "schema_two": true,
+        "all_ids_preserved": true,
+        "answer_bytes_preserved": true,
+        "source_bytes_preserved": true,
+        "revision_and_timestamps_preserved": true,
+        "original_backup_exact": true,
+        "previous_backup_exact": true,
+        "previous_snapshot_is_original": true
+      },
+      "result": {
+        "course_id": "sample-course",
+        "from_schema": 1,
+        "to_schema": 2,
+        "state_revision": 19,
+        "original_sha256": "3be4d58fe53168ba5804e907aefd643ff8b5f83891a227c863a38063a5547b5b",
+        "original_bytes": 75520959,
+        "manifest_bytes": 27895,
+        "largest_json_scalar_bytes": 4194306,
+        "verified_artifacts": 56,
+        "submission_count": 6,
+        "operation_count": 19,
+        "legacy_verification": "requires_review",
+        "reader": "ijson_incremental",
+        "preview": false,
+        "changed": true,
+        "backup_relative_path": "migration-backups/3be4d58fe53168ba5804e907aefd643ff8b5f83891a227c863a38063a5547b5b",
+        "actual_answer_hashes": {
+          "history-0000": "0c6ee403f441cbfe3c6a4ab31eb4af11534f4bca7031620f441e0cbbea518e1d",
+          "history-0001": "0e494a9ff87a8c43d759ffd5fa22010e11b664f06a58a571012701df1098698a",
+          "history-0002": "e4608d065d280fac154105a2ba880292cf42bd85196e882509c929157de1bf79",
+          "history-0003": "d2be386839aedda6d74c8381617f6828599644fdb6d1ba313a5271da2bfc8f45",
+          "history-0004": "eac9b95bcf1598cacf313134195ac9ce46a337e8fd4ef87c9f5c969473d4358a",
+          "history-0005": "11d627cd5c5a0b7c557b4353431330731d72ff4b1593e6affd65b9b1f470c602"
+        },
+        "backup_sha256": "3be4d58fe53168ba5804e907aefd643ff8b5f83891a227c863a38063a5547b5b",
+        "previous_backup_sha256": "b718d5b1040755192e2820c6793c762f181ec18e75c974832c2b451e392ec1dc"
+      }
+    }
+  ],
+  "passed": true,
+  "fixture_construction_in_separate_process": true,
+  "fixture_construction_in_migration_peak": false,
+  "codex_client_measured": false,
+  "google_drive_measured": false,
+  "ocr_provider_measured": false,
+  "limits": "Synthetic oversized schema-1 input with bounded 4 MiB scalars; not real human history or a claim for arbitrary scalar/metadata sizes. Independent Linux/Windows Python worker measurements only; timings are single runs."
+}

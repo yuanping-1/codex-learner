@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.local/
+.agents/
+artifacts/
+learning-library/
+skills/codex-learner/config.json
+skills/codex-learner/install-manifest.json

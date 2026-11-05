@@ -1,0 +1,18 @@
+{
+  "command": [
+    ".local/venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "cwd": "/workspace/codex-learner",
+  "started_at_utc": "2026-11-05T18:54:32.819715+00:00",
+  "returncode": 0,
+  "completed_at_utc": "2026-11-05T18:55:01.969480+00:00",
+  "elapsed_seconds": 29.14977489699959,
+  "stdout": "core-final.stdout.txt",
+  "stderr": "core-final.stderr.txt"
+}

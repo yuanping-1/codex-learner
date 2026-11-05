@@ -1,0 +1,1220 @@
+{
+  "scope": "Cloud Linux source validation; native Windows restore/latency FAIL remain. No formal install or native records accessed. Pre-commit source snapshot, actual module hashes below.",
+  "base_head": "7469ac6e60fa19b2de94b784231453e00477ef99",
+  "core": {
+    "tests": 230,
+    "PASS": 223,
+    "SKIP": 7,
+    "FAIL": 0
+  },
+  "product_sha256": {
+    "skills/codex-learner/scripts/codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+    "skills/codex-learner/scripts/codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+    "skills/codex-learner/scripts/codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+    "skills/codex-learner/scripts/codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+    "skills/codex-learner/scripts/codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+    "skills/codex-learner/scripts/codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+    "skills/codex-learner/scripts/codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+    "skills/codex-learner/scripts/codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+    "skills/codex-learner/scripts/codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+    "skills/codex-learner/scripts/codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+    "skills/codex-learner/scripts/codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+    "skills/codex-learner/scripts/codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+    "skills/codex-learner/scripts/codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+    "skills/codex-learner/scripts/codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+    "skills/codex-learner/scripts/codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+    "skills/codex-learner/scripts/codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+  },
+  "restore_protocol": {
+    "linux-first-protocol": {
+      "command": {
+        "command": [
+          ".local/venv/bin/python",
+          "scripts/benchmark_restore.py",
+          "--scripts-root",
+          "skills/codex-learner/scripts",
+          "--f06-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+          "--s05-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+          "--output-dir",
+          "artifacts/repair-02c922d/linux-first-protocol",
+          "--mode",
+          "first",
+          "--repeat",
+          "1"
+        ],
+        "cwd": "/workspace/codex-learner",
+        "started_at_utc": "2026-11-05T16:42:35.583523+00:00",
+        "returncode": 0,
+        "completed_at_utc": "2026-11-05T16:42:36.217849+00:00",
+        "elapsed_seconds": 0.6343301480010268,
+        "stdout": "linux-first-protocol.stdout.txt",
+        "stderr": "linux-first-protocol.stderr.txt"
+      },
+      "summary": {
+        "schema_version": 1,
+        "started_at_utc": "2026-11-05T16:42:35.702608+00:00",
+        "mode": "first",
+        "repeat_per_group": 1,
+        "python": "/workspace/codex-learner/.local/venv/bin/python",
+        "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89",
+        "platform": {
+          "system": "Linux",
+          "release": "6.18.57",
+          "machine": "x86_64"
+        },
+        "system": "Linux",
+        "required_native_first_calls_per_group": 30,
+        "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+        "fixed_inputs": {
+          "F06": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+            "sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e"
+          },
+          "S05": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+            "sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a"
+          }
+        },
+        "automatic_retry": false,
+        "scope": "This version, machine, and run only; old failures remain unchanged.",
+        "samples": [
+          {
+            "sample": "empty-01",
+            "group": "empty",
+            "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/empty-01",
+            "command": [
+              "/workspace/codex-learner/.local/venv/bin/python",
+              "/workspace/codex-learner/scripts/benchmark_restore.py",
+              "--scripts-root",
+              "/workspace/codex-learner/skills/codex-learner/scripts",
+              "--f06-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+              "--s05-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+              "--output-dir",
+              "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/empty-01",
+              "--mode",
+              "first",
+              "--_worker-group",
+              "empty"
+            ],
+            "started_at_utc": "2026-11-05T16:42:35.702894+00:00",
+            "fresh_subprocess": true,
+            "diagnostic": false,
+            "returncode": 0,
+            "stdout": "{\"case\": \"/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/empty-01\", \"status\": \"PASS\"}\n",
+            "stderr": "",
+            "completed_at_utc": "2026-11-05T16:42:35.928926+00:00",
+            "worker_status": "PASS",
+            "worker_started_at_utc": "2026-11-05T16:42:35.825406+00:00",
+            "worker_completed_at_utc": "2026-11-05T16:42:35.909628+00:00",
+            "worker_pid": 49477,
+            "restore_call_count": 1,
+            "primary_first_calls": 1,
+            "status": "PASS"
+          },
+          {
+            "sample": "released-01",
+            "group": "released",
+            "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/released-01",
+            "command": [
+              "/workspace/codex-learner/.local/venv/bin/python",
+              "/workspace/codex-learner/scripts/benchmark_restore.py",
+              "--scripts-root",
+              "/workspace/codex-learner/skills/codex-learner/scripts",
+              "--f06-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+              "--s05-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+              "--output-dir",
+              "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/released-01",
+              "--mode",
+              "first",
+              "--_worker-group",
+              "released"
+            ],
+            "started_at_utc": "2026-11-05T16:42:35.929500+00:00",
+            "fresh_subprocess": true,
+            "diagnostic": false,
+            "returncode": 0,
+            "stdout": "{\"case\": \"/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/released-01\", \"status\": \"PASS\"}\n",
+            "stderr": "",
+            "completed_at_utc": "2026-11-05T16:42:36.201341+00:00",
+            "worker_status": "PASS",
+            "worker_started_at_utc": "2026-11-05T16:42:36.057310+00:00",
+            "worker_completed_at_utc": "2026-11-05T16:42:36.183611+00:00",
+            "worker_pid": 49478,
+            "restore_call_count": 1,
+            "primary_first_calls": 1,
+            "status": "PASS"
+          }
+        ],
+        "complete": true,
+        "groups": {
+          "empty": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          },
+          "released": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          }
+        },
+        "status": "PASS",
+        "diagnostics_only": false,
+        "first_call_groups": {
+          "empty": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          },
+          "released": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          }
+        },
+        "full_first_call_sample_count": false,
+        "completed_at_utc": "2026-11-05T16:42:36.201943+00:00"
+      },
+      "worker_results": [
+        {
+          "schema_version": 1,
+          "status": "PASS",
+          "group": "empty",
+          "started_at_utc": "2026-11-05T16:42:35.825406+00:00",
+          "pid": 49477,
+          "python": "/workspace/codex-learner/.local/venv/bin/python",
+          "worker_time_scope": "Driver entry through final snapshot; final result write and process exit are bounded by supervisor timestamps.",
+          "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "cwd": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol",
+          "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/empty-01",
+          "diagnostic": false,
+          "first_call_acceptance_eligible": true,
+          "automatic_retry": false,
+          "preparation_restore_calls": 0,
+          "archive_sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e",
+          "restore_calls": [
+            {
+              "tag": "primary-first",
+              "started_at_utc": "2026-11-05T16:42:35.850013+00:00",
+              "pid": 49477,
+              "probe_enabled": false,
+              "injection_enabled": false,
+              "receipt": {
+                "course_id": "sample-course",
+                "state_revision": 9,
+                "status": "course_restored",
+                "archive_sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e",
+                "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/empty-01/library/sample-course",
+                "network_required": false
+              },
+              "status": "SUCCESS",
+              "completed_at_utc": "2026-11-05T16:42:35.866468+00:00",
+              "elapsed_seconds": 0.016452582996862475,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots"
+            }
+          ],
+          "scope": "Isolated installed Python API; not CLI, native panel, or real Drive.",
+          "identity_before": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "offline_verification": {
+            "status": "PASS",
+            "manifest_files": 48,
+            "transitive_reference_counts": {
+              "course.json": 46,
+              "course.previous.json": 41
+            }
+          },
+          "identity_after": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "completed_at_utc": "2026-11-05T16:42:35.909628+00:00"
+        },
+        {
+          "schema_version": 1,
+          "status": "PASS",
+          "group": "released",
+          "started_at_utc": "2026-11-05T16:42:36.057310+00:00",
+          "pid": 49478,
+          "python": "/workspace/codex-learner/.local/venv/bin/python",
+          "worker_time_scope": "Driver entry through final snapshot; final result write and process exit are bounded by supervisor timestamps.",
+          "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "cwd": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol",
+          "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/released-01",
+          "diagnostic": false,
+          "first_call_acceptance_eligible": true,
+          "automatic_retry": false,
+          "preparation_restore_calls": 0,
+          "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+          "restore_calls": [
+            {
+              "tag": "primary-first",
+              "started_at_utc": "2026-11-05T16:42:36.124992+00:00",
+              "pid": 49478,
+              "probe_enabled": false,
+              "injection_enabled": false,
+              "receipt": {
+                "course_id": "sample-course",
+                "state_revision": 7,
+                "status": "course_restored",
+                "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+                "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-first-protocol/released-01/library/sample-course",
+                "network_required": false
+              },
+              "status": "SUCCESS",
+              "completed_at_utc": "2026-11-05T16:42:36.141141+00:00",
+              "elapsed_seconds": 0.016144717003044207,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots"
+            }
+          ],
+          "scope": "Isolated installed Python API; not CLI, native panel, or real Drive.",
+          "identity_before": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "offline_verification": {
+            "status": "PASS",
+            "manifest_files": 39,
+            "transitive_reference_counts": {
+              "course.json": 37,
+              "course.previous.json": 34
+            }
+          },
+          "identity_after": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "completed_at_utc": "2026-11-05T16:42:36.183611+00:00"
+        }
+      ]
+    },
+    "linux-fault-chain": {
+      "command": {
+        "command": [
+          ".local/venv/bin/python",
+          "scripts/benchmark_restore.py",
+          "--scripts-root",
+          "skills/codex-learner/scripts",
+          "--f06-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+          "--s05-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+          "--output-dir",
+          "artifacts/repair-02c922d/linux-fault-chain",
+          "--mode",
+          "fault-chain"
+        ],
+        "cwd": "/workspace/codex-learner",
+        "started_at_utc": "2026-11-05T16:42:26.130285+00:00",
+        "returncode": 0,
+        "completed_at_utc": "2026-11-05T16:42:26.554939+00:00",
+        "elapsed_seconds": 0.42465773400181206,
+        "stdout": "linux-fault-chain.stdout.txt",
+        "stderr": "linux-fault-chain.stderr.txt"
+      },
+      "summary": {
+        "schema_version": 1,
+        "started_at_utc": "2026-11-05T16:42:26.251350+00:00",
+        "mode": "fault-chain",
+        "repeat_per_group": 1,
+        "python": "/workspace/codex-learner/.local/venv/bin/python",
+        "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89",
+        "platform": {
+          "system": "Linux",
+          "release": "6.18.57",
+          "machine": "x86_64"
+        },
+        "system": "Linux",
+        "required_native_first_calls_per_group": 30,
+        "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+        "fixed_inputs": {
+          "F06": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+            "sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e"
+          },
+          "S05": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+            "sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a"
+          }
+        },
+        "automatic_retry": false,
+        "scope": "This version, machine, and run only; old failures remain unchanged.",
+        "samples": [
+          {
+            "sample": "fault-chain-01",
+            "group": "fault-chain",
+            "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01",
+            "command": [
+              "/workspace/codex-learner/.local/venv/bin/python",
+              "/workspace/codex-learner/scripts/benchmark_restore.py",
+              "--scripts-root",
+              "/workspace/codex-learner/skills/codex-learner/scripts",
+              "--f06-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+              "--s05-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+              "--output-dir",
+              "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01",
+              "--mode",
+              "fault-chain",
+              "--_worker-group",
+              "fault-chain"
+            ],
+            "started_at_utc": "2026-11-05T16:42:26.251630+00:00",
+            "fresh_subprocess": true,
+            "diagnostic": false,
+            "returncode": 0,
+            "stdout": "{\"case\": \"/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01\", \"status\": \"PASS\"}\n",
+            "stderr": "",
+            "completed_at_utc": "2026-11-05T16:42:26.537632+00:00",
+            "worker_status": "PASS",
+            "worker_started_at_utc": "2026-11-05T16:42:26.376058+00:00",
+            "worker_completed_at_utc": "2026-11-05T16:42:26.519365+00:00",
+            "worker_pid": 49466,
+            "restore_call_count": 2,
+            "primary_first_calls": 0,
+            "status": "PASS"
+          }
+        ],
+        "complete": true,
+        "groups": {
+          "fault-chain": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 0
+          }
+        },
+        "status": "PASS",
+        "diagnostics_only": false,
+        "first_call_groups": {},
+        "full_first_call_sample_count": false,
+        "completed_at_utc": "2026-11-05T16:42:26.538148+00:00"
+      },
+      "worker_results": [
+        {
+          "schema_version": 1,
+          "status": "PASS",
+          "group": "fault-chain",
+          "started_at_utc": "2026-11-05T16:42:26.376058+00:00",
+          "pid": 49466,
+          "python": "/workspace/codex-learner/.local/venv/bin/python",
+          "worker_time_scope": "Driver entry through final snapshot; final result write and process exit are bounded by supervisor timestamps.",
+          "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "cwd": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain",
+          "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01",
+          "diagnostic": false,
+          "first_call_acceptance_eligible": false,
+          "automatic_retry": false,
+          "preparation_restore_calls": 0,
+          "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+          "restore_calls": [
+            {
+              "tag": "injected-index",
+              "started_at_utc": "2026-11-05T16:42:26.444503+00:00",
+              "pid": 49466,
+              "probe_enabled": false,
+              "injection_enabled": true,
+              "status": "ERROR",
+              "error": {
+                "type": "LearnerError",
+                "message": "Restore failed; rollback completed without enabling the course.",
+                "traceback": "Traceback (most recent call last):\n  File \"/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py\", line 681, in restore_archive\n    _write_index(library, index)\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py\", line 1139, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py\", line 1143, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py\", line 1204, in _execute_mock_call\n    result = effect(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/codex-learner/scripts/benchmark_restore.py\", line 276, in fail_index\n    raise OSError(INJECTED_ERROR)\nOSError: benchmark_restore: injected write_index failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/codex-learner/scripts/benchmark_restore.py\", line 253, in call\n    row[\"receipt\"] = archives.restore_archive(library, archive, expected, confirmed=True)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py\", line 750, in restore_archive\n    raise pending_failure from exc\ncodex_learner.common.LearnerError: Restore failed; rollback completed without enabling the course.\n",
+                "structured": {
+                  "error": "restore_failed",
+                  "message": "Restore failed; rollback completed without enabling the course.",
+                  "course_id": "sample-course",
+                  "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/sample-course",
+                  "stage_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/.learner-restore-ztq2x3fm",
+                  "phase": "write_index",
+                  "source_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/.archive-index.json",
+                  "destination_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/.archive-index.json",
+                  "original_error": {
+                    "type": "OSError",
+                    "message": "benchmark_restore: injected write_index failure"
+                  },
+                  "rollback": {
+                    "status": "completed",
+                    "steps": [
+                      {
+                        "phase": "rollback_course",
+                        "source_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/sample-course",
+                        "destination_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/.learner-restore-ztq2x3fm/sample-course",
+                        "status": "completed"
+                      },
+                      {
+                        "phase": "restore_residue",
+                        "source_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/.learner-restore-ztq2x3fm/release-residue",
+                        "destination_path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/sample-course",
+                        "status": "completed"
+                      }
+                    ]
+                  },
+                  "staging_preserved": false,
+                  "stage_exists": false,
+                  "cleanup_failed": false
+                }
+              },
+              "completed_at_utc": "2026-11-05T16:42:26.459938+00:00",
+              "elapsed_seconds": 0.015432213003805373,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots"
+            },
+            {
+              "tag": "normal-after-injection",
+              "started_at_utc": "2026-11-05T16:42:26.461853+00:00",
+              "pid": 49466,
+              "probe_enabled": false,
+              "injection_enabled": false,
+              "receipt": {
+                "course_id": "sample-course",
+                "state_revision": 7,
+                "status": "course_restored",
+                "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+                "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library/sample-course",
+                "network_required": false
+              },
+              "status": "SUCCESS",
+              "completed_at_utc": "2026-11-05T16:42:26.477273+00:00",
+              "elapsed_seconds": 0.015418456998304464,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots"
+            }
+          ],
+          "scope": "Isolated installed Python API; not CLI, native panel, or real Drive.",
+          "identity_before": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "normal_after_injection_status": "PASS",
+          "index_injection_hits": [
+            {
+              "at_utc": "2026-11-05T16:42:26.457770+00:00",
+              "pid": 49466,
+              "library": "/workspace/codex-learner/artifacts/repair-02c922d/linux-fault-chain/fault-chain-01/library"
+            }
+          ],
+          "archive_guard_unchanged_after_injection": true,
+          "offline_verification": {
+            "status": "PASS",
+            "manifest_files": 39,
+            "transitive_reference_counts": {
+              "course.json": 37,
+              "course.previous.json": 34
+            }
+          },
+          "identity_after": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "completed_at_utc": "2026-11-05T16:42:26.519365+00:00"
+        }
+      ]
+    },
+    "linux-diagnostic-protocol": {
+      "command": {
+        "command": [
+          ".local/venv/bin/python",
+          "scripts/benchmark_restore.py",
+          "--scripts-root",
+          "skills/codex-learner/scripts",
+          "--f06-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+          "--s05-archive",
+          "artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+          "--output-dir",
+          "artifacts/repair-02c922d/linux-diagnostic-protocol",
+          "--mode",
+          "diagnostic",
+          "--repeat",
+          "1"
+        ],
+        "cwd": "/workspace/codex-learner",
+        "started_at_utc": "2026-11-05T16:43:11.527077+00:00",
+        "returncode": 0,
+        "completed_at_utc": "2026-11-05T16:43:12.173850+00:00",
+        "elapsed_seconds": 0.646778517999337,
+        "stdout": "linux-diagnostic-protocol.stdout.txt",
+        "stderr": "linux-diagnostic-protocol.stderr.txt"
+      },
+      "summary": {
+        "schema_version": 1,
+        "started_at_utc": "2026-11-05T16:43:11.653074+00:00",
+        "mode": "diagnostic",
+        "repeat_per_group": 1,
+        "python": "/workspace/codex-learner/.local/venv/bin/python",
+        "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89",
+        "platform": {
+          "system": "Linux",
+          "release": "6.18.57",
+          "machine": "x86_64"
+        },
+        "system": "Linux",
+        "required_native_first_calls_per_group": 30,
+        "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+        "fixed_inputs": {
+          "F06": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+            "sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e"
+          },
+          "S05": {
+            "path": "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+            "sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a"
+          }
+        },
+        "automatic_retry": false,
+        "scope": "This version, machine, and run only; old failures remain unchanged.",
+        "samples": [
+          {
+            "sample": "empty-01",
+            "group": "empty",
+            "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/empty-01",
+            "command": [
+              "/workspace/codex-learner/.local/venv/bin/python",
+              "/workspace/codex-learner/scripts/benchmark_restore.py",
+              "--scripts-root",
+              "/workspace/codex-learner/skills/codex-learner/scripts",
+              "--f06-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+              "--s05-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+              "--output-dir",
+              "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/empty-01",
+              "--mode",
+              "diagnostic",
+              "--_worker-group",
+              "empty"
+            ],
+            "started_at_utc": "2026-11-05T16:43:11.653431+00:00",
+            "fresh_subprocess": true,
+            "diagnostic": true,
+            "returncode": 0,
+            "stdout": "{\"case\": \"/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/empty-01\", \"status\": \"PASS\"}\n",
+            "stderr": "",
+            "completed_at_utc": "2026-11-05T16:43:11.879848+00:00",
+            "worker_status": "PASS",
+            "worker_started_at_utc": "2026-11-05T16:43:11.771073+00:00",
+            "worker_completed_at_utc": "2026-11-05T16:43:11.860072+00:00",
+            "worker_pid": 49508,
+            "restore_call_count": 1,
+            "primary_first_calls": 1,
+            "status": "PASS"
+          },
+          {
+            "sample": "released-01",
+            "group": "released",
+            "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/released-01",
+            "command": [
+              "/workspace/codex-learner/.local/venv/bin/python",
+              "/workspace/codex-learner/scripts/benchmark_restore.py",
+              "--scripts-root",
+              "/workspace/codex-learner/skills/codex-learner/scripts",
+              "--f06-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/F06-original-synthetic.zip",
+              "--s05-archive",
+              "/workspace/codex-learner/artifacts/native-evidence-02c922d/unpacked/inputs/S05-original-synthetic.zip",
+              "--output-dir",
+              "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/released-01",
+              "--mode",
+              "diagnostic",
+              "--_worker-group",
+              "released"
+            ],
+            "started_at_utc": "2026-11-05T16:43:11.880494+00:00",
+            "fresh_subprocess": true,
+            "diagnostic": true,
+            "returncode": 0,
+            "stdout": "{\"case\": \"/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/released-01\", \"status\": \"PASS\"}\n",
+            "stderr": "",
+            "completed_at_utc": "2026-11-05T16:43:12.155040+00:00",
+            "worker_status": "PASS",
+            "worker_started_at_utc": "2026-11-05T16:43:12.011364+00:00",
+            "worker_completed_at_utc": "2026-11-05T16:43:12.135740+00:00",
+            "worker_pid": 49509,
+            "restore_call_count": 1,
+            "primary_first_calls": 1,
+            "status": "PASS"
+          }
+        ],
+        "complete": true,
+        "groups": {
+          "empty": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          },
+          "released": {
+            "attempts": 1,
+            "PASS": 1,
+            "FAIL": 0,
+            "primary_first_calls_reached": 1
+          }
+        },
+        "status": "PASS",
+        "diagnostics_only": true,
+        "first_call_groups": {},
+        "full_first_call_sample_count": false,
+        "completed_at_utc": "2026-11-05T16:43:12.155569+00:00"
+      },
+      "worker_results": [
+        {
+          "schema_version": 1,
+          "status": "PASS",
+          "group": "empty",
+          "started_at_utc": "2026-11-05T16:43:11.771073+00:00",
+          "pid": 49508,
+          "python": "/workspace/codex-learner/.local/venv/bin/python",
+          "worker_time_scope": "Driver entry through final snapshot; final result write and process exit are bounded by supervisor timestamps.",
+          "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "cwd": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol",
+          "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/empty-01",
+          "diagnostic": true,
+          "first_call_acceptance_eligible": false,
+          "automatic_retry": false,
+          "preparation_restore_calls": 0,
+          "archive_sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e",
+          "restore_calls": [
+            {
+              "tag": "primary-first",
+              "started_at_utc": "2026-11-05T16:43:11.793803+00:00",
+              "pid": 49508,
+              "probe_enabled": true,
+              "injection_enabled": false,
+              "receipt": {
+                "course_id": "sample-course",
+                "state_revision": 9,
+                "status": "course_restored",
+                "archive_sha256": "3470e1d590dc1b75e38fe2dc8e0dc709f7013ae240da0842bc11241be6d71a7e",
+                "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/empty-01/library/sample-course",
+                "network_required": false
+              },
+              "status": "SUCCESS",
+              "completed_at_utc": "2026-11-05T16:43:11.814388+00:00",
+              "elapsed_seconds": 0.019028028997126967,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots",
+              "probe_report": {
+                "schema_version": 1,
+                "diagnostic_only": true,
+                "started_at_utc": "2026-11-05T16:43:11.795477+00:00",
+                "finished_at_utc": "2026-11-05T16:43:11.814376+00:00",
+                "events": [],
+                "observer_errors": [],
+                "limits": "Timing affected; not first-call acceptance. Python streams cover opens observed in this context only; native/external handles and lock ownership remain UNKNOWN."
+              }
+            }
+          ],
+          "scope": "Isolated installed Python API; not CLI, native panel, or real Drive.",
+          "identity_before": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "offline_verification": {
+            "status": "PASS",
+            "manifest_files": 48,
+            "transitive_reference_counts": {
+              "course.json": 46,
+              "course.previous.json": 41
+            }
+          },
+          "identity_after": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "completed_at_utc": "2026-11-05T16:43:11.860072+00:00"
+        },
+        {
+          "schema_version": 1,
+          "status": "PASS",
+          "group": "released",
+          "started_at_utc": "2026-11-05T16:43:12.011364+00:00",
+          "pid": 49509,
+          "python": "/workspace/codex-learner/.local/venv/bin/python",
+          "worker_time_scope": "Driver entry through final snapshot; final result write and process exit are bounded by supervisor timestamps.",
+          "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "cwd": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol",
+          "case": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/released-01",
+          "diagnostic": true,
+          "first_call_acceptance_eligible": false,
+          "automatic_retry": false,
+          "preparation_restore_calls": 0,
+          "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+          "restore_calls": [
+            {
+              "tag": "primary-first",
+              "started_at_utc": "2026-11-05T16:43:12.077813+00:00",
+              "pid": 49509,
+              "probe_enabled": true,
+              "injection_enabled": false,
+              "receipt": {
+                "course_id": "sample-course",
+                "state_revision": 7,
+                "status": "course_restored",
+                "archive_sha256": "1466225d47ad3a83f04d9b3f485b8465a9965fe5cb00299c0d5bc420d691b70a",
+                "path": "/workspace/codex-learner/artifacts/repair-02c922d/linux-diagnostic-protocol/released-01/library/sample-course",
+                "network_required": false
+              },
+              "status": "SUCCESS",
+              "completed_at_utc": "2026-11-05T16:43:12.095470+00:00",
+              "elapsed_seconds": 0.015571049996651709,
+              "elapsed_scope": "API plus optional probe/injection, excluding before/after snapshots",
+              "probe_report": {
+                "schema_version": 1,
+                "diagnostic_only": true,
+                "started_at_utc": "2026-11-05T16:43:12.079946+00:00",
+                "finished_at_utc": "2026-11-05T16:43:12.095459+00:00",
+                "events": [],
+                "observer_errors": [],
+                "limits": "Timing affected; not first-call acceptance. Python streams cover opens observed in this context only; native/external handles and lock ownership remain UNKNOWN."
+              }
+            }
+          ],
+          "scope": "Isolated installed Python API; not CLI, native panel, or real Drive.",
+          "identity_before": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "offline_verification": {
+            "status": "PASS",
+            "manifest_files": 39,
+            "transitive_reference_counts": {
+              "course.json": 37,
+              "course.previous.json": 34
+            }
+          },
+          "identity_after": {
+            "scripts_root": "/workspace/codex-learner/skills/codex-learner/scripts",
+            "source_files_sha256": {
+              "codex_learner/__init__.py": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d",
+              "codex_learner/archives.py": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8",
+              "codex_learner/blobs.py": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96",
+              "codex_learner/cli.py": "1d0981bf2e7dff13d888ba114e0f1b2a5e37e14565c7fdab3cdbfc3c25573f54",
+              "codex_learner/common.py": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb",
+              "codex_learner/diagnostics.py": "b2e632fdcbe518820b6330209b04b19d2ca5e6bba8d197f30df52b74ffc9b1a1",
+              "codex_learner/migration.py": "af2bb81fb899a931e392b7f5d40bfa25d2e7495cc1caa9837730df6be7d5ebd4",
+              "codex_learner/ocr.py": "5b0ecdb2fab8abe6d6976ce7e588de0de36ee6b3c706080390c34d2d81f72e54",
+              "codex_learner/ocr_worker.py": "3404117fddf1abf748b9a9c1f55c4c2e0c36f3d8777a60ab6696520bc9b5d884",
+              "codex_learner/operations.py": "b5875937659b8630431b65f5c5cb42084a204868c2b677fce8dc30184f6d3b7f",
+              "codex_learner/panel.py": "8c67092b01619d18042276a580ab6c1d1a2f63e1aec6e7d6166c692abadd601e",
+              "codex_learner/reads.py": "f55dca2fb566cb2cae1cae84507346da39c153e212b6536d33f3e381a834fd12",
+              "codex_learner/resource_limits.py": "14c63daca1f3dc3b3fba254b677d2640ba47d02c3de366edc4cdf809bfa11a1e",
+              "codex_learner/sources.py": "f1f0474491f065f19c457cc8530ca8cb720a7ab5ae611d4464400bf84b719af6",
+              "codex_learner/storage.py": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c",
+              "codex_learner/views.py": "ac615c6d487a83b1257b329777fd6e5b4f39a4ee0afb52a12331f931c92e7150"
+            },
+            "actual_product_modules": {
+              "codex_learner": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/__init__.py",
+                "sha256": "00e0a9a628aacc5cde06af68bfd4c9a144ce108aeb0293b247c78fbcc4a3349d"
+              },
+              "codex_learner.archives": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/archives.py",
+                "sha256": "c6f93b1124422ddc599be16ca22c3a0ec57da9850f47f5118234ca5a3fb5b3c8"
+              },
+              "codex_learner.blobs": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/blobs.py",
+                "sha256": "1c2c3ffc638418f6afca3f1879e9e327e8bfb283ffd93e5d5116bbfd6bfedc96"
+              },
+              "codex_learner.common": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/common.py",
+                "sha256": "f7f0ce01d2162677af0191498686c2b5caf0b91431f6937825ace63248c916eb"
+              },
+              "codex_learner.storage": {
+                "path": "/workspace/codex-learner/skills/codex-learner/scripts/codex_learner/storage.py",
+                "sha256": "1b8ee725f768a190dfb89e256bdfe1590788ea84392d75260aa63917afe6509c"
+              }
+            },
+            "probe_helper_sha256": "a6c21007002a795d758263b2947d3b7286c95e65fd0355c5df39c621ceceabe8",
+            "driver_sha256": "6ba4781c0a7f8a3ceb4b1785ab3a8726c3b955a92f7a3d6ed269f7f28c604e89"
+          },
+          "completed_at_utc": "2026-11-05T16:43:12.135740+00:00"
+        }
+      ]
+    }
+  },
+  "target_windows_restore": "FAIL carried from 02c922d; new candidate NOT_RUN",
+  "target_windows_old_s05_chain": "BLOCKED",
+  "target_windows_performance": "FAIL carried from 7946513; new candidate NOT_RUN",
+  "formal_performance_comparison": "not run in this cloud validation",
+  "formal_comparison_previous_completeness": "PARTIAL",
+  "protected_native_data": "not accessible here; no native writes performed"
+}
