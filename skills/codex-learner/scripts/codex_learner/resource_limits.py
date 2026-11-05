@@ -130,9 +130,15 @@ class _SuspendedWindowsProcess:
         if self.poll() is None:
             try:
                 self.api.TerminateProcess(self._process_handle, 137)
-            except PermissionError:
-                if self.poll() is None:
-                    raise
+            except PermissionError as error:
+                # TerminateJobObject/another owner may already have initiated
+                # termination. Windows then rejects another TerminateProcess
+                # before the process handle becomes signalled. A bounded wait
+                # proves exit; an actually live/inaccessible process still fails.
+                try:
+                    self.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    raise error
 
     def close(self):
         if self.stdin is not None and not self.stdin.closed:
@@ -313,6 +319,10 @@ def _stop_tree(proc, job, known, psutil):
     # psutil Process instances remember identity and check PID reuse in kill().
     # This also handles observed children that made their own process group.
     for item, _created in reversed(list(known.values())):
+        if item.pid == proc.pid:
+            # Use the retained native handle for the root, not a second psutil
+            # termination followed immediately by another TerminateProcess.
+            continue
         try:
             item.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):

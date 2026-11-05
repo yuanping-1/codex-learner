@@ -4,6 +4,7 @@ import sys
 import tempfile
 import subprocess
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 from pathlib import Path
 
@@ -85,6 +86,21 @@ class ResourceLimitTests(unittest.TestCase):
     def test_rejects_shell_text_before_execution(self):
         with self.assertRaises(ValueError):
             run_limited("python -c unsafe")
+
+    def test_windows_termination_access_denied_requires_confirmed_exit(self):
+        from codex_learner.resource_limits import _SuspendedWindowsProcess
+        process = _SuspendedWindowsProcess.__new__(_SuspendedWindowsProcess)
+        process._process_handle = 123
+        error = PermissionError("termination already in progress or genuinely denied")
+        process.api = SimpleNamespace(TerminateProcess=mock.Mock(side_effect=error))
+        process.poll = mock.Mock(return_value=None)
+        process.wait = mock.Mock(return_value=137)
+        process.kill()
+        process.wait.assert_called_once_with(timeout=5)
+        process.wait = mock.Mock(side_effect=subprocess.TimeoutExpired(["test-process"], 5))
+        with self.assertRaises(PermissionError) as raised:
+            process.kill()
+        self.assertIs(raised.exception, error)
 
     def test_broken_startup_gate_still_cleans_process_and_handles(self):
         from codex_learner import resource_limits as limits
@@ -286,6 +302,30 @@ delay = float(sys.argv[1])
 identity = Path(sys.argv[2])
 worker = sys.argv[3]
 observed = {}
+processes = []
+jobs = []
+process_init = limits._SuspendedWindowsProcess.__init__
+job_init = limits._WindowsJob.__init__
+def capture_process(self, *args, **kwargs):
+    process_init(self, *args, **kwargs)
+    processes.append(self)
+def capture_job(self, *args, **kwargs):
+    job_init(self, *args, **kwargs)
+    jobs.append(self)
+def owned_handles_closed():
+    return (all(p._process_handle is None and p._thread_handle is None and p.stdin.closed for p in processes)
+            and all(j.handle is None for j in jobs))
+limits._SuspendedWindowsProcess.__init__ = capture_process
+limits._WindowsJob.__init__ = capture_job
+# Warm up native library initialization separately from the repeated operation
+# measurement. Keep its handle change visible; do not allow a per-run tolerance.
+initial_handles = psutil.Process().num_handles()
+warmup = limits.run_limited([sys.executable, "-c", "import time; time.sleep(0.2)"],
+                           memory_limit=128*1024*1024, timeout=10)
+gc.collect()
+warmup_evidence = {"run": warmup, "handles_before": initial_handles,
+                   "handles_after": psutil.Process().num_handles(),
+                   "owned_handles_closed": owned_handles_closed()}
 original = limits._WindowsJob.attach
 def delayed_attach(self, pid, process_handle=None):
     time.sleep(delay)
@@ -293,15 +333,22 @@ def delayed_attach(self, pid, process_handle=None):
     original(self, pid, process_handle=process_handle)
     identity.write_text(json.dumps({"supervisor_pid": os.getpid(), "job_handle": int(self.handle)}), encoding="utf-8")
 limits._WindowsJob.attach = delayed_attach
-handles_before = psutil.Process().num_handles()
+measurements = []
 try:
-    result = limits.run_limited([sys.executable, worker, str(identity)], memory_limit=128*1024*1024, timeout=10)
+    for iteration in range(3):
+        observed = {}
+        handles_before = psutil.Process().num_handles()
+        result = limits.run_limited([sys.executable, worker, str(identity)], memory_limit=128*1024*1024, timeout=10)
+        gc.collect()
+        observed.update({"delay_seconds": delay, "iteration": iteration, "run": result,
+                         "handles_before": handles_before, "handles_after": psutil.Process().num_handles(),
+                         "owned_handles_closed": owned_handles_closed()})
+        measurements.append(observed)
 finally:
     limits._WindowsJob.attach = original
-gc.collect()
-observed.update({"delay_seconds": delay, "run": result,
-                 "handles_before": handles_before, "handles_after": psutil.Process().num_handles()})
-print(json.dumps(observed))
+    limits._SuspendedWindowsProcess.__init__ = process_init
+    limits._WindowsJob.__init__ = job_init
+print(json.dumps({"warmup": warmup_evidence, "measurements": measurements}))
 ''', encoding="utf-8")
             environment = dict(os.environ)
             # This fresh venv intentionally has no pip installations. Reuse the
@@ -315,25 +362,34 @@ print(json.dumps(observed))
                         [str(python), str(controller), str(delay), str(root / "job.json"), str(worker)],
                         env=environment, capture_output=True, text=True, encoding="utf-8", timeout=30)
                     self.assertEqual(completed.returncode, 0, completed.stderr)
-                    evidence = json.loads(completed.stdout)
-                    result = evidence["run"]
-                    self.assertEqual(result["status"], "completed", evidence)
-                    self.assertEqual(result["returncode"], 0, evidence)
-                    self.assertEqual(evidence["descendants_before_assignment"], [], evidence)
-                    self.assertTrue(result["job_membership_verified"], evidence)
-                    self.assertTrue(result["launcher_created_suspended"], evidence)
-                    self.assertTrue(result["launcher_resumed_after_job_verification"], evidence)
-                    self.assertTrue(result["hard_limit_enforced"], evidence)
-                    self.assertEqual(result["job_memory_limit_bytes"], 128*1024*1024, evidence)
-                    allocation = json.loads(result["stdout"])
-                    self.assertTrue(allocation["target_job_member"], evidence)
-                    self.assertTrue(allocation["small_allocation_succeeded"], evidence)
-                    self.assertTrue(allocation["large_allocation_denied"], evidence)
-                    self.assertNotEqual(allocation["allocation_error"], 0, evidence)
-                    self.assertTrue(result["cleanup_verified"], evidence)
-                    self.assertEqual(result["surviving_process_ids"], [], evidence)
-                    self.assertLessEqual(evidence["handles_after"], evidence["handles_before"], evidence)
-                    print("Windows suspended venv evidence: " + json.dumps(evidence, sort_keys=True))
+                    report = json.loads(completed.stdout)
+                    warmup = report["warmup"]
+                    self.assertEqual(warmup["run"]["status"], "completed", report)
+                    self.assertEqual(warmup["run"]["returncode"], 0, report)
+                    self.assertTrue(warmup["run"]["cleanup_verified"], report)
+                    self.assertTrue(warmup["owned_handles_closed"], report)
+                    self.assertEqual(len(report["measurements"]), 3)
+                    for evidence in report["measurements"]:
+                        result = evidence["run"]
+                        self.assertEqual(result["status"], "completed", report)
+                        self.assertEqual(result["returncode"], 0, report)
+                        self.assertEqual(evidence["descendants_before_assignment"], [], report)
+                        self.assertTrue(result["job_membership_verified"], report)
+                        self.assertTrue(result["launcher_created_suspended"], report)
+                        self.assertTrue(result["launcher_resumed_after_job_verification"], report)
+                        self.assertTrue(result["hard_limit_enforced"], report)
+                        self.assertEqual(result["job_memory_limit_bytes"], 128*1024*1024, report)
+                        allocation = json.loads(result["stdout"])
+                        self.assertTrue(allocation["target_job_member"], report)
+                        self.assertTrue(allocation["small_allocation_succeeded"], report)
+                        self.assertTrue(allocation["large_allocation_denied"], report)
+                        self.assertNotEqual(allocation["allocation_error"], 0, report)
+                        self.assertTrue(result["cleanup_verified"], report)
+                        self.assertEqual(result["surviving_process_ids"], [], report)
+                        self.assertTrue(evidence["owned_handles_closed"], report)
+                        self.assertLessEqual(evidence["handles_after"], evidence["handles_before"], report)
+                        self.assertLessEqual(evidence["handles_after"], warmup["handles_after"], report)
+                    print("Windows suspended venv evidence: " + json.dumps(report, sort_keys=True))
 
     @unittest.skipUnless(os.name == "nt", "Exercises the Windows-specific fail-closed gate")
     def test_windows_failed_job_setup_does_not_start_command(self):
