@@ -1,6 +1,8 @@
 # Codex Learner 0.2.0 验收候选
 
-代码覆盖紧凑存储、显式迁移、逐页 OCR、四项学习功能修补、Drive 归档恢复及安装诊断。**完整交付验收仍为 PARTIAL**：本页区分云端自动化、真实模型执行、Windows CI 与用户本机/真实云盘证据。旧版 0.1.0 的本机结果不计入新包验收。
+代码覆盖紧凑存储、显式迁移、逐页 OCR、四项学习功能修补、Drive 归档恢复及安装诊断。**2026-11-05 用户提供的本机报告将原候选包判为 FAIL：20 PASS、5 FAIL、12 BLOCKED。** 独立聊天 C04 恢复已报告通过，但不能替代原生面板发送/取消。报告对应 `ed91178` 与 ZIP `3799ba27…e9a60`；本轮修复和后续包的结果必须单独绑定，不能把旧包改判通过。详见 [本机报告与修复映射](local-acceptance-2026-11-05.md)。
+
+以下既有云端自动化、模型资源和 Windows CI 记录属于修订前基线。Windows 的普通启动测试遗漏了虚拟环境 redirector 的延迟启动竞态；其 PASS 不证明任意启动时序都受 Job 约束。修订后的真实 Windows 延迟回归与安装包哈希另行记录。旧版 0.1.0 的本机结果同样不计入新包验收。
 
 ## 已实现与验证范围
 
@@ -39,19 +41,19 @@ OCR 测试使用自行编写的中英数字扫描页；10/100 页使用重复同
 - [固定元数据、大正文](evidence/v0.2/memory-benchmark.json)
 - [大量历史与多版本](evidence/v0.2/history-benchmark.json)
 - [大旧库增量迁移](evidence/v0.2/migration-benchmark.json)
-- [最终 OCR 代码哈希、逐次资源与清理](evidence/v0.2/ocr-linux-validation.json)
-- [Windows Job Object 实际限额与分配结果](evidence/v0.2/windows-job-validation.json)
+- [原候选 OCR 代码哈希、逐次资源与清理](evidence/v0.2/ocr-linux-validation.json)
+- [原候选 Windows Job Object 普通启动结果](evidence/v0.2/windows-job-validation.json)
 - [依赖版本锁解析](evidence/v0.2/dependency-lock-validation.json)
 
 首轮 Windows CI 暴露短路径、CRLF 和测试编码差异，以及历史 Job 内存计数的错误断言。修订保留原始历史计数，新增内核限额读回、当前 PrivateUsage 采样、小额成功/超额拒绝验证，未增加预算；Windows Python 3.10/3.12 已分别验证 16 MiB 原生提交成功、256 MiB 在 128 MiB 内核限额下被拒绝、失败前后当前提交量不增长，并保留历史峰值原值；完整矩阵结果另见最终包外记录。
 
 ## 尚未取得的交付证据
 
-1. **真实 Codex 客户端完整教学**：两章真实教学、六类答案评价、原生发送失败恢复与新独立聊天恢复待评价。本轮有业务/模拟面板/跨进程测试，不能替代真实客户端结果。
+1. **真实 Codex 客户端完整教学及原生发送**：用户已提供旧候选 C04 独立聊天恢复通过报告；真实面板发送/取消和宿主失败恢复仍缺证据，样例来源覆盖有实测失败。CLI、模拟面板及 C04 不能替代其余真实客户端项目。
 2. **真实 Google Drive 上传与网页重新下载**：本轮只验证临时目录中的完整协议。程序保留 `sync_unconfirmed` 和 `network_provenance=user_declared` 区别，未声称自动观察到了云端传输。
-3. **用户本机干净安装和旧版升级**：自动化 Windows CI 与真实用户本机分别记录；新包须在目标 Codex 环境核对安装清单/包哈希并复验。
+3. **用户本机正式升级**：用户报告已核对旧候选隔离安装，正式 Skill 暂缓升级，正式配置和课程文件未变。新包须重新核对安装清单/包哈希并复验，不能自动计入旧包通过项。
 4. **可选 Docling 模型推理**：预览、选页、离线模型门控、进程预算与错误处理已实现；完整模型未实际运行。预览图受像素限制，不代表 Docling 内部所有布局分配都受同样像素限制。
-5. **整机资源**：Codex、Drive 和用户本机整体占用未实测。无 OCR 配置时的 native PDF 解析有输入/提取限额，不宣称第三方解析器内部是 256 MiB 硬隔离。
+5. **目标机器默认 OCR 与整机资源**：用户报告默认 OCR 内存预检阻塞，512 MiB 档完成了 1→2→3 页续跑；这不替代默认 10/100 页完成证据。完整 Codex/Drive 进程组采样仍有缺口。无 OCR 配置时的 native PDF 解析有输入/提取限额，不宣称第三方解析器内部是 256 MiB 硬隔离。
 
 ## 最终包证据
 

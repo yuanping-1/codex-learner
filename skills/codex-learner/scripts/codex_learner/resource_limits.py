@@ -20,8 +20,9 @@ POLL_INTERVAL = 0.1
 RETURN_LOG_BYTES = 64 * 1024
 MAX_LOG_BYTES = 8 * 1024 ** 2
 
-# The actual parser cannot load heavyweight dependencies until its launcher has
-# been assigned to the job. Child processes inherit that assignment on Windows.
+# Windows creates even the executable redirector suspended and assigns it to
+# the job before its first instruction. A Python-level stdin gate alone is not
+# sufficient: venv python.exe can spawn the real interpreter before Python runs.
 # stdin is reserved for the gate; parser protocols must use files or arguments.
 _LAUNCHER = """import json, subprocess, sys
 if sys.stdin.buffer.readline() != b'GO\\n':
@@ -33,6 +34,118 @@ except OSError as exc:
     raise SystemExit(126)
 raise SystemExit(code if code >= 0 else 128 - code)
 """
+
+
+class _SuspendedWindowsProcess:
+    """Small process adapter retaining CreateProcess's original thread handle.
+
+    subprocess.Popen closes that handle before returning. Reopening/guessing a
+    main thread would create another race, so only this Windows startup path uses
+    _winapi.CreateProcess directly. The same standard-library API implements
+    Popen on supported CPython versions. No arbitrary handles are inherited.
+    """
+
+    def __init__(self, args, *, stdout, stderr, cwd=None, env=None):
+        import _winapi
+        import msvcrt
+
+        self.api = _winapi
+        self.args = args
+        self.returncode = None
+        self.stdin = None
+        self._process_handle = None
+        self._thread_handle = None
+        self.resumed = False
+        read_fd, write_fd = os.pipe()
+        inherited = []
+        try:
+            self.stdin = os.fdopen(write_fd, "wb")
+            write_fd = None
+            current = _winapi.GetCurrentProcess()
+            for fd in (read_fd, stdout.fileno(), stderr.fileno()):
+                inherited.append(_winapi.DuplicateHandle(
+                    current, msvcrt.get_osfhandle(fd), current, 0, True,
+                    _winapi.DUPLICATE_SAME_ACCESS))
+            startup = subprocess.STARTUPINFO()
+            startup.dwFlags |= _winapi.STARTF_USESTDHANDLES
+            startup.hStdInput, startup.hStdOutput, startup.hStdError = inherited
+            startup.lpAttributeList = {"handle_list": inherited}
+            command_line = subprocess.list2cmdline(args)
+            sys.audit("subprocess.Popen", args[0], command_line, cwd, env)
+            process, thread, self.pid, self.thread_id = _winapi.CreateProcess(
+                args[0], command_line, None, None, True,
+                0x00000004, env, os.fsdecode(cwd) if cwd is not None else None,
+                startup)  # CREATE_SUSPENDED, before the executable's loader runs.
+            self._process_handle, self._thread_handle = process, thread
+        except BaseException:
+            self.close()
+            raise
+        finally:
+            os.close(read_fd)
+            if write_fd is not None:
+                os.close(write_fd)
+            for handle in inherited:
+                _winapi.CloseHandle(handle)
+
+    @property
+    def process_handle(self):
+        return self._process_handle
+
+    def resume(self):
+        import ctypes
+        from ctypes import wintypes
+
+        if self.resumed or self._thread_handle is None:
+            raise OSError("Windows launcher main thread is not awaiting its first resume")
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.ResumeThread.argtypes = [wintypes.HANDLE]
+        kernel.ResumeThread.restype = wintypes.DWORD
+        previous = kernel.ResumeThread(self._thread_handle)
+        if previous == 0xFFFFFFFF:
+            raise ctypes.WinError(ctypes.get_last_error())
+        if previous != 1:
+            raise OSError(f"Unexpected Windows launcher suspend count: {previous}")
+        self.resumed = True
+        self.api.CloseHandle(self._thread_handle)
+        self._thread_handle = None
+
+    def poll(self):
+        if self.returncode is None:
+            if self.api.WaitForSingleObject(self._process_handle, 0) == self.api.WAIT_OBJECT_0:
+                self.returncode = self.api.GetExitCodeProcess(self._process_handle)
+        return self.returncode
+
+    def wait(self, timeout=None):
+        if self.returncode is None:
+            milliseconds = self.api.INFINITE if timeout is None else max(0, int(timeout * 1000))
+            result = self.api.WaitForSingleObject(self._process_handle, milliseconds)
+            if result == self.api.WAIT_TIMEOUT:
+                raise subprocess.TimeoutExpired(self.args, timeout)
+            if result != self.api.WAIT_OBJECT_0:
+                raise OSError(f"Unexpected Windows process wait result: {result}")
+            self.returncode = self.api.GetExitCodeProcess(self._process_handle)
+        return self.returncode
+
+    def kill(self):
+        if self.poll() is None:
+            try:
+                self.api.TerminateProcess(self._process_handle, 137)
+            except PermissionError:
+                if self.poll() is None:
+                    raise
+
+    def close(self):
+        if self.stdin is not None and not self.stdin.closed:
+            try:
+                self.stdin.close()
+            except OSError:
+                # A broken GO pipe must never prevent native handle cleanup.
+                pass
+        for attribute in ("_thread_handle", "_process_handle"):
+            handle = getattr(self, attribute, None)
+            if handle is not None:
+                self.api.CloseHandle(handle)
+                setattr(self, attribute, None)
 
 
 class _WindowsJob:
@@ -85,6 +198,9 @@ class _WindowsJob:
         self.kernel.OpenProcess.restype = wintypes.HANDLE
         self.kernel.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
         self.kernel.AssignProcessToJobObject.restype = wintypes.BOOL
+        self.kernel.IsProcessInJob.argtypes = [wintypes.HANDLE, wintypes.HANDLE,
+                                              ctypes.POINTER(wintypes.BOOL)]
+        self.kernel.IsProcessInJob.restype = wintypes.BOOL
         self.kernel.TerminateJobObject.argtypes = [wintypes.HANDLE, wintypes.UINT]
         self.kernel.TerminateJobObject.restype = wintypes.BOOL
         self.kernel.CloseHandle.argtypes = [wintypes.HANDLE]
@@ -102,16 +218,29 @@ class _WindowsJob:
             self.close()
             raise error
 
-    def attach(self, pid):
+    def attach(self, pid, process_handle=None):
         # Assignment requires PROCESS_SET_QUOTA and PROCESS_TERMINATE.
-        process = self.kernel.OpenProcess(0x100 | 0x1, False, pid)
+        # The suspended path retains its original process handle so assignment
+        # cannot accidentally target a recycled PID.
+        process = process_handle or self.kernel.OpenProcess(0x100 | 0x1, False, pid)
         if not process:
             raise self.ctypes.WinError(self.ctypes.get_last_error())
         try:
             if not self.kernel.AssignProcessToJobObject(self.handle, process):
                 raise self.ctypes.WinError(self.ctypes.get_last_error())
         finally:
-            self.kernel.CloseHandle(process)
+            if process_handle is None:
+                self.kernel.CloseHandle(process)
+
+    def verify_membership(self, process_handle):
+        from ctypes import wintypes
+
+        member = wintypes.BOOL()
+        if not self.kernel.IsProcessInJob(process_handle, self.handle, self.ctypes.byref(member)):
+            raise self.ctypes.WinError(self.ctypes.get_last_error())
+        if not member.value:
+            raise OSError("Windows launcher is not a member of its configured Job Object")
+        return True
 
     def read_limits(self):
         """Read the actual kernel settings and the unmodified historical peak."""
@@ -228,7 +357,8 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
     stdin; use request files/argv. ``status`` is completed, timeout, memory_limit,
     output_limit, monitoring_failed or job_setup_failed. A completed process may
     have a nonzero returncode. ``hard_limit_enforced`` is true only after an
-    actual Windows job assignment and kernel limit readback succeed; its limit counts committed memory,
+    actual suspended-process job assignment, membership and kernel limit
+    readback succeed before resuming its original main thread; its limit counts committed memory,
     while ``peak_rss_bytes`` is the sampled sum of process-tree resident memory.
     ``peak_commit_bytes`` is retained as a compatibility alias for the raw
     ``peak_job_memory_used_bytes`` historical Windows counter. It must not be
@@ -257,28 +387,39 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
     status, detail, peak, peak_commit = "completed", None, 0, None
     hard, job, known = False, None, {}
     job_limits, job_query_error = None, None
+    job_membership_verified = False
     current_private_commit, peak_private_commit, private_samples = None, None, 0
     with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
-        proc = subprocess.Popen(
-            [sys.executable, "-c", _LAUNCHER, json.dumps(list(command))],
-            stdin=subprocess.PIPE, stdout=out, stderr=err, cwd=cwd, env=env,
-            start_new_session=os.name != "nt")
-        process = psutil.Process(proc.pid)
-        known[process.pid] = (process, process.create_time())
+        arguments = [sys.executable, "-I", "-S", "-c", _LAUNCHER, json.dumps(list(command))]
+        proc = (_SuspendedWindowsProcess(arguments, stdout=out, stderr=err, cwd=cwd, env=env)
+                if os.name == "nt" else subprocess.Popen(
+                    arguments, stdin=subprocess.PIPE, stdout=out, stderr=err, cwd=cwd,
+                    env=env, start_new_session=True))
         try:
+            process = psutil.Process(proc.pid)
+            known[process.pid] = (process, process.create_time())
             if os.name == "nt":
                 try:
                     job = _WindowsJob(memory_limit)
-                    job.attach(proc.pid)
+                    job.attach(proc.pid, process_handle=proc.process_handle)
+                    job_membership_verified = job.verify_membership(proc.process_handle)
                     job_limits = job.verify_limits(memory_limit)
+                    proc.resume()
                     hard = True
                 except OSError as exc:
                     status = "job_setup_failed"
                     detail = f"Windows Job Object could not be attached; parser not started: {exc}"
             if status == "completed":
-                proc.stdin.write(b"GO\n")
-                proc.stdin.flush()
-            proc.stdin.close()
+                try:
+                    proc.stdin.write(b"GO\n")
+                    proc.stdin.flush()
+                except OSError as exc:
+                    status, detail = "monitoring_failed", f"Parser startup gate failed: {exc}"
+            try:
+                proc.stdin.close()
+            except OSError as exc:
+                if status == "completed":
+                    status, detail = "monitoring_failed", f"Parser startup gate close failed: {exc}"
             while status == "completed" and proc.poll() is None:
                 try:
                     current, private_commit = _sample_tree(process, psutil, known)
@@ -303,7 +444,10 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
                 time.sleep(POLL_INTERVAL)
         finally:
             if proc.stdin and not proc.stdin.closed:
-                proc.stdin.close()
+                try:
+                    proc.stdin.close()
+                except OSError:
+                    pass
             if job is not None:
                 try:
                     peak_commit = job.read_limits()["peak_job_memory_used_bytes"]
@@ -313,8 +457,12 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
             try:
                 _stop_tree(proc, job, known, psutil)
             finally:
-                if job is not None:
-                    job.close()
+                try:
+                    if job is not None:
+                        job.close()
+                finally:
+                    if isinstance(proc, _SuspendedWindowsProcess):
+                        proc.close()
         surviving = _confirm_cleanup(known, psutil)
         stdout, out_cut = _tail(out)
         stderr, err_cut = _tail(err)
@@ -330,6 +478,9 @@ def run_limited(command, *, timeout=600, memory_limit=DEFAULT_MEMORY_LIMIT,
                 "job_memory_limit_bytes": job_limits["memory_limit_bytes"] if job_limits else None,
                 "job_limit_flags": job_limits["limit_flags"] if job_limits else None,
                 "job_limit_verified": job_limits is not None,
+                "job_membership_verified": job_membership_verified,
+                "launcher_created_suspended": os.name == "nt",
+                "launcher_resumed_after_job_verification": hard,
                 "job_query_error": job_query_error,
                 "last_sampled_private_commit_bytes": current_private_commit,
                 "peak_sampled_private_commit_bytes": peak_private_commit,

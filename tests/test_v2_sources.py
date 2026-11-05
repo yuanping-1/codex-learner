@@ -11,6 +11,18 @@ from codex_learner.sources import (MAX_SOURCE_BYTES, archive_source, check_refer
 
 
 class StructuralSourceTests(unittest.TestCase):
+    def test_html_metadata_never_becomes_verified_lesson_text(self):
+        segments, missing = extract(
+            b'<!doctype html><?audit ignored?><html><head><title>Metadata title</title>'
+            b'<style>body {color:red}</style></head><body><!-- hidden comment -->'
+            b'<div>Visible <b>lesson</b></div><p>Second paragraph</p></body></html>', '.html')
+        self.assertEqual([segment['text'] for segment in segments], ['Visible lesson', 'Second paragraph'])
+        self.assertEqual([segment['locator'] for segment in segments], ['block:1', 'block:2'])
+        self.assertFalse(missing)
+        with self.assertRaises(LearnerError) as error:
+            extract(b'<!doctype html><?audit ignored?><!-- comment -->', '.html')
+        self.assertEqual(error.exception.code, 'unreadable_source')
+
     def test_html_table_and_math_never_flatten_into_verified_prose(self):
         segments, missing = extract(b'<table><tr><th>Distance</th><th>Time</th></tr>'
                                     b'<tr><td>100 m</td><td>20 s</td></tr></table>'

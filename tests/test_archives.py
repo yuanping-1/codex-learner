@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 import zipfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,7 +12,7 @@ from unittest.mock import patch
 
 from support import CourseCase
 from codex_learner.archives import (
-    archived_courses, confirm_download, copy_to_drive, create_archive,
+    archive_availability, archived_courses, confirm_download, copy_to_drive, create_archive,
     inspect_archive, release_course, restore_archive,
 )
 from codex_learner.common import LearnerError, canonical, read_json
@@ -182,6 +183,105 @@ class ArchiveTests(CourseCase):
             restore_archive(self.library, result["path"], confirmed=True)
         self.assertEqual(error.exception.code, "course_exists")
         self.assertEqual((self.library.root / "sample-course/course.json").read_bytes(), before)
+
+    def test_archived_course_explains_local_verification_and_network_retrieval(self):
+        result = self.archive()
+        drive_copy = copy_to_drive(result["path"], self.root / "fake-drive-retained")
+        verification = self.retrieved(result)
+        release_course(self.library, "sample-course", result["path"], verification, confirmed=True)
+        index_path = self.library.root / archives.INDEX_NAME
+        index_before = index_path.read_bytes()
+        with patch.object(archives, "_sha", side_effect=AssertionError("Listing must not read ZIP bodies")):
+            row = archived_courses(self.library)[0]
+            self.assertEqual(row["restore_status"], "local_copy_requires_verification")
+            self.assertFalse(row["network_required"])
+            self.assertFalse(row["local_archive_integrity_verified"])
+            self.assertIn("核验后可离线恢复", row["restore_message"])
+            with self.assertRaises(LearnerError) as error:
+                self.library.load("sample-course")
+            self.assertFalse(error.exception.details["network_required"])
+            self.assertEqual(self.library.list_courses()[0], row)
+        # The Drive directory remains present; it must not masquerade as an
+        # independently downloaded ordinary local copy.
+        Path(result["path"]).unlink()
+        Path(verification["path"]).unlink()
+        self.assertTrue(Path(drive_copy["path"]).is_file())
+        row = archived_courses(self.library)[0]
+        self.assertEqual(row["restore_status"], "download_required")
+        self.assertTrue(row["network_required"])
+        self.assertEqual(row["local_archive_paths"], [])
+        self.assertIn("需要联网取回", row["restore_message"])
+        self.assertEqual(row["cloud_sync"], "user_declared_download_verified")
+        self.assertEqual(self.library.list_courses()[0], row)
+        with self.assertRaises(LearnerError) as error:
+            self.library.load_manifest("sample-course")
+        self.assertEqual(error.exception.code, "course_archived")
+        self.assertTrue(error.exception.details["network_required"])
+        self.assertIn("需要联网取回", str(error.exception))
+        self.assertEqual(index_path.read_bytes(), index_before)
+        # Lightweight indexes remain discoverable even if the empty course
+        # directory is no longer present.
+        shutil.rmtree(self.library.course_dir("sample-course"))
+        self.assertEqual(self.library.list_courses(), [row])
+
+    def test_archive_existence_does_not_claim_integrity_or_enable_corrupt_course(self):
+        result = self.archive()
+        verification = self.retrieved(result)
+        release_course(self.library, "sample-course", result["path"], verification, confirmed=True)
+        Path(result["path"]).unlink()
+        Path(verification["path"]).write_bytes(b"damaged archive")
+        row = archived_courses(self.library)[0]
+        self.assertFalse(row["network_required"])
+        self.assertFalse(row["local_archive_integrity_verified"])
+        self.assertIn("核验", row["restore_message"])
+        with self.assertRaises(LearnerError):
+            restore_archive(self.library, verification["path"], result["sha256"], confirmed=True)
+        self.assertFalse((self.library.root / "sample-course/course.json").exists())
+
+    def test_drive_files_and_windows_cloud_placeholders_are_not_offline_copies(self):
+        candidate = self.root / "cloud" / "course.zip"
+        candidate.parent.mkdir()
+        candidate.write_bytes(b"not a downloaded archive")
+        entry = {"retrieved_path": str(candidate), "archive_path": str(candidate),
+                 "drive_paths": [str(candidate)]}
+        self.assertTrue(archive_availability(entry)["network_required"])
+        entry["drive_paths"] = []
+        for flag in (0x1000, 0x40000, 0x400000):
+            with self.subTest(flag=flag), patch.object(Path, "stat", return_value=SimpleNamespace(
+                    st_mode=candidate.stat().st_mode, st_file_attributes=flag)):
+                self.assertTrue(archive_availability(entry)["network_required"])
+
+    def test_restore_hint_does_not_traverse_parent_junction_or_cloud_placeholder(self):
+        parent = self.root / "redirected"
+        parent.mkdir()
+        candidate = parent / "course.zip"
+        calls = []
+        original_lstat = Path.lstat
+        for flag in (0x400, 0x1000, 0x40000, 0x400000):
+            calls.clear()
+
+            def inspect(path):
+                calls.append(path)
+                if path == candidate:
+                    self.fail("Archive hint traversed a redirected/recall-only directory")
+                if path == parent:
+                    return SimpleNamespace(st_mode=stat.S_IFDIR, st_file_attributes=flag)
+                return original_lstat(path)
+
+            with self.subTest(flag=flag), patch.object(Path, "lstat", inspect):
+                self.assertTrue(archive_availability({"archive_path": str(candidate)})["network_required"])
+            self.assertIn(parent, calls)
+            self.assertNotIn(candidate, calls)
+
+    def test_restore_hint_rejects_mapped_network_drive_before_stat(self):
+        import ctypes
+        candidate = self.root / "not-local.zip"
+        with patch.object(archives, "os", SimpleNamespace(name="nt")), \
+                patch.object(ctypes, "WinDLL", create=True) as kernel, \
+                patch.object(Path, "lstat", side_effect=AssertionError("Network drive must not be probed")):
+            kernel.return_value.GetDriveTypeW.return_value = 4  # DRIVE_REMOTE
+            self.assertFalse(archives._ordinary_local_archive(candidate))
+            kernel.return_value.GetDriveTypeW.assert_called_once_with(candidate.anchor)
 
     def test_hash_mismatch_and_zip_traversal_never_enable_a_course(self):
         result = self.archive()

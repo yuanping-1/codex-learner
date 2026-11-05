@@ -141,14 +141,37 @@ class V2LearningTests(CourseCase):
                               expected_segment_hashes={"line:2": body_hash(segment, "text")})
         receipt = self.engine.apply(review)
         self.assertTrue(self.engine.apply(review)["duplicate"])
+        # Reviewing the general definition alone must not authorize the other
+        # source locations now cited by the sample rubric.
+        partial = self.library.load("sample-course")
+        with self.assertRaises(LearnerError) as error:
+            self.engine.apply(request)
+        self.assertEqual(error.exception.code, "unverified_source")
+        self.assertEqual(self.library.load("sample-course")["state_revision"], partial["state_revision"])
+        self.assertNotIn("reviewed-question", self.library.load("sample-course")["questions"])
+
+        required_locators = {ref["locator"] for ref in request["rubric"]["source_refs"]}
+        remaining_locators = sorted(required_locators - {"line:2"})
+        self.assertTrue(remaining_locators)
+        complete_review = self.request(
+            "verify_source", source_id="sample-source-v1", locators=remaining_locators,
+            evidence="对照归档原件逐项核对题目引用的其余数值、单位和含义。",
+            expected_source_sha256=source["sha256"],
+            expected_segment_hashes={s["locator"]: body_hash(s, "text") for s in source["segments"]
+                                     if s["locator"] in remaining_locators})
+        self.engine.apply(complete_review)
         self.engine.apply(request)
         state = self.library.load("sample-course")
         event = state["source_verifications"][review["operation_id"]]
         self.assertEqual(event["source_sha256"], source["sha256"])
         self.assertEqual(event["segment_hashes"], review["expected_segment_hashes"])
         self.assertEqual(receipt["result"]["verification_event_id"], review["operation_id"])
-        self.assertEqual(len(state["source_verifications"]), 1)
-        remaining = next(s for s in state["sources"]["sample-source-v1"]["segments"] if s["locator"] != "line:2")
+        self.assertEqual(len(state["source_verifications"]), 2)
+        self.assertEqual(state["source_verifications"][complete_review["operation_id"]]["segment_hashes"],
+                         complete_review["expected_segment_hashes"])
+        self.assertIn("reviewed-question", state["questions"])
+        remaining = next(s for s in state["sources"]["sample-source-v1"]["segments"]
+                         if s["locator"] not in required_locators)
         self.assertTrue(remaining["legacy_claim"])
         self.assertFalse(remaining["verified"])
 

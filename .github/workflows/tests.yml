@@ -67,3 +67,5 @@ jobs:
           "$ocr_python" -m pip install -r requirements-base.txt -r requirements-ocr.txt
           "$ocr_python" -c "import rapidocr, pypdfium2, onnxruntime, psutil; from importlib.metadata import version; print({name:version(name) for name in ('rapidocr','pypdfium2','onnxruntime','psutil')})"
           "$ocr_python" -m unittest discover -s tests -p test_ocr.py -v
+          "$ocr_python" -m unittest discover -s tests -p test_benchmark_ocr.py -v
+          "$ocr_python" -m unittest discover -s tests -p test_resource_limits.py -v

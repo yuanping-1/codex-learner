@@ -34,6 +34,10 @@ def file_hash(path):
 
 def allowed(name):
     path = Path(name)
+    # The external acceptance task pins the original ZIP hash. Keep it outside
+    # subsequent packages instead of shipping instructions for a different ZIP.
+    if name == "docs/local-acceptance-handoff-v0.2.md":
+        return False
     if (set(path.parts) & BLOCKED_PARTS or path.name in BLOCKED_NAMES or
             re.search(r"(^|[-_.])(secret|credential|token|private[-_]?key)([-_.]|$)", path.name, re.I)):
         return False

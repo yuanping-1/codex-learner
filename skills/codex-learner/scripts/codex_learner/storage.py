@@ -178,10 +178,18 @@ class Library:
         index = read_json(path)
         return index.get("courses", {}).get(course_id)
 
+    def require_restored(self, course_id):
+        entry = self.archived_entry(course_id)
+        if entry:
+            from .archives import archive_availability
+            availability = archive_availability(entry)
+            raise LearnerError("course_archived", availability["restore_message"],
+                               course_id=course_id, **availability)
+
     def load_manifest(self, course_id):
         directory = self.course_dir(course_id)
         path = directory / "course.json"
-        require(not self.archived_entry(course_id), "Historical course requires archive restoration.", "course_archived")
+        self.require_restored(course_id)
         require(not path.is_symlink(), "Course state cannot be a symbolic link.", "invalid_path")
         try:
             # v1 can contain arbitrarily repeated bodies. Large libraries must
@@ -190,9 +198,7 @@ class Library:
                     "Manifest exceeds the safe reader budget; run migrate --preview.", "migration_required")
             return validate_state(read_json(path), course_id)
         except FileNotFoundError as exc:
-            if self.archived_entry(course_id):
-                raise LearnerError("course_archived", "Historical course requires archive restoration.",
-                                   course_id=course_id) from exc
+            self.require_restored(course_id)
             raise LearnerError("course_missing", f"Course state is missing: {path}",
                                path=str(path), backup=str(directory / "course.previous.json")) from exc
 
@@ -201,33 +207,34 @@ class Library:
 
     def list_courses(self):
         self.check()
+        from .archives import archived_courses
+        archived = {row["course_id"]: row for row in archived_courses(self)}
         courses = []
         for directory in sorted(self.root.iterdir()):
             if not directory.is_dir() or directory.name.startswith("."):
+                continue
+            if directory.name in archived:
                 continue
             try:
                 state = self.load(directory.name)
                 courses.append({"course_id": state["course_id"], "title": state["title"],
                                 "state_revision": state["state_revision"], "position": state["position"]})
             except (LearnerError, OSError) as exc:
-                archived = self.archived_entry(directory.name)
-                courses.append({"course_id": directory.name, "status": "archived", **archived} if archived else
-                               {"course_id": directory.name,
+                courses.append({"course_id": directory.name,
                                 "error": exc.as_dict() if isinstance(exc, LearnerError) else str(exc)})
-        return courses
+        courses.extend(archived.values())
+        return sorted(courses, key=lambda row: row["course_id"])
 
     def transact(self, request, mutate, create=False):
         operation_id = identifier(request.get("operation_id"))
         directory = self.course_dir(request.get("course_id"))
         fingerprint = digest(request)
-        require(not self.archived_entry(request["course_id"]),
-                "Archived course must be restored, never recreated.", "course_archived")
+        self.require_restored(request["course_id"])
         if create:
             directory.mkdir(exist_ok=True)
         require(directory.is_dir(), "Unknown course; no implicit creation.", "course_missing")
         with file_lock(directory / ".lock"):
-            require(not self.archived_entry(request["course_id"]),
-                    "Historical course requires archive restoration.", "course_archived")
+            self.require_restored(request["course_id"])
             state_path = directory / "course.json"
             if create and not state_path.exists():
                 # 残留课程目录可能包含已丢失的记录，不能据此创建空课程。
@@ -284,7 +291,7 @@ class Library:
     def backup_info(self, course_id):
         directory = self.course_dir(course_id)
         path = directory / "course.previous.json"
-        require(not self.archived_entry(course_id), "Restore the archived course first.", "course_archived")
+        self.require_restored(course_id)
         require(path.stat().st_size <= 64 * 1024 * 1024,
                 "Legacy backup exceeds safe reader capacity; use the preserved migration snapshot.", "migration_capacity")
         state = validate_state(read_json(path), course_id)

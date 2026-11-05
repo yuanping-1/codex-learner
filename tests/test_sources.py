@@ -10,6 +10,29 @@ from create_demo import sample_requests
 
 
 class SourceTests(CourseCase):
+    def test_sample_lecture_references_cover_worked_examples_and_unit_factors(self):
+        state = self.library.load("sample-course")
+        source = state["sources"]["sample-source-v1"]
+        by_locator = {segment["locator"]: segment["text"] for segment in source["segments"]}
+        content = {request["chapter_id"]: request for request in sample_requests()
+                   if request["action"] == "publish_content"}
+
+        def referenced(chapter, part):
+            return "\n".join(by_locator[ref["locator"]]
+                             for ref in content[chapter]["parts"][part]["source_refs"])
+
+        boundaries = referenced("chapter-1", 1)
+        self.assertIn("(60 + 40) ÷ (20 + 40)", boundaries)
+        self.assertIn("5/3 m/s", boundaries)
+        self.assertIn("20 + 10 + 20", boundaries)
+        self.assertIn("路程为 200 米，位移为 0", boundaries)
+        conversions = referenced("chapter-2", 1)
+        self.assertIn("1 分钟等于 60 秒", conversions)
+        self.assertIn("1500 ÷ 300 = 5 m/s = 18 km/h", conversions)
+        self.assertIn("反向换算乘以 3.6", conversions)
+        self.assertIn("不代表终点那一刻的瞬时速率", referenced("chapter-1", 0))
+        self.assertIn("(1 h / 3600 s)", referenced("chapter-2", 0))
+
     def test_e05_archived_source_survives_original_removal_and_retry(self):
         original = self.root / "original.txt"
         original.write_text("原文第一行\n第二行", encoding="utf-8")

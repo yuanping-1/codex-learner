@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Explicit local OCR measurement; creates fixtures, never installs or downloads.
 
-Run with the configured OCR Python (Pillow/pypdf are needed to create fixtures).
+Run with the configured OCR Python. Fixtures use its locked Pillow/PDFium dependencies.
 The repeated-page fixture measures scaling, not diverse OCR accuracy.
 """
 
@@ -37,14 +37,13 @@ def create_fixture(path, label, font_path=None):
 
 
 def repeated_pdf(source, target, count):
-    from pypdf import PdfReader, PdfWriter
-    writer = PdfWriter()
-    with source.open("rb") as incoming:
-        reader = PdfReader(incoming)
-        for _ in range(count):
-            writer.add_page(reader.pages[0])
-        with target.open("wb") as outgoing:
-            writer.write(outgoing)
+    import pypdfium2 as pdfium
+    # The OCR environment already includes PDFium; pypdf belongs to the optional
+    # core PDF reader and is not installed by install_ocr.py. Import the same
+    # page without rendering or retaining one raster image per repeated page.
+    with pdfium.PdfDocument(source) as incoming, pdfium.PdfDocument.new() as outgoing:
+        outgoing.import_pages(incoming, pages=[0] * count)
+        outgoing.save(target)
 
 
 def main():

@@ -166,10 +166,72 @@ def _index(library):
     return value
 
 
+def _ordinary_local_archive(path):
+    """Inspect metadata without traversing links, cloud placeholders or shares."""
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+        get_drive_type = ctypes.WinDLL("kernel32", use_last_error=True).GetDriveTypeW
+        get_drive_type.argtypes = [wintypes.LPCWSTR]
+        get_drive_type.restype = wintypes.UINT
+        # Mapped network drives do not necessarily use UNC syntax. Unknown or
+        # unavailable roots also cannot establish an ordinary local copy.
+        if get_drive_type(path.anchor) not in (2, 3, 5, 6):
+            return False
+    try:
+        # Inspect ancestors first: lstat on the leaf alone would still follow a
+        # parent junction/symlink and could contact a remote target.
+        for component in (*reversed(path.parents), path):
+            details = component.lstat()
+            attributes = getattr(details, "st_file_attributes", 0)
+            if (stat.S_ISLNK(details.st_mode)
+                    or attributes & (0x400 | 0x1000 | 0x40000 | 0x400000)):
+                return False
+        return stat.S_ISREG(details.st_mode)
+    except OSError:
+        return False
+
+
+def archive_availability(entry):
+    """Describe retrieval needs without opening a ZIP or accessing Drive paths.
+
+    Local existence is only a hint: restore_archive must still verify the ZIP
+    and every referenced member. Never persist this transient filesystem view
+    or upgrade the index's cloud-sync/provenance declaration.
+    """
+    drive_roots = [Path(os.path.normpath(path)).expanduser().absolute().parent
+                   for path in entry.get("drive_paths", []) if isinstance(path, str)]
+    local = []
+    for key in ("retrieved_path", "archive_path"):
+        value = entry.get(key)
+        if not isinstance(value, str) or not value:
+            continue
+        path = Path(os.path.normpath(value)).expanduser()
+        if (not path.is_absolute() or str(path).startswith(("\\\\", "//"))
+                or any(path.is_relative_to(root) for root in drive_roots)):
+            continue
+        if _ordinary_local_archive(path):
+            if str(path) not in local:
+                local.append(str(path))
+    available = bool(local)
+    return {
+        "restore_status": "local_copy_requires_verification" if available else "download_required",
+        "network_required": not available,
+        "local_archive_paths": local,
+        "local_archive_integrity_verified": False,
+        "restore_message": (
+            "本地归档副本存在，核验后可离线恢复。"
+            if available else
+            "未找到已登记的本地归档，需要联网取回完整归档后再校验恢复；"
+            "若已有其他本地归档，可直接选择并校验恢复。"
+        ),
+    }
+
+
 def archived_courses(library):
-    """Return lightweight records; this index contains no answers or credentials."""
+    """Return lightweight records plus current local retrieval requirements."""
     library.check()
-    return list(_index(library)["courses"].values())
+    return [{**entry, **archive_availability(entry)} for entry in _index(library)["courses"].values()]
 
 
 def _write_index(library, value):

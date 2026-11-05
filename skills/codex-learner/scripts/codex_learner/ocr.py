@@ -130,6 +130,7 @@ def _run_ocr_locked(source_path, source_sha256, config, *, page_numbers=None, fo
         raise LearnerError("ocr_supervisor_missing", str(exc)) from exc
     memory_evidence = {key: run.get(key) for key in (
         "hard_limit_kind", "job_memory_limit_bytes", "job_limit_flags", "job_limit_verified",
+        "job_membership_verified", "launcher_created_suspended", "launcher_resumed_after_job_verification",
         "initial_peak_job_memory_used_bytes", "peak_job_memory_used_bytes", "job_query_error",
         "peak_sampled_private_commit_bytes", "last_sampled_private_commit_bytes", "private_commit_sample_count")}
     if run["status"] != "completed" or run["returncode"] != 0:
@@ -149,7 +150,8 @@ def _run_ocr_locked(source_path, source_sha256, config, *, page_numbers=None, fo
                            cleanup_verified=run.get("cleanup_verified", False),
                            surviving_process_ids=run.get("surviving_process_ids", []),
                            preview_manifest=str(output / "previews" / "manifest.json")
-                           if (output / "previews" / "manifest.json").is_file() else None)
+                           if (output / "previews" / "manifest.json").is_file() else None,
+                           **memory_evidence)
     result_path = output / "result.json"
     require(result_path.is_file(), "OCR worker returned no result.", "ocr_protocol_error")
     result = json.loads(result_path.read_text(encoding="utf-8"))

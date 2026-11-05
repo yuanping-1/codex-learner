@@ -100,12 +100,12 @@ def _html(path, missing, resources):
     require(path.stat().st_size <= MAX_STRUCTURE_BYTES,
             "HTML exceeds the 1 MiB structural parser budget; supply a smaller archived section.", "parser_budget")
     try:
-        from bs4 import BeautifulSoup, Comment, NavigableString
+        from bs4 import BeautifulSoup, CData, NavigableString
     except ImportError as exc:
         raise LearnerError("parser_missing", "HTML import needs requirements-base.txt.") from exc
     with path.open(encoding="utf-8-sig") as stream:
         soup = BeautifulSoup(stream, "html.parser")
-    for node in soup(["script", "style", "noscript", "template"]):
+    for node in soup(["head", "title", "script", "style", "noscript", "template"]):
         node.decompose()
     for i, node in enumerate(soup.find_all(["img", "iframe", "object", "embed"]), 1):
         uri = node.get("src") or node.get("data") or "embedded resource"
@@ -135,7 +135,10 @@ def _html(path, missing, resources):
             flush_loose_text()
             blocks.append(node)
         elif not any(id(parent) in selected for parent in node.parents):
-            if isinstance(node, NavigableString) and not isinstance(node, Comment) and node.strip():
+            # Match Beautiful Soup's visible text types, not every string
+            # subclass: doctypes, declarations and processing instructions are
+            # document metadata, even when their text looks like ordinary prose.
+            if type(node) in (NavigableString, CData) and node.strip():
                 container = next((id(parent) for parent in node.parents if parent.name in containers), id(soup))
                 if loose_container is not None and loose_container != container:
                     flush_loose_text()
