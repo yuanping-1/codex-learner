@@ -234,6 +234,23 @@ class PackageV2Tests(unittest.TestCase):
             self.assertEqual(build["write_schema"], 2)
             self.assertEqual(build["protocol"], "codex-learner-course")
 
+    def test_product_excludes_entire_historical_snapshot_not_just_logs(self):
+        prefix = "docs/evidence/v0.2/revised-release/"
+        for name in ("README.md", "evidence-manifest.json", "windows-job-validation.json",
+                     "revised-ocr-linux-validation.json", "revised-final-core.log"):
+            self.write(prefix + name, "historical evidence belongs in its complete attachment")
+        self.write("docs/evidence/v0.2/revised-ocr-linux-validation.json", "current top-level evidence")
+        self.write("docs/delivery-perf-candidate.md", "how to obtain the complete evidence attachment")
+        self.write("docs/local-acceptance-handoff-v0.2.md", "historical task pinned to the original failed candidate")
+        with patch.object(package, "ROOT", self.repo):
+            result = package.build(self.root / "candidate.zip")
+        with zipfile.ZipFile(result["path"]) as archive:
+            names = archive.namelist()
+        self.assertFalse(any(prefix in name for name in names))
+        self.assertNotIn("codex-learner/docs/local-acceptance-handoff-v0.2.md", names)
+        self.assertIn("codex-learner/docs/evidence/v0.2/revised-ocr-linux-validation.json", names)
+        self.assertIn("codex-learner/docs/delivery-perf-candidate.md", names)
+
     def test_concurrent_edit_fails_without_replacing_previous_package(self):
         output = self.root / "release.zip"
         output.write_bytes(b"previous package")

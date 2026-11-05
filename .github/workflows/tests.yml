@@ -22,16 +22,34 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -r requirements-base.txt
       - run: python -m unittest discover -s tests -v
-      - run: python scripts/package.py --output artifacts/codex-learner-0.2.0.zip
-      - name: Upload package, checksum, and recorded validation evidence
+      - name: Build commit-bound performance candidate
+        id: package
+        shell: bash
+        run: |
+          candidate="codex-learner-0.2.0-perf-$(git rev-parse --short=12 HEAD)"
+          python scripts/package.py --output "artifacts/$candidate.zip"
+          echo "candidate=$candidate" >> "$GITHUB_OUTPUT"
+      - name: Build complete evidence attachment
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        run: python scripts/package_evidence.py --output artifacts/${{ steps.package.outputs.candidate }}-evidence.zip
+      - name: Upload candidate and checksum
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
         uses: actions/upload-artifact@v4
         with:
-          name: codex-learner-0.2.0-${{ github.event_name }}-${{ github.sha }}
+          name: ${{ steps.package.outputs.candidate }}-${{ github.event_name }}
           path: |
-            artifacts/codex-learner-0.2.0.zip
-            artifacts/codex-learner-0.2.0.zip.sha256
-            docs/evidence/v0.2/*.json
+            artifacts/${{ steps.package.outputs.candidate }}.zip
+            artifacts/${{ steps.package.outputs.candidate }}.zip.sha256
+          retention-days: 30
+          if-no-files-found: error
+      - name: Upload complete checksummed evidence
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.candidate }}-evidence-${{ github.event_name }}
+          path: |
+            artifacts/${{ steps.package.outputs.candidate }}-evidence.zip
+            artifacts/${{ steps.package.outputs.candidate }}-evidence.zip.sha256
           retention-days: 30
           if-no-files-found: error
   browser:

@@ -34,6 +34,10 @@ def file_hash(path):
 
 def allowed(name):
     path = Path(name)
+    # Historical validation is delivered as a complete, separately checksummed
+    # evidence attachment. Never include just the basename-allowed JSON subset.
+    if name.startswith("docs/evidence/v0.2/revised-release/"):
+        return False
     # The external acceptance task pins the original ZIP hash. Keep it outside
     # subsequent packages instead of shipping instructions for a different ZIP.
     if name == "docs/local-acceptance-handoff-v0.2.md":
@@ -140,4 +144,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    print(json.dumps(build(args.output or ROOT / ("artifacts/codex-learner-" + version() + ".zip")), indent=2))
+    output = args.output
+    if output is None:
+        commit = metadata({})["commit"]
+        if not commit:
+            parser.error("Outside Git, specify a new --output path explicitly.")
+        output = ROOT / "artifacts" / f"codex-learner-{version()}-perf-{commit[:12]}.zip"
+    print(json.dumps(build(output), indent=2))

@@ -8,7 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from .common import LearnerError, canonical, require
+from .common import LearnerError, canonical, parse_json_text, require
 
 BODY_FIELDS = frozenset({"text", "answer", "feedback", "reason", "prompt",
                          "reference_answer", "required", "alternatives", "critical_errors"})
@@ -63,12 +63,38 @@ def verify_ref(directory, ref):
     return path
 
 
+def _read_verified_json(directory, ref):
+    """Hash and parse the same bytes, keeping only this one JSON body in memory."""
+    validate_ref(ref)
+    path = artifact_path(directory, ref["path"])
+    require(path.is_file(), f"Referenced artifact is missing: {ref['path']}", "artifact_missing")
+    expected_length = ref.get("byte_length")
+    require(expected_length is None or path.stat().st_size == expected_length,
+            f"Referenced artifact failed integrity verification: {ref['path']}", "artifact_corrupt")
+    data = bytearray()
+    digest = hashlib.sha256()
+    with open(path, "rb") as stream:
+        for chunk in iter(lambda: stream.read(CHUNK_SIZE), b""):
+            require(expected_length is None or len(data) + len(chunk) <= expected_length,
+                    f"Referenced artifact failed integrity verification: {ref['path']}", "artifact_corrupt")
+            digest.update(chunk)
+            data.extend(chunk)
+    require((expected_length is None or len(data) == expected_length)
+            and digest.hexdigest() == ref["sha256"],
+            f"Referenced artifact failed integrity verification: {ref['path']}", "artifact_corrupt")
+    try:
+        text = data.decode("utf-8")
+    except UnicodeError as exc:
+        raise LearnerError("invalid_json", f"Invalid JSON: {path}", path=str(path)) from exc
+    del data
+    return parse_json_text(text, path)
+
+
 def read_body(directory, ref):
+    if isinstance(ref, dict) and ref.get("format") == "json":
+        return lazy(_read_verified_json(directory, ref), directory)
     path = verify_ref(directory, ref)
     try:
-        if ref.get("format") == "json":
-            from .common import read_json
-            return lazy(read_json(path), directory)
         return _read_text_exact(path)
     except (UnicodeError, ValueError) as exc:
         raise LearnerError("artifact_corrupt", f"Body cannot be decoded: {ref['path']}") from exc
@@ -182,27 +208,34 @@ def materialize(value, directory=None):
     return result
 
 
-def iter_body_refs(value, directory=None, _seen=None):
-    """Yield source originals, bodies, and transitive references in receipts."""
-    seen = set() if _seen is None else _seen
+def _walk_body_refs(value, directory, seen, verify):
     if isinstance(value, dict):
         if isinstance(value.get("path"), str) and isinstance(value.get("sha256"), str):
             identity = (value["path"], value["sha256"])
             if identity not in seen:
                 seen.add(identity)
+                is_json = directory is not None and value.get("format") == "json"
+                if is_json:
+                    body = _read_verified_json(directory, value)
+                elif verify:
+                    verify_ref(directory, value)
                 yield value
-                if directory is not None and value.get("format") == "json":
-                    yield from iter_body_refs(read_body(directory, value), directory, seen)
+                if is_json:
+                    yield from _walk_body_refs(body, directory, seen, verify)
         for item in dict.values(value):
-            yield from iter_body_refs(item, directory, seen)
+            yield from _walk_body_refs(item, directory, seen, verify)
     elif isinstance(value, list):
         for item in value:
-            yield from iter_body_refs(item, directory, seen)
+            yield from _walk_body_refs(item, directory, seen, verify)
+
+
+def iter_body_refs(value, directory=None, _seen=None):
+    """Yield source originals, bodies, and transitive references in receipts."""
+    seen = set() if _seen is None else _seen
+    yield from _walk_body_refs(value, directory, seen, verify=False)
 
 
 def verify_artifacts(directory, state):
-    count = 0
-    for ref in iter_body_refs(state, directory):
-        verify_ref(directory, ref)
-        count += 1
-    return count
+    # JSON traversal already verifies the bytes it parses; do not read/hash
+    # these receipts again. The seen set lives only for this verification.
+    return sum(1 for _ in _walk_body_refs(state, directory, set(), verify=True))

@@ -48,7 +48,8 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def read_json(path):
+def parse_json_text(text, source_path):
+    """Parse already-read JSON with the same strict rules as file reads."""
     def pairs(items):
         result = {}
         for key, value in items:
@@ -57,10 +58,18 @@ def read_json(path):
             result[key] = value
         return result
     try:
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs,
+        return json.loads(text, object_pairs_hook=pairs,
                           parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
     except (ValueError, UnicodeError) as exc:
+        raise LearnerError("invalid_json", f"Invalid JSON: {source_path}", path=str(source_path)) from exc
+
+
+def read_json(path):
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (ValueError, UnicodeError) as exc:
         raise LearnerError("invalid_json", f"Invalid JSON: {path}", path=str(path)) from exc
+    return parse_json_text(text, path)
 
 
 def has_body(record, field, nonempty=False):
