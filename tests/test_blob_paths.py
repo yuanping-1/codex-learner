@@ -21,6 +21,10 @@ class ArtifactPathTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name) / "course"
         self.root.mkdir()
+        # Windows temporary roots may use an 8.3 parent alias (RUNNER~1).
+        # Product traversal resolves that root before component checks, so mock
+        # targets and expected visited paths must use the same canonical root.
+        self.root = self.root.resolve()
 
     def ref(self, relative, data=b"unchanged"):
         path = self.root / relative
@@ -119,6 +123,50 @@ class ArtifactPathTests(unittest.TestCase):
                 self.rejected(name + "/body")
             finally:
                 os.rmdir(link)
+
+    @unittest.skipUnless(os.name == "nt", "Windows actual short-path aliases")
+    def test_windows_short_root_reads_bodies_and_rejects_actual_junction(self):
+        import ctypes
+        from ctypes import wintypes
+
+        root = self.root / "long artifact course directory"
+        root.mkdir()
+        text = "\u539f\u7b54\r\n\U0001f600  \n"
+        ref = blobs.write_body(root, text)
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        short_path = kernel32.GetShortPathNameW
+        short_path.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
+        short_path.restype = wintypes.DWORD
+        capacity = short_path(str(root), None, 0)
+        if not capacity:
+            raise ctypes.WinError(ctypes.get_last_error())
+        buffer = ctypes.create_unicode_buffer(capacity)
+        written = short_path(str(root), buffer, capacity)
+        if not written:
+            raise ctypes.WinError(ctypes.get_last_error())
+        self.assertLess(written, capacity)
+        alias = Path(buffer.value)
+        if os.path.normcase(str(alias)) == os.path.normcase(str(root)):
+            self.skipTest("The volume does not expose a distinct 8.3 root alias.")
+        self.assertEqual(alias.resolve(), root)
+        self.assertEqual(blobs.read_body(alias, ref), text)
+        self.assertEqual(blobs.verify_ref(alias, ref), root / ref["path"])
+
+        outside = self.root / "outside-short-root"
+        outside.mkdir()
+        (outside / "body.txt").write_text("external", encoding="utf-8")
+        junction = root / "junction"
+        run = subprocess.run(["cmd.exe", "/d", "/c", "mklink", "/J", str(junction), str(outside)],
+                             capture_output=True, text=True, errors="replace")
+        if run.returncode:
+            self.skipTest(f"Directory junction creation unavailable: {run.stdout} {run.stderr}")
+        try:
+            self.assertTrue(junction.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+            with self.assertRaises(LearnerError) as error:
+                blobs.artifact_path(alias, "junction/body.txt")
+            self.assertEqual(error.exception.code, "invalid_path")
+        finally:
+            os.rmdir(junction)
 
     def test_root_and_ancestors_are_rechecked_for_each_reference(self):
         self.ref("parent/body")

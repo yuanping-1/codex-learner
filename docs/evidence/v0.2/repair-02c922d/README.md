@@ -5,3 +5,5 @@
 核心 230 项：223 PASS、7 平台/依赖 SKIP、0 FAIL。两份原归档各一次无探针恢复、旧 S05 同进程索引注入后正常恢复，以及各一次独立探针正常恢复均在 Linux 通过；样本数不是 Windows 首调验收的各30次。探针未捕获自然Windows故障。
 
 `core-command-observation.json` 的起始时间取运行中观察到的OS进程创建时间，完成字段为轮询观察上界，未伪造精确退出时间。其他协议命令由包装器直接记录起止和退出码。原始log和首轮样本保持。旧本机恢复/性能FAIL、旧S05 BLOCKED不变。最终包、CI和新性能诊断由包外交付记录绑定。
+
+首轮 `33207d6` Windows CI失败原日志见 `ci-first-failure.log`，两套解释器均4条失败断言，涉及测试短路径与展开路径的目标比较/注入匹配。`ci-first-status.json` 同时保留matrix一项cancelled的调度状态；不能因已打印测试结果把job取消状态改写为success。后续仅修正测试路径对齐，产品模块未再改变。

@@ -57,7 +57,10 @@ class RestoreBenchmarkTests(CourseCase):
         self.assertEqual(after["tag"], "normal-after-injection")
         self.assertEqual(before["pid"], after["pid"])
         self.assertFalse(result["first_call_acceptance_eligible"])
-        self.assertEqual(after["receipt"]["path"], str(self.root / "fault/library/sample-course"))
+        # The driver resolves its fresh case root; Windows may expand RUNNER~1.
+        # Assert the same real destination, not equality of two path spellings.
+        self.assertEqual(Path(after["receipt"]["path"]),
+                         (self.root / "fault/library/sample-course").resolve())
 
     def test_early_publish_failure_does_not_satisfy_index_injection_or_retry(self):
         archive = self.fixture()
