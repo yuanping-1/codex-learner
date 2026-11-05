@@ -6,6 +6,8 @@
 
 2026-11-05 本机报告将原候选包判为 **FAIL（20 通过、5 失败、12 阻塞）**。当前修订针对五个实测缺陷，尤其 Windows venv 启动时序下的 Job 限制失效；修复后的 CI 与原包/本机验收分别记录，详见 [失败与修复映射](docs/local-acceptance-2026-11-05.md)。
 
+后续性能候选保留每次写入前的历史完整性检查，消除 JSON 回执的重复读取与哈希；新提交和幂等重试使用同一合成快照分别测量。结果与边界见 [性能修订报告](docs/performance-v0.2.md)，本机执行入口见 [定向复验任务](docs/performance-recheck-v0.2.md)。候选文件名包含提交号，产品包与完整证据分开交付，详见 [附件说明](docs/delivery-perf-candidate.md)。这些云端结果不替代修订包的用户本机验收。
+
 ## 安装与升级
 
 基础环境支持 Python 3.10–3.12；独立 OCR 环境固定 Python 3.12。先下载并解压发布包，在项目根目录运行。以下以 PowerShell 为例：
@@ -78,6 +80,8 @@ python scripts/package.py
 
 - [0.2.0 迁移、OCR 和归档操作](docs/v0.2-upgrade.md)
 - [0.2.0 验收记录](docs/acceptance-v0.2.md)
+- [项目工程报告与功能状态](docs/project-engineering-report-2026-11-05.md)
+- [性能修订与本机复验](docs/performance-v0.2.md)
 - [完整原计划](docs/plan-v2.2.md)
 - [记录接口](skills/codex-learner/references/operations.md)
 - [教学 Skill](skills/codex-learner/SKILL.md)

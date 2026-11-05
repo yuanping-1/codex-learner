@@ -2,6 +2,8 @@
 
 当前软件版本字符串保持 `0.2.0`。性能修订使用文件名 `codex-learner-0.2.0-perf-<12 位提交号>.zip`，并以包内 `BUILD.json` 的完整提交号、成员清单及外部 ZIP SHA-256 共同确定身份。文件名不能替代校验，开发树未提交的文件也不能冒充该提交的发布产物；对外交付从干净提交构建。
 
+产品附件同时提供 `*-recheck.md`：由实际 ZIP 校验后的成员、BUILD 提交和 ZIP SHA-256 生成，可直接交给本机 Codex 执行。生成入口为 `scripts/create_recheck_task.py --package <候选ZIP> --output <新任务文件>`；它不会覆盖不同内容的旧任务，也不把任务生成视为本机验收通过。
+
 安装 ZIP 包含产品源码、安装与验收工具及说明，**排除整个 `docs/evidence/v0.2/revised-release/` 历史证据快照**。同一 CI 提供独立的 `codex-learner-0.2.0-perf-<提交号>-evidence.zip` 及其外部 SHA-256，内含完整历史快照、工程报告、评审采纳记录和明确允许的性能结果。
 
 两份 ZIP 内均保留 `codex-learner/` 仓库相对目录。将匹配的两个附件解压至同一个新的父目录，即可按报告的相对链接读取证据；重叠文档应为相同字节。证据附件的 `EVIDENCE_MANIFEST.sha256.json` 覆盖其全部输入和 `EVIDENCE_BUILD.json`，清单自身由外部 ZIP SHA-256 绑定。它不包含安装 ZIP、模型、课程库、配置或凭据；完整软件和相关源码链接仍由产品包提供。

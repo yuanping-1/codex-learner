@@ -32,6 +32,9 @@ jobs:
       - name: Build complete evidence attachment
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
         run: python scripts/package_evidence.py --output artifacts/${{ steps.package.outputs.candidate }}-evidence.zip
+      - name: Bind native recheck task to candidate SHA-256
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        run: python scripts/create_recheck_task.py --package artifacts/${{ steps.package.outputs.candidate }}.zip --output artifacts/${{ steps.package.outputs.candidate }}-recheck.md
       - name: Upload candidate and checksum
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
         uses: actions/upload-artifact@v4
@@ -40,6 +43,7 @@ jobs:
           path: |
             artifacts/${{ steps.package.outputs.candidate }}.zip
             artifacts/${{ steps.package.outputs.candidate }}.zip.sha256
+            artifacts/${{ steps.package.outputs.candidate }}-recheck.md
           retention-days: 30
           if-no-files-found: error
       - name: Upload complete checksummed evidence
