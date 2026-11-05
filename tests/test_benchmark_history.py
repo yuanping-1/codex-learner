@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -50,6 +51,9 @@ class HistoryBenchmarkTests(unittest.TestCase):
         self.assertIsNone(results[2]["returncode"])
         self.assertEqual(results[2]["stdout"], "partial stdout")
         self.assertEqual(results[2]["stderr"], "partial stderr")
+        for result in results:
+            self.assertLessEqual(datetime.fromisoformat(result["process_started_at_utc"]),
+                                 datetime.fromisoformat(result["process_completed_at_utc"]))
 
     def test_repeated_isolated_comparison_and_profile_keep_one_fixture(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -72,6 +76,11 @@ class HistoryBenchmarkTests(unittest.TestCase):
         expected_modules = report["sources"]["candidate"]["module_sha256"]
         for sample in report["samples"]:
             result = sample["result"]
+            times = [sample["process_started_at_utc"], result["worker_started_at_utc"],
+                     result["operation_started_at_utc"], result["operation_completed_at_utc"],
+                     result["worker_completed_at_utc"], sample["process_completed_at_utc"]]
+            self.assertEqual(times, sorted(times))
+            self.assertGreater(result["worker_pid"], 0)
             self.assertTrue(result["correctness"]["passed"])
             self.assertEqual(result["correctness"]["before_submissions"], 20)
             self.assertEqual(result["correctness"]["after_submissions"],

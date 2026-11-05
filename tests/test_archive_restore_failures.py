@@ -67,7 +67,7 @@ class ArchiveRestoreFailureTests(CourseCase):
         return restore_archive(library or self.library, archive["path"], archive["sha256"], confirmed=True)
 
     def assert_preserved(self, error):
-        self.assertEqual(error.code, "commit_uncertain")
+        self.assertEqual(error.code, "commit_uncertain", json.dumps(error.as_dict(), ensure_ascii=False))
         self.assertTrue(error.details["staging_preserved"])
         stage = Path(error.details["stage_path"])
         self.assertTrue(stage.is_dir())
@@ -409,20 +409,56 @@ class ArchiveRestoreFailureTests(CourseCase):
         archive = self.archive()
         library = self.fresh_library()
         lock = archives.file_lock
+        injection_reached = []
 
         @contextmanager
         def unlock_failed(path):
             with lock(path):
                 yield
+            injection_reached.append(str(path))
             raise denied("unlock denied", path)
 
         with patch.object(archives, "file_lock", unlock_failed), self.assertRaises(LearnerError) as caught:
             self.restore(archive, library)
         error = caught.exception
+        self.assertEqual(len(injection_reached), 1,
+                         json.dumps({"injection_reached": injection_reached, "error": error.as_dict()},
+                                    ensure_ascii=False))
         self.assert_preserved(error)
         self.assertEqual(error.details["phase"], "unlock_library")
         self.assertEqual(error.details["rollback"]["status"], "state_unknown")
         self.assertEqual(library.load_manifest("sample-course")["state_revision"], archive["state_revision"])
+        self.assertEqual(archived_courses(library), [])
+
+    def test_cleanup_and_stage_observation_failure_keep_unknown_status(self):
+        archive = self.archive()
+        library = self.fresh_library()
+        rmtree, lstat = shutil.rmtree, Path.lstat
+        cleanup_attempts = []
+
+        def cleanup_failed(path, *args, **kwargs):
+            if Path(path).name.startswith(".learner-restore-"):
+                cleanup_attempts.append(Path(path))
+                raise denied("cleanup denied", path)
+            return rmtree(path, *args, **kwargs)
+
+        def observation_failed(path, *args, **kwargs):
+            if path in cleanup_attempts:
+                raise denied("stage observation unavailable", path)
+            return lstat(path, *args, **kwargs)
+
+        with patch.object(shutil, "rmtree", cleanup_failed), patch.object(Path, "lstat", observation_failed):
+            result = self.restore(archive, library)
+        self.assertEqual(result["status"], "course_restored")
+        diagnostic = result["diagnostics"][0]
+        self.assertEqual(diagnostic["phase"], "cleanup")
+        self.assertTrue(diagnostic["cleanup_failed"])
+        self.assertIsNone(diagnostic["stage_exists"])
+        self.assertIsNone(diagnostic["staging_preserved"])
+        self.assertEqual(diagnostic["rollback"]["status"], "not_needed_committed")
+        # Later observation is separate evidence, never a replacement for null.
+        self.assertTrue(cleanup_attempts[0].is_dir())
+        self.assertEqual(self.tree(library.root / "sample-course"), self.archive_tree(archive))
         self.assertEqual(archived_courses(library), [])
 
     def test_lock_exit_error_does_not_mask_prior_failure_and_rollback(self):

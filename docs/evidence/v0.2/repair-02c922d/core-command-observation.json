@@ -1,0 +1,25 @@
+[
+  {
+    "pid": 49319,
+    "command": [
+      ".local/venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "process_started_at_utc": "2026-11-05T16:41:49.310000+00:00",
+    "timestamp_source": "OS process creation time, recorded after start",
+    "stdout_stderr": "core-first.log",
+    "returncode": 0,
+    "completion_observed_at_utc": "2026-11-05T16:43:11.487734+00:00",
+    "test_framework_elapsed_seconds": 27.208,
+    "tests_run": 230,
+    "passed": 223,
+    "skipped": 7,
+    "failed": 0,
+    "log_last_modified_at_utc": "2026-11-05T16:42:17.425548+00:00"
+  }
+]

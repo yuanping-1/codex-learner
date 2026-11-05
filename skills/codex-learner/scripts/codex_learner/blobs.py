@@ -6,7 +6,8 @@ field lookup does; a missing/corrupt body is an error, never an empty string.
 import copy
 import hashlib
 import json
-from pathlib import Path
+import stat
+from pathlib import Path, PureWindowsPath
 
 from .common import LearnerError, canonical, parse_json_text, require
 
@@ -24,19 +25,44 @@ def file_sha256(path):
 
 
 def artifact_path(directory, relative):
-    require(isinstance(relative, str) and relative and "\\" not in relative,
+    require(isinstance(relative, str) and relative and "\\" not in relative and ":" not in relative,
             "Invalid artifact path.", "invalid_path")
+    # Validate the original spelling before Path normalizes '.' or empty parts.
+    # These are portable course-relative names: Windows trims trailing dots and
+    # spaces, and reserves device names even when they have an extension.
+    parts = relative.split("/")
     rel = Path(relative)
-    require(not rel.is_absolute() and all(part not in ("..", ".") for part in rel.parts),
+    require(not rel.is_absolute() and not rel.drive and all(
+        part not in ("", "..", ".") and part == part.rstrip(" .")
+        and not PureWindowsPath(part).is_reserved() for part in parts),
             "Artifact escaped course directory.", "invalid_path")
     root = Path(directory).resolve()
-    path = root / rel
-    require(path.resolve().is_relative_to(root), "Artifact escaped course directory.", "invalid_path")
-    cursor = path
-    while cursor != root:
-        require(not cursor.is_symlink(), "Artifact symbolic links are not supported.", "invalid_path")
-        cursor = cursor.parent
-    return path
+    # Check every component without following it. With a resolved root and no
+    # navigation/device components, rejecting all links/reparse points keeps
+    # the path beneath that root without resolving the full path a second time.
+    # No ancestor result is cached across references or verification calls.
+    cursor = root
+    for part in parts:
+        cursor /= part
+        try:
+            info = cursor.lstat()
+        except (FileNotFoundError, NotADirectoryError):
+            # New immutable bodies may need directories that do not exist yet.
+            # Readers still require an existing regular file below.
+            continue
+        require(not stat.S_ISLNK(info.st_mode)
+                and not getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT,
+                "Artifact symbolic links and reparse points are not supported.", "invalid_path")
+    return cursor
+
+
+def _artifact_file_info(path, relative):
+    try:
+        info = path.stat()
+    except (FileNotFoundError, NotADirectoryError):
+        raise LearnerError("artifact_missing", f"Referenced artifact is missing: {relative}") from None
+    require(stat.S_ISREG(info.st_mode), f"Referenced artifact is missing: {relative}", "artifact_missing")
+    return info
 
 
 def is_body_ref(value):
@@ -56,8 +82,8 @@ def validate_ref(ref):
 def verify_ref(directory, ref):
     validate_ref(ref)
     path = artifact_path(directory, ref["path"])
-    require(path.is_file(), f"Referenced artifact is missing: {ref['path']}", "artifact_missing")
-    require(("byte_length" not in ref or path.stat().st_size == ref["byte_length"])
+    info = _artifact_file_info(path, ref["path"])
+    require(("byte_length" not in ref or info.st_size == ref["byte_length"])
             and file_sha256(path) == ref["sha256"],
             f"Referenced artifact failed integrity verification: {ref['path']}", "artifact_corrupt")
     return path
@@ -67,9 +93,9 @@ def _read_verified_json(directory, ref):
     """Hash and parse the same bytes, keeping only this one JSON body in memory."""
     validate_ref(ref)
     path = artifact_path(directory, ref["path"])
-    require(path.is_file(), f"Referenced artifact is missing: {ref['path']}", "artifact_missing")
+    info = _artifact_file_info(path, ref["path"])
     expected_length = ref.get("byte_length")
-    require(expected_length is None or path.stat().st_size == expected_length,
+    require(expected_length is None or info.st_size == expected_length,
             f"Referenced artifact failed integrity verification: {ref['path']}", "artifact_corrupt")
     data = bytearray()
     digest = hashlib.sha256()

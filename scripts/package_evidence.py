@@ -37,6 +37,10 @@ REQUIRED = (
     )),
 )
 OPTIONAL = (
+    "docs/native-repair-02c922d.md", "docs/native-repair-recheck-v0.2.md",
+    *("docs/evidence/v0.2/repair-02c922d/" + name for name in (
+        "README.md", "core-first.log", "core-command-observation.json", "validation.json",
+    )),
     "docs/performance-v0.2.md", "docs/performance-recheck-v0.2.md",
     "docs/local-recheck-7946513-2026-11-05.md", "docs/recovery-diagnostic-recheck-v0.2.md",
     "docs/evidence/v0.2/performance-baseline.json",

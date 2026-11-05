@@ -217,6 +217,7 @@ def worker(operation, root, fixture, profile=False):
                           question_id="q1", question_version="qv10", submission_id=sid,
                           answer="新的简短作答。\r\n末行保留  ")
     with probe if probe else nullcontext():
+        operation_started_at_utc = datetime.now(timezone.utc).isoformat()
         started = time.monotonic()
         if operation == "list":
             result = library.list_courses()
@@ -247,6 +248,7 @@ def worker(operation, root, fixture, profile=False):
         serialization_seconds = time.monotonic() - serialized_at
         elapsed = time.monotonic() - started
         peak, method = peak_memory()
+        operation_completed_at_utc = datetime.now(timezone.utc).isoformat()
     # Correctness checks deliberately follow timing AND the process peak capture.
     state = library.load("sample-course")
     after_hash = file_hash(directory / "course.json")
@@ -269,6 +271,8 @@ def worker(operation, root, fixture, profile=False):
         path = Path(module.__file__).resolve()
         actual_modules[module.__name__] = {"path": str(path), "sha256": file_hash(path)}
     return {"operation": operation, "peak_bytes": peak, "peak_mib": round(peak / (1024 * 1024), 3),
+            "operation_started_at_utc": operation_started_at_utc,
+            "operation_completed_at_utc": operation_completed_at_utc,
             "measurement": method, "elapsed_seconds": round(elapsed, 6), "result_count": count,
             "serialized_result_bytes": encoded_bytes, "serialization_seconds": serialization_seconds,
             "request_bytes": len(json.dumps(command, ensure_ascii=False).encode("utf-8")) if command else None,
@@ -286,15 +290,20 @@ def worker(operation, root, fixture, profile=False):
 def run_subprocess(arguments, timeout=600):
     """Never discard worker errors: callers persist this result before continuing."""
     started = time.monotonic()
+    started_at_utc = datetime.now(timezone.utc).isoformat()
     try:
         run = subprocess.run(arguments, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
         result = {"returncode": run.returncode, "stdout": run.stdout, "stderr": run.stderr,
+                  "process_started_at_utc": started_at_utc,
+                  "process_completed_at_utc": datetime.now(timezone.utc).isoformat(),
                   "process_wall_seconds": time.monotonic() - started}
     except (subprocess.TimeoutExpired, OSError) as exc:
         def text(value):
             return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else value or ""
         return {"returncode": None, "stdout": text(getattr(exc, "stdout", "")),
                 "stderr": text(getattr(exc, "stderr", "")), "error": type(exc).__name__ + ": " + str(exc),
+                "process_started_at_utc": started_at_utc,
+                "process_completed_at_utc": datetime.now(timezone.utc).isoformat(),
                 "process_wall_seconds": time.monotonic() - started, "ok": False}
     try:
         result["result"] = json.loads(result["stdout"])
@@ -361,17 +370,25 @@ def main():
     if args._build_fixture or args._worker:
         if not args._library:
             parser.error("Internal fixture and operation workers require an isolated library path.")
-        code_root = select_code(args._code_root)
-        if args._build_fixture:
-            result = create_fixture(args._library, args.records)
-        else:
-            if not args._fixture_info:
-                parser.error("An operation worker requires synthetic fixture metadata.")
-            fixture = json.loads(args._fixture_info.read_text(encoding="utf-8"))
-            result = worker(args._worker, args._library, fixture, args._profile_worker)
-            for value in result["actual_product_modules"].values():
-                if not Path(value["path"]).is_relative_to(code_root):
-                    raise AssertionError("Worker imported product code outside selected source root")
+        timing = {"worker_started_at_utc": datetime.now(timezone.utc).isoformat(), "worker_pid": os.getpid()}
+        try:
+            code_root = select_code(args._code_root)
+            if args._build_fixture:
+                result = create_fixture(args._library, args.records)
+            else:
+                if not args._fixture_info:
+                    parser.error("An operation worker requires synthetic fixture metadata.")
+                fixture = json.loads(args._fixture_info.read_text(encoding="utf-8"))
+                result = worker(args._worker, args._library, fixture, args._profile_worker)
+                for value in result["actual_product_modules"].values():
+                    if not Path(value["path"]).is_relative_to(code_root):
+                        raise AssertionError("Worker imported product code outside selected source root")
+        except BaseException:
+            timing["worker_completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+            print(json.dumps({"failed_worker_timing": timing}), file=sys.stderr, flush=True)
+            raise
+        timing["worker_completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+        result.update(timing)
         print(json.dumps(result, ensure_ascii=False))
         return 0
 
