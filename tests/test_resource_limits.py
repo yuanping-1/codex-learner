@@ -304,19 +304,50 @@ worker = sys.argv[3]
 observed = {}
 processes = []
 jobs = []
+phases = []
 process_init = limits._SuspendedWindowsProcess.__init__
 job_init = limits._WindowsJob.__init__
+process_close = limits._SuspendedWindowsProcess.close
+job_close = limits._WindowsJob.close
+process_resume = limits._SuspendedWindowsProcess.resume
+stop_tree = limits._stop_tree
+def phase(label):
+    phases.append({"phase": label, "handles": psutil.Process().num_handles()})
 def capture_process(self, *args, **kwargs):
+    phase("before_process_create")
     process_init(self, *args, **kwargs)
     processes.append(self)
+    phase("after_process_create")
 def capture_job(self, *args, **kwargs):
+    phase("before_job_create")
     job_init(self, *args, **kwargs)
     jobs.append(self)
+    phase("after_job_create")
+def capture_process_close(self):
+    phase("before_process_close")
+    process_close(self)
+    phase("after_process_close")
+def capture_job_close(self):
+    phase("before_job_close")
+    job_close(self)
+    phase("after_job_close")
+def capture_resume(self):
+    phase("before_resume")
+    process_resume(self)
+    phase("after_resume")
+def capture_stop(*args, **kwargs):
+    phase("before_stop")
+    stop_tree(*args, **kwargs)
+    phase("after_stop")
 def owned_handles_closed():
     return (all(p._process_handle is None and p._thread_handle is None and p.stdin.closed for p in processes)
             and all(j.handle is None for j in jobs))
 limits._SuspendedWindowsProcess.__init__ = capture_process
 limits._WindowsJob.__init__ = capture_job
+limits._SuspendedWindowsProcess.close = capture_process_close
+limits._WindowsJob.close = capture_job_close
+limits._SuspendedWindowsProcess.resume = capture_resume
+limits._stop_tree = capture_stop
 # Warm up native library initialization separately from the repeated operation
 # measurement. Keep its handle change visible; do not allow a per-run tolerance.
 initial_handles = psutil.Process().num_handles()
@@ -325,7 +356,24 @@ warmup = limits.run_limited([sys.executable, "-c", "import time; time.sleep(0.2)
 gc.collect()
 warmup_evidence = {"run": warmup, "handles_before": initial_handles,
                    "handles_after": psutil.Process().num_handles(),
-                   "owned_handles_closed": owned_handles_closed()}
+                   "owned_handles_closed": owned_handles_closed(), "phases": list(phases)}
+processes.clear()
+jobs.clear()
+gc.collect()
+warmup_evidence["handles_after_releasing_captured_instances"] = psutil.Process().num_handles()
+# Isolate the lifetime of a closed BufferedWriter wrapper from an OS pipe leak.
+# Some Windows Python builds keep the wrapper's synchronization handle until
+# the wrapper is deallocated, even though its file descriptor is already closed.
+wrapper_probe = {"before": psutil.Process().num_handles()}
+probe_read, probe_write = os.pipe()
+probe_stream = os.fdopen(probe_write, "wb")
+os.close(probe_read)
+probe_stream.close()
+gc.collect()
+wrapper_probe["closed_wrapper_retained"] = psutil.Process().num_handles()
+del probe_stream
+gc.collect()
+wrapper_probe["wrapper_released"] = psutil.Process().num_handles()
 original = limits._WindowsJob.attach
 def delayed_attach(self, pid, process_handle=None):
     time.sleep(delay)
@@ -337,18 +385,28 @@ measurements = []
 try:
     for iteration in range(3):
         observed = {}
+        phases = []
         handles_before = psutil.Process().num_handles()
         result = limits.run_limited([sys.executable, worker, str(identity)], memory_limit=128*1024*1024, timeout=10)
         gc.collect()
         observed.update({"delay_seconds": delay, "iteration": iteration, "run": result,
                          "handles_before": handles_before, "handles_after": psutil.Process().num_handles(),
-                         "owned_handles_closed": owned_handles_closed()})
+                         "owned_handles_closed": owned_handles_closed(), "phases": list(phases)})
+        processes.clear()
+        jobs.clear()
+        gc.collect()
+        observed["handles_after_releasing_captured_instances"] = psutil.Process().num_handles()
         measurements.append(observed)
 finally:
     limits._WindowsJob.attach = original
     limits._SuspendedWindowsProcess.__init__ = process_init
     limits._WindowsJob.__init__ = job_init
-print(json.dumps({"warmup": warmup_evidence, "measurements": measurements}))
+    limits._SuspendedWindowsProcess.close = process_close
+    limits._WindowsJob.close = job_close
+    limits._SuspendedWindowsProcess.resume = process_resume
+    limits._stop_tree = stop_tree
+print(json.dumps({"warmup": warmup_evidence, "closed_pipe_wrapper_probe": wrapper_probe,
+                  "measurements": measurements}))
 ''', encoding="utf-8")
             environment = dict(os.environ)
             # This fresh venv intentionally has no pip installations. Reuse the
