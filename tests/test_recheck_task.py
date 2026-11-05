@@ -31,9 +31,10 @@ class RecheckTaskTests(unittest.TestCase):
             output = root / "recheck.md"
             result = create(package, output)
             self.assertEqual(result["package_sha256"], hashlib.sha256(package.read_bytes()).hexdigest())
-            self.assertIn(result["package_sha256"], output.read_text())
-            self.assertIn("a" * 40, output.read_text())
-            self.assertTrue(output.read_text().endswith("# 隔离验收\n保留正式课程。\n"))
+            text = output.read_text(encoding="utf-8")
+            self.assertIn(result["package_sha256"], text)
+            self.assertIn("a" * 40, text)
+            self.assertTrue(text.endswith("# 隔离验收\n保留正式课程。\n"))
             self.assertEqual(create(package, output), result)
 
     def test_corruption_does_not_publish_a_task(self):
