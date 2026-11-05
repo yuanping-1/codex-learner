@@ -24,7 +24,8 @@ class HistoryBenchmarkTests(unittest.TestCase):
                     "profiled": False, "ok": True,
                     "result": {"elapsed_seconds": value, "peak_bytes": value * 100}, **fields}
         rows = [sample(i) for i in range(1, 21)]
-        rows += [sample(1000, warmup=True), sample(1000, profiled=True), sample(1000, ok=False)]
+        rows += [sample(1000, warmup=True), sample(1000, profiled=True), sample(1000, ok=False),
+                 sample(1000, diagnostic=True)]
         result = benchmark.summarize(rows, ["candidate"], ["submit"])[0]
         self.assertEqual(result["samples"], 21)
         self.assertEqual(result["successful_samples"], 20)
@@ -82,13 +83,40 @@ class HistoryBenchmarkTests(unittest.TestCase):
             for value in result["actual_product_modules"].values():
                 self.assertEqual(value["sha256"], expected_modules[Path(value["path"]).name])
             if sample["profiled"]:
+                self.assertEqual(result["profile"]["profile_schema_version"], 2)
                 self.assertGreater(result["profile"]["application_file_totals"]["opens"], 0)
                 self.assertGreater(result["profile"]["sha256"]["input_bytes"], 0)
                 if sample["operation"] == "submit":
                     self.assertGreater(result["profile"]["phase_io_inclusive"]["history_integrity"]["sha256_input_bytes"], 0)
+                    detail = result["profile"]["phase_call_timings_inclusive"]["history_integrity"]
+                    for name in ("artifact_path_safety", "path_resolve", "metadata_path_stat", "open", "read", "sha256_update", "json_loads"):
+                        self.assertGreater(detail[name]["calls"], 0)
             else:
                 self.assertIsNone(result["profile"])
         self.assertIn("not cold-disk", report["cache_state"])
+
+    def test_profile_only_keeps_controls_out_of_acceptance_and_summaries(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "diagnostic.json"
+            run = subprocess.run([
+                sys.executable, str(ROOT / "scripts/benchmark_history.py"), "--records", "20",
+                "--operations", "submit,retry", "--profile-only", "--baseline-root", str(ROOT),
+                "--budget-mib", "1", "--output", str(output),
+            ], text=True, encoding="utf-8", capture_output=True, timeout=120)
+            self.assertEqual(run.returncode, 0, run.stderr + run.stdout[-3000:])
+            report = json.loads(output.read_text(encoding="utf-8"))
+        self.assertTrue(report["complete"])
+        self.assertTrue(report["diagnostics_only"])
+        self.assertTrue(report["diagnostics_passed"])
+        self.assertIsNone(report["passed"])
+        self.assertEqual(report["summaries"], [])
+        self.assertEqual(report["operations"], [])
+        self.assertEqual(len(report["samples"]), 8)
+        self.assertEqual(sum(row["diagnostic_control"] for row in report["samples"]), 4)
+        self.assertTrue(all(row["diagnostic"] and not row["warmup"] for row in report["samples"]))
+        self.assertEqual({row["starting_manifest_sha256"] for row in report["samples"]},
+                         {report["fixture"]["fixture_manifest_sha256"]})
+        self.assertTrue(all((row["result"]["profile"] is not None) == row["profiled"] for row in report["samples"]))
 
     def test_unpacked_build_identity_wins_and_parent_repository_is_not_a_source_identity(self):
         with tempfile.TemporaryDirectory() as temporary:

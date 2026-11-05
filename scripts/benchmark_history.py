@@ -309,7 +309,7 @@ def summarize(samples, variants, operations):
     for variant in variants:
         for operation in operations:
             rows = [s for s in samples if s["variant"] == variant and s["operation"] == operation
-                    and not s["warmup"] and not s["profiled"]]
+                    and not s["warmup"] and not s["profiled"] and not s.get("diagnostic", False)]
             good = [s["result"] for s in rows if s["ok"]]
             times = sorted(s["elapsed_seconds"] for s in good)
             summaries.append({
@@ -340,7 +340,9 @@ def main():
     parser.add_argument("--repeat", type=int, default=1)
     parser.add_argument("--warmup", type=int, default=0)
     parser.add_argument("--operations", default=",".join(available[:-1]))
-    parser.add_argument("--profile", action="store_true", help="Run extra instrumented samples, excluded from latency summaries")
+    profiling = parser.add_mutually_exclusive_group()
+    profiling.add_argument("--profile", action="store_true", help="Run extra instrumented samples, excluded from latency summaries")
+    profiling.add_argument("--profile-only", action="store_true", help="Only run one unprofiled control and one profiled diagnostic per operation/variant; no latency or memory acceptance")
     parser.add_argument("--baseline-root", type=Path, help="Read-only product source checkout; never a personal course library")
     parser.add_argument("--_build-fixture", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--_worker", choices=available, help=argparse.SUPPRESS)
@@ -386,16 +388,20 @@ def main():
         "target_budget_mib": args.budget_mib, "sources": identities,
         "benchmark_sha256": file_hash(Path(__file__)),
         "profile_helper_sha256": file_hash(ROOT / "scripts/history_profile.py"),
-        "configuration": {"records": args.records, "repeat": args.repeat, "warmup": args.warmup,
-                          "operations": operations, "profile": args.profile},
-        "fixture": None, "operations": [], "samples": [], "summaries": [], "passed": False,
+        "configuration": {"records": args.records, "repeat": 0 if args.profile_only else args.repeat,
+                          "warmup": 0 if args.profile_only else args.warmup,
+                          "operations": operations, "profile": args.profile or args.profile_only,
+                          "profile_only": args.profile_only},
+        "fixture": None, "operations": [], "samples": [], "summaries": [],
+        "passed": None if args.profile_only else False,
+        "diagnostics_only": args.profile_only, "diagnostics_passed": None,
         "complete": False, "fixture_construction_in_separate_process": True,
         "fixture_construction_in_daily_peak": False, "fixture_copy_in_worker_peak": False,
         "codex_client_measured": False, "google_drive_measured": False, "ocr_provider_measured": False,
         "cache_state": "OS filesystem cache uncontrolled; copying fixtures may warm it. Each operation uses a fresh process; this is not cold-disk testing.",
         "scope": "Independent Python process peak RSS/working set captured immediately after operation plus JSON serialization, before post-operation correctness checks. Process wall time includes startup and checks and is reported separately.",
         "write_integrity_cost": "Writes verify all reachable historical artifacts before backup rotation; latency depends on metadata and artifact bytes.",
-        "limits": "Synthetic structure, not real human usage. No physical-disk I/O, full-history export, OCR, native Codex/Drive memory, or unbounded-history claim. Profiled diagnostics are separate from unprofiled latency distributions. Low sample counts do not establish stable tail latency.",
+        "limits": "Synthetic structure, not real human usage. No physical-disk I/O, full-history export, OCR, native Codex/Drive memory, or unbounded-history claim. Profiled diagnostics are separate from unprofiled latency distributions. In profile-only mode all samples, including the single unprofiled control per operation/variant, are diagnostic: passed is null and no latency/memory acceptance is evaluated. A control/profile difference is an observation, not a stable probe-overhead estimate. Low sample counts do not establish stable tail latency.",
     }
     failure_root = args.output.resolve().parent / (args.output.stem + "-failures-" + uuid.uuid4().hex[:8])
 
@@ -420,6 +426,8 @@ def main():
         if not build["ok"]:
             report["fixture_failure_path"] = preserve_failure(fixture_root.parent, build, "fixture-build")
             report["complete"] = True
+            if args.profile_only:
+                report["diagnostics_passed"] = False
             save_report(args.output, report)
             print(json.dumps(report, ensure_ascii=False, indent=2))
             return 1
@@ -429,7 +437,8 @@ def main():
         fixture_info.write_text(json.dumps(fixture, ensure_ascii=False), encoding="utf-8")
         report["fixture_volume"] = {"temporary_root": str(temporary), "filesystem": "not_measured",
                                    "device": fixture_root.stat().st_dev}
-        plan = [(i, i < args.warmup, False) for i in range(args.warmup + args.repeat)]
+        plan = ([(0, False, False), (1, False, True)] if args.profile_only else
+                [(i, i < args.warmup, False) for i in range(args.warmup + args.repeat)])
         if args.profile:
             plan.append((0, False, True))
         for iteration, warmup, profiled in plan:
@@ -452,6 +461,8 @@ def main():
                     sample = run_subprocess(arguments)
                     sample.update({"variant": variant, "operation": operation, "iteration": iteration,
                                    "warmup": warmup, "profiled": profiled,
+                                   "diagnostic": args.profile_only,
+                                   "diagnostic_control": args.profile_only and not profiled,
                                    "starting_manifest_sha256": actual_start_hash,
                                    "process_launch_order": len(report["samples"]),
                                    "process_first_for_variant_operation": not any(
@@ -468,19 +479,22 @@ def main():
                         sample["failed_sample_path"] = preserve_failure(
                             case_root, sample, f"sample-{len(report['samples']):04d}-{variant}-{operation}", fixture)
                     report["samples"].append(sample)
-                    report["summaries"] = summarize(report["samples"], roots, operations)
+                    report["summaries"] = [] if args.profile_only else summarize(report["samples"], roots, operations)
                     save_report(args.output, report)
                     if sample["ok"]:
                         shutil.rmtree(case_root)
         report["operations"] = [row["result"] for row in report["samples"] if row["variant"] == "candidate"
-                                and not row["warmup"] and not row["profiled"] and row["ok"]]
-        report["passed"] = (all(row["ok"] for row in report["samples"])
-                            and all(row["result"]["peak_bytes"] < args.budget_mib * 1024 * 1024
-                                    for row in report["samples"] if not row["warmup"] and not row["profiled"]))
+                                and not row["warmup"] and not row["profiled"] and not row["diagnostic"] and row["ok"]]
+        if args.profile_only:
+            report["diagnostics_passed"] = all(row["ok"] for row in report["samples"])
+        else:
+            report["passed"] = (all(row["ok"] for row in report["samples"])
+                                and all(row["result"]["peak_bytes"] < args.budget_mib * 1024 * 1024
+                                        for row in report["samples"] if not row["warmup"] and not row["profiled"]))
         report["complete"] = True
     save_report(args.output, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 0 if report["passed"] else 1
+    return 0 if (report["diagnostics_passed"] if args.profile_only else report["passed"]) else 1
 
 
 if __name__ == "__main__":

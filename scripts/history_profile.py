@@ -3,6 +3,7 @@
 import builtins
 import hashlib
 import io
+import json
 import os
 import time
 from contextlib import ExitStack, contextmanager
@@ -14,8 +15,12 @@ class OperationProfile:
     """Inclusive phase timings and application-level I/O, not physical disk I/O."""
 
     def __init__(self, library):
-        self.library = Path(library).resolve()
+        # Classification must not perform the filesystem work being measured.
+        # In particular, never add a resolve/stat for every application open.
+        self.library = os.path.normcase(os.path.abspath(os.fsdecode(library)))
         self.phases = {}
+        self.calls = {}
+        self.phase_calls = {}
         self.files = {}
         self.phase_io = {}
         self.hashes = {"created": 0, "update_calls": 0, "input_bytes": 0}
@@ -45,8 +50,41 @@ class OperationProfile:
                 return function(*args, **kwargs)
         return wrapped
 
+    def observed(self, name, function):
+        """Time the underlying call; counters exclude this probe's bookkeeping."""
+        def wrapped(*args, **kwargs):
+            started = time.perf_counter()
+            failed = True
+            try:
+                result = function(*args, **kwargs)
+                failed = False
+                return result
+            finally:
+                elapsed = time.perf_counter() - started
+                groups = [self.calls]
+                groups += [self.phase_calls.setdefault(phase, {})
+                           for phase in set(self.active) or {"unattributed"}]
+                for group in groups:
+                    row = group.setdefault(name, {"calls": 0, "failures": 0, "seconds": 0.0})
+                    row["calls"] += 1
+                    row["failures"] += int(failed)
+                    row["seconds"] += elapsed
+        return wrapped
+
+    def file_key(self, file):
+        # Do not evaluate arbitrary __fspath__ implementations a second time.
+        if not isinstance(file, (str, bytes, Path)):
+            return None
+        path = os.path.normcase(os.path.abspath(os.fsdecode(file)))
+        try:
+            if os.path.commonpath((self.library, path)) != self.library:
+                return None
+        except ValueError:  # Different Windows drives.
+            return None
+        return Path(os.path.relpath(path, self.library)).as_posix()
+
     def __enter__(self):
-        from codex_learner import storage
+        from codex_learner import blobs, storage
         from codex_learner.operations import Engine
         profile = self
         original_builtin, original_io = builtins.open, io.open
@@ -75,24 +113,31 @@ class OperationProfile:
                 elif isinstance(value, str):
                     self.row["text_read_characters"] += len(value)
                     profile.note("text_read_characters", len(value))
-                    profile.note("text_returned_utf8_bytes", len(value.encode("utf-8")))
-                    self.row["text_returned_utf8_bytes"] += len(value.encode("utf-8"))
+                    try:
+                        size = len(value.encode("utf-8"))
+                    except UnicodeError:
+                        # A probe must not reject successful surrogateescape reads.
+                        self.row["text_utf8_unencodable_reads"] += 1
+                        profile.note("text_utf8_unencodable_reads")
+                    else:
+                        profile.note("text_returned_utf8_bytes", size)
+                        self.row["text_returned_utf8_bytes"] += size
                 return value
 
             def read(self, *args, **kwargs):
-                return self.record(self.stream.read(*args, **kwargs))
+                return self.record(profile.observed("read", self.stream.read)(*args, **kwargs))
 
             def readline(self, *args, **kwargs):
-                return self.record(self.stream.readline(*args, **kwargs))
+                return self.record(profile.observed("readline", self.stream.readline)(*args, **kwargs))
 
             def readlines(self, *args, **kwargs):
-                values = self.stream.readlines(*args, **kwargs)
+                values = profile.observed("readlines", self.stream.readlines)(*args, **kwargs)
                 for value in values:
                     self.record(value)
                 return values
 
             def readinto(self, buffer):
-                count = self.stream.readinto(buffer)
+                count = profile.observed("readinto", self.stream.readinto)(buffer)
                 self.row["read_calls"] += 1
                 self.row["binary_read_bytes"] += count or 0
                 profile.note("read_calls")
@@ -109,15 +154,16 @@ class OperationProfile:
                 return value
 
         def tracked_open(original):
+            observed_open = profile.observed("open", original)
             def opened(file, *args, **kwargs):
-                stream = original(file, *args, **kwargs)
-                try:
-                    relative = Path(file).resolve().relative_to(profile.library).as_posix()
-                except (TypeError, ValueError):
+                stream = observed_open(file, *args, **kwargs)
+                relative = profile.file_key(file)
+                if relative is None:
                     return stream
                 row = profile.files.setdefault(relative, {
                     "opens": 0, "read_calls": 0, "binary_read_bytes": 0,
                     "text_read_characters": 0, "text_returned_utf8_bytes": 0,
+                    "text_utf8_unencodable_reads": 0,
                 })
                 row["opens"] += 1
                 profile.note("opens")
@@ -125,26 +171,57 @@ class OperationProfile:
             return opened
 
         class Hash:
-            def __init__(self, value, *args, **kwargs):
-                self.hash = original_sha(value, *args, **kwargs)
+            def __init__(self, *args, **kwargs):
+                self.hash = profile.observed("sha256_create", original_sha)(*args, **kwargs)
+                value = args[0] if args else kwargs.get("string", b"")
+                size = memoryview(value).nbytes
                 profile.hashes["created"] += 1
-                profile.hashes["input_bytes"] += len(value)
+                profile.hashes["input_bytes"] += size
                 profile.note("sha256_created")
-                profile.note("sha256_input_bytes", len(value))
+                profile.note("sha256_input_bytes", size)
 
             def __getattr__(self, name):
                 return getattr(self.hash, name)
 
             def update(self, value):
+                result = profile.observed("sha256_update", self.hash.update)(value)
+                size = memoryview(value).nbytes
                 profile.hashes["update_calls"] += 1
                 profile.note("sha256_update_calls")
-                profile.note("sha256_input_bytes", len(value))
-                profile.hashes["input_bytes"] += len(value)
-                return self.hash.update(value)
+                profile.note("sha256_input_bytes", size)
+                profile.hashes["input_bytes"] += size
+                return result
+
+            def digest(self, *args, **kwargs):
+                return profile.observed("sha256_digest", self.hash.digest)(*args, **kwargs)
+
+            def hexdigest(self, *args, **kwargs):
+                return profile.observed("sha256_hexdigest", self.hash.hexdigest)(*args, **kwargs)
+
+            def copy(self):
+                result = object.__new__(Hash)
+                result.hash = profile.observed("sha256_copy", self.hash.copy)()
+                return result
 
         self.stack.enter_context(patch("builtins.open", tracked_open(original_builtin)))
         self.stack.enter_context(patch("io.open", tracked_open(original_io)))
-        self.stack.enter_context(patch("hashlib.sha256", lambda value=b"", *a, **k: Hash(value, *a, **k)))
+        self.stack.enter_context(patch("hashlib.sha256", Hash))
+        # Resolve contains metadata calls; artifact_path contains both. These
+        # deliberately remain inclusive, including failed calls and nested probes.
+        for owner, attribute, name in (
+            (Path, "resolve", "path_resolve"),
+            # Python 3.10 pathlib can cache os functions in its accessor, so
+            # observe Path APIs too. These layers overlap; do not add them.
+            (Path, "stat", "metadata_path_stat"),
+            (Path, "lstat", "metadata_path_lstat"),
+            (os, "stat", "metadata_stat"),
+            (os, "lstat", "metadata_lstat"),
+            (json, "loads", "json_loads"),
+        ):
+            self.stack.enter_context(patch.object(owner, attribute, self.observed(name, getattr(owner, attribute))))
+        checked_path = self.observed("artifact_path_safety", blobs.artifact_path)
+        self.stack.enter_context(patch.object(blobs, "artifact_path", checked_path))
+        self.stack.enter_context(patch.object(storage, "artifact_path", checked_path))
         for owner, attribute, phase in (
             (storage, "verify_artifacts", "history_integrity"),
             (storage.Library, "load", "manifest_load"),
@@ -189,12 +266,18 @@ class OperationProfile:
 
     def report(self):
         totals = {key: sum(row[key] for row in self.files.values()) for key in (
-            "opens", "read_calls", "binary_read_bytes", "text_read_characters", "text_returned_utf8_bytes")}
+            "opens", "read_calls", "binary_read_bytes", "text_read_characters", "text_returned_utf8_bytes",
+            "text_utf8_unencodable_reads")}
         return {
+            "profile_schema_version": 2,
             "phase_timings_inclusive": self.phases,
+            "call_timings_inclusive": self.calls,
+            "phase_call_timings_inclusive": self.phase_calls,
             "application_file_totals": totals,
             "phase_io_inclusive": self.phase_io,
             "application_files": self.files,
             "sha256": self.hashes,
-            "limits": "Probes add overhead. Phase timings are nested/inclusive, not additive. File reads count returned bytes/characters; text UTF-8 bytes may differ from on-disk bytes after newline decoding. These are application calls, not OS/physical disk I/O. Hash counts include request/receipt hashing during the operation. Uninstrumented work is not assigned to a phase.",
+            "file_classification": "Lexical absolute paths under the library; no resolve/stat for classification. Symlink aliases are not followed. Integer descriptors and custom PathLike objects are not assigned to a file.",
+            "call_scope": "Open, SHA-256, json.loads, Path.resolve, Path.stat/Path.lstat and Python-visible os.stat/os.lstat calls are process-wide during the operation. Read timings cover wrapped library streams only. artifact_path_safety covers blobs/storage entry points. Failures propagate unchanged and are counted. Read/UTF-8 counters describe successful returns, excluding unencodable text from UTF-8 byte totals.",
+            "limits": "Probes add overhead; use separate unprofiled samples for latency and memory acceptance. Phase and call timings are nested/inclusive, not additive: artifact_path includes resolve/metadata, resolve can include metadata, Path metadata can include os metadata, and enclosing timers include nested probe overhead. Per-phase call timings overlap when phases nest. Metadata counters cover Python-visible calls, not every OS syscall; cached/native APIs can bypass os probes (including Python 3.10 pathlib accessors), so absent os counters do not imply zero metadata cost. File reads count returned bytes/characters; text UTF-8 bytes may differ from on-disk bytes after newline decoding. These are application calls, not OS/physical disk I/O; they do not establish a physical-disk bottleneck. Hash counts include request/receipt hashing. JSON timings cover json.loads, excluding surrounding decode and lazy materialization. Uninstrumented work is not assigned to a phase.",
         }

@@ -38,6 +38,7 @@ REQUIRED = (
 )
 OPTIONAL = (
     "docs/performance-v0.2.md", "docs/performance-recheck-v0.2.md",
+    "docs/local-recheck-7946513-2026-11-05.md", "docs/recovery-diagnostic-recheck-v0.2.md",
     "docs/evidence/v0.2/performance-baseline.json",
     "docs/evidence/v0.2/performance-candidate.json",
     "docs/evidence/v0.2/performance-comparison.json",

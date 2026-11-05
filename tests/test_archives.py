@@ -347,8 +347,10 @@ class ArchiveTests(CourseCase):
         self.assertEqual(archived_courses(self.library)[0]["drive_paths"], [])
         self.assertEqual(archived_courses(self.library)[0]["cloud_sync"], "unknown")
         with patch("codex_learner.archives._write_index", side_effect=OSError("index write failed")):
-            with self.assertRaises(OSError):
+            with self.assertRaises(LearnerError) as error:
                 restore_archive(self.library, result["path"], confirmed=True)
+        self.assertEqual(error.exception.code, "restore_failed")
+        self.assertEqual(error.exception.details["phase"], "write_index")
         self.assertFalse((self.library.root / "sample-course/course.json").exists())
         self.assertEqual(len(archived_courses(self.library)), 1)
         restore_archive(self.library, result["path"], confirmed=True)

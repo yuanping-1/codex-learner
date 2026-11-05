@@ -566,22 +566,70 @@ def release_course(library, course_id, archive_path, verification, *, confirmed=
     return row
 
 
+def _restore_exception(exc):
+    """Keep OS details JSON-serializable instead of discarding them at the CLI."""
+    result = {"type": type(exc).__name__, "message": str(exc)}
+    if isinstance(exc, LearnerError):
+        result["error"] = exc.code
+    for name in ("errno", "winerror", "filename", "filename2"):
+        value = getattr(exc, name, None)
+        if value is not None:
+            result[name] = str(value) if name.startswith("filename") else value
+    return result
+
+
+def _restore_enabled(library, destination, course_id, manifest):
+    """Confirm the commit before reporting a recoverable post-commit error."""
+    require(course_id not in _index(library)["courses"],
+            "The restored course is still guarded by its archive index.", "commit_uncertain")
+    for relative, expected in manifest["files"].items():
+        require(_sha(_file(destination, relative)) == expected["sha256"],
+                "Restored course could not be verified after an I/O error.", "commit_uncertain")
+    _load(library, course_id)
+
+
 def restore_archive(library, archive_path, expected_sha256=None, *, confirmed=False):
-    """Validate in a separate temporary library, then enable without overwriting."""
+    """Validate in isolation, retaining recovery material if rollback is uncertain."""
     require(confirmed, "Explicit selection is required to restore a course archive.", "confirmation_required")
     library.check()
     checked = inspect_archive(archive_path, expected_sha256)
     manifest = checked["manifest"]
     course_id = manifest["course_id"]
     destination = library.root / course_id
-    warning = None
     expanded_bytes = sum(entry["bytes"] for entry in manifest["files"].values())
     _require_disk_space(library.root.parent,
                         expanded_bytes + (library.root / "library.json").stat().st_size + DISK_RESERVE_BYTES,
                         "isolated archive extraction")
-    with tempfile.TemporaryDirectory(prefix=".learner-restore-", dir=library.root.parent) as work:
-        stage_root = Path(work)
-        stage_course = stage_root / course_id
+    # TemporaryDirectory would erase the recovery material while unwinding a
+    # failed rollback. This directory is removed only after a known outcome.
+    stage_root = Path(tempfile.mkdtemp(prefix=".learner-restore-", dir=library.root.parent))
+    stage_course = stage_root / course_id
+    phase = "extract"
+    source_path, target_path = str(archive_path), str(stage_course)
+    preserve_stage = False
+    cleanup_failed = False
+    mutation_started = False
+    pending_failure = None
+    warnings, diagnostics = [], []
+
+    def details(exc, rollback=None):
+        return {"course_id": course_id, "path": str(destination), "stage_path": str(stage_root),
+                "phase": phase, "source_path": source_path, "destination_path": target_path,
+                "original_error": _restore_exception(exc),
+                "rollback": rollback or {"status": "not_attempted", "steps": []}}
+
+    def staging_status():
+        try:
+            stage_root.lstat()
+            exists = True
+        except FileNotFoundError:
+            exists = False
+        except OSError:
+            exists = None
+        return {"staging_preserved": preserve_stage and exists, "stage_exists": exists,
+                "cleanup_failed": cleanup_failed}
+
+    try:
         stage_course.mkdir()
         _copy(library.root / "library.json", stage_root / "library.json")
         with zipfile.ZipFile(archive_path) as archive:
@@ -592,9 +640,13 @@ def restore_archive(library, archive_path, expected_sha256=None, *, confirmed=Fa
                     shutil.copyfileobj(incoming, stream, CHUNK)
                 require(_sha(output) == manifest["files"][relative]["sha256"],
                         "Restored artifact did not match its manifest.", "archive_corrupt")
+        phase = "validate_stage"
         _load(Library(stage_root), course_id)
+        phase = "lock_library"
         with file_lock(library.root / ".library.lock"):
+            phase = "validate_destination"
             index = _index(library)
+            original_entry = index["courses"].get(course_id)
             residue = None
             if destination.exists():
                 require(not destination.is_symlink() and course_id in index["courses"],
@@ -603,7 +655,6 @@ def restore_archive(library, archive_path, expected_sha256=None, *, confirmed=Fa
                         "Released files belong to another archive; restore into a different library.", "archive_conflict")
                 # Release may stop before or after removing course.json. The
                 # committed index blocks writes, and every residue must match.
-                # Only unchanged files from the same verified archive may remain.
                 for path in destination.rglob("*"):
                     require(not path.is_symlink(), "Restore cannot replace symbolic links.", "invalid_path")
                     if path.is_file() and path.name != ".lock":
@@ -612,34 +663,160 @@ def restore_archive(library, archive_path, expected_sha256=None, *, confirmed=Fa
                                 and _sha(path) == manifest["files"][relative]["sha256"],
                                 "Unarchived local files must be preserved before restoring.", "unarchived_files")
                 residue = stage_root / "release-residue"
-                destination.rename(residue)
-            enabled = False
+            residue_moved = False
             try:
+                mutation_started = True
+                if residue is not None:
+                    phase = "move_residue"
+                    source_path, target_path = str(destination), str(residue)
+                    destination.rename(residue)
+                    residue_moved = True
+                phase = "publish_course"
+                source_path, target_path = str(stage_course), str(destination)
                 stage_course.rename(destination)
-                enabled = True
                 if course_id in index["courses"]:
+                    phase = "write_index"
+                    source_path = target_path = str(library.root / INDEX_NAME)
                     del index["courses"][course_id]
                     _write_index(library, index)
-            except OSError as exc:
-                # atomic_write may have replaced the index before a later fsync
-                # error. Never undo the course while its archived guard is gone.
+            except (OSError, LearnerError) as exc:
+                failure = details(exc)
+                # A rename or atomic index write can have taken effect before
+                # an error is reported. Inspect state before deciding to undo it.
                 try:
-                    committed = enabled and course_id not in _index(library)["courses"]
+                    current_entry = _index(library)["courses"].get(course_id)
+                    staged = stage_course.exists()
+                    present = destination.exists()
+                    published = not staged and present
+                    if published and current_entry is None:
+                        _restore_enabled(library, destination, course_id, manifest)
+                        committed = True
+                    else:
+                        require(current_entry == original_entry,
+                                "The archive guard changed during a failed restore.", "commit_uncertain")
+                        require(staged or published,
+                                "The staged and destination course are both unavailable.", "commit_uncertain")
+                        require(not (residue_moved and (residue is None or not residue.exists())),
+                                "The original release residue is unavailable.", "commit_uncertain")
+                        require(not (staged and present and (residue is None or residue.exists())),
+                                "An unexpected destination prevents safe rollback.", "commit_uncertain")
+                        committed = False
                 except (OSError, LearnerError) as read_error:
-                    raise LearnerError("commit_uncertain", "Restore may have enabled the course; inspect the index and preserved course before retrying.",
-                                       course_id=course_id, path=str(destination)) from read_error
+                    preserve_stage = True
+                    failure["rollback"] = {"status": "state_unknown", "steps": [],
+                                           "phase": "readback", "error": _restore_exception(read_error)}
+                    pending_failure = LearnerError("commit_uncertain",
+                                                   "Restore state is uncertain; preserve the staging directory and inspect it before retrying.",
+                                                   **failure)
+                    raise pending_failure from exc
                 if committed:
-                    require(_sha(destination / "course.json") == manifest["files"]["course.json"]["sha256"],
-                            "Restored course could not be verified after the index error.", "commit_uncertain")
-                    warning = "Index write reported an error; readback confirmed that the restored course is enabled."
+                    warnings.append("Restore reported an error; readback confirmed that the restored course is enabled.")
+                    failure["rollback"]["status"] = "not_needed_committed"
+                    diagnostics.append(failure)
                 else:
-                    if enabled and destination.exists():
-                        destination.rename(stage_course)
-                    if residue is not None and residue.exists():
-                        residue.rename(destination)
-                    raise exc
+                    rollback = {"status": "completed", "steps": []}
+                    failure["rollback"] = rollback
+                    step = None
+                    try:
+                        if published:
+                            step = {"phase": "rollback_course", "source_path": str(destination),
+                                    "destination_path": str(stage_course), "status": "started"}
+                            rollback["steps"].append(step)
+                            destination.rename(stage_course)
+                            step["status"] = "completed"
+                        if residue is not None:
+                            step = {"phase": "check_residue", "source_path": str(residue),
+                                    "destination_path": str(destination), "status": "started"}
+                            if residue.exists():
+                                step["phase"] = "restore_residue"
+                                rollback["steps"].append(step)
+                                require(not destination.exists(), "Rollback must not replace a destination.", "commit_uncertain")
+                                residue.rename(destination)
+                                step["status"] = "completed"
+                    except (OSError, LearnerError) as rollback_error:
+                        preserve_stage = True
+                        if step is None:
+                            step = {"phase": "rollback_state", "status": "started"}
+                        if not any(item is step for item in rollback["steps"]):
+                            rollback["steps"].append(step)
+                        step["status"] = "failed"
+                        rollback.update(status="failed", phase=step["phase"], error=_restore_exception(rollback_error))
+                        pending_failure = LearnerError("commit_uncertain",
+                                                       "Restore failed and rollback did not complete; the staging directory was preserved.",
+                                                       **failure)
+                        raise pending_failure from exc
+                    pending_failure = LearnerError("restore_failed", "Restore failed; rollback completed without enabling the course.",
+                                                   **failure)
+                    raise pending_failure from exc
+            finally:
+                phase = "unlock_library"
+                source_path = target_path = str(library.root / ".library.lock")
+        phase = "cleanup"
+        source_path, target_path = str(stage_root), None
+        try:
+            shutil.rmtree(stage_root)
+        except OSError as cleanup_error:
+            # The course is already enabled. A leftover temporary directory
+            # must not turn a committed restore into a misleading plain failure.
+            preserve_stage = True
+            cleanup_failed = True
+            failure = details(cleanup_error)
+            try:
+                with file_lock(library.root / ".library.lock"):
+                    _restore_enabled(library, destination, course_id, manifest)
+            except (OSError, LearnerError) as read_error:
+                failure["rollback"] = {"status": "state_unknown", "steps": [],
+                                       "phase": "readback", "error": _restore_exception(read_error)}
+                raise LearnerError("commit_uncertain",
+                                   "Cleanup failed after enablement, and the enabled course could not be confirmed; inspect the preserved paths.",
+                                   **failure) from cleanup_error
+            warnings.append("The course is restored; temporary cleanup failed. Inspect the reported staging status before removing leftover files.")
+            failure["rollback"]["status"] = "not_needed_committed"
+            diagnostics.append(failure)
+    except (OSError, LearnerError) as exc:
+        if pending_failure is not None and exc is not pending_failure:
+            # A failing context-manager exit must not erase a failed rollback's
+            # original error and recovery paths.
+            error = pending_failure
+            error.details["lock_error"] = {"phase": phase, **_restore_exception(exc)}
+            preserve_stage = True
+        elif isinstance(exc, LearnerError) and "phase" in exc.details:
+            error = exc
+        elif mutation_started:
+            # In particular, unlocking/closing the lock may fail after commit.
+            # Preserve the scene rather than claiming the course was not enabled.
+            preserve_stage = True
+            error = LearnerError("commit_uncertain", "Restore may have enabled the course; inspect the preserved paths before retrying.",
+                                 **details(exc, {"status": "state_unknown", "steps": []}))
+        elif isinstance(exc, LearnerError):
+            error = exc
+            error.details.update(details(exc))
+        else:
+            error = LearnerError("restore_failed", "Restore failed before completion.", **details(exc))
+        if not preserve_stage:
+            try:
+                shutil.rmtree(stage_root)
+            except OSError as cleanup_error:
+                preserve_stage = True
+                cleanup_failed = True
+                error.details["cleanup_error"] = {"phase": "cleanup", **_restore_exception(cleanup_error)}
+        error.details.update(staging_status())
+        if diagnostics:
+            error.details["diagnostics"] = diagnostics
+        if error is exc:
+            raise
+        if error is pending_failure:
+            raise error from error.__cause__
+        raise error from exc
+    except BaseException:
+        # Interruptions during a mutation have no verified rollback outcome.
+        # Do not let automatic temporary cleanup destroy the recovery scene.
+        if not mutation_started:
+            shutil.rmtree(stage_root)
+        raise
     result = {"course_id": course_id, "state_revision": manifest["state_revision"], "status": "course_restored",
               "archive_sha256": checked["sha256"], "path": str(destination), "network_required": False}
-    if warning:
-        result["warning"] = warning
+    if warnings:
+        result["warning"] = " ".join(warnings)
+        result["diagnostics"] = [{**item, **staging_status()} for item in diagnostics]
     return result

@@ -166,3 +166,5 @@ OCR Python、离线模型、缓存位置来自运行配置，不混入操作指�
     learner.py archive-restore --archive /absolute/web-download/course-r42.zip --sha256 HASH --confirm
 
 迁移/释放/恢复仅对用户明确选择的课程执行。复制到 Drive 不是云端同步证明；没有网络观测能力时，网页重新下载的来源由用户声明，程序只验证独立文件、哈希和内容。归档释放拒绝待评/待重评/运行任务/未归档文件，保留轻量索引。详情见发布包 docs/v0.2-upgrade.md。
+
+归档恢复异常保留 `phase`、`original_error`（包括可用的 `errno/winerror/filename/filename2`）、源/目标路径、`rollback` 及 `stage_path/staging_preserved`。收到 `commit_uncertain` 时保留现场并核对状态，不自动删除暂存目录或覆盖目标；`restore_failed` 的回滚结果按回执读取。已启用课程的清理失败在完整回读确认后仍返回 `course_restored`，附 `warning/diagnostics`，不能再次导入或向学习者报告课程尚未恢复。
