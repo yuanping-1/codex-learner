@@ -8,7 +8,7 @@
 
 后续性能候选保留每次写入前的历史完整性检查，消除 JSON 回执的重复读取与哈希；新提交和幂等重试使用同一合成快照分别测量。结果与边界见 [性能修订报告](docs/performance-v0.2.md)，本机执行入口见 [定向复验任务](docs/performance-recheck-v0.2.md)。候选文件名包含提交号，产品包与完整证据分开交付，详见 [附件说明](docs/delivery-perf-candidate.md)。这些云端结果不替代修订包的用户本机验收。
 
-**最新本机复验：`7946513` 候选 FAIL（15 PASS / 3 FAIL / 6 BLOCKED / 1 PARTIAL）。** 用户回传的新提交中位数为 7.086 秒、P95 为 17.469 秒，仍高于 2 秒 / 5 秒目标；两次首次归档恢复出现 `WinError 5`。当前修订先处理恢复异常及诊断缺口，不宣称已解决目标机时延或 Windows 首次恢复问题。结果来源、完整性边界与关闭条件见 [本机结果登记](docs/local-recheck-7946513-2026-11-05.md)，下一轮先执行 [恢复与性能诊断任务](docs/recovery-diagnostic-recheck-v0.2.md)。正式升级继续暂缓。
+**最新本机复验：`7946513` 候选 FAIL（15 PASS / 3 FAIL / 6 BLOCKED / 1 PARTIAL）。** 原始证据包已收到并逐文件核验，重算的新提交中位数为 7.0855 秒、P95 为 17.469 秒；两处 `WinError 5` 均定位到课程目录发布。S05 是故障调用之后的正常恢复失败，F06 是首次有效 CLI 恢复失败，不能统称为两次首次调用。详见 [原始证据审阅](docs/native-evidence-review-7946513.md)。当前 `02c922d` 候选改善异常处理及诊断，不宣称已解决目标机时延或 Windows 恢复稳定性；下一轮执行 [恢复与性能诊断任务](docs/recovery-diagnostic-recheck-v0.2.md)。正式升级继续暂缓。
 
 ## 安装与升级
 
