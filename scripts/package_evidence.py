@@ -37,6 +37,13 @@ REQUIRED = (
     )),
 )
 OPTIONAL = (
+    "docs/native-followup-3987193.md", "docs/native-followup-recheck-v0.2.md",
+    *("docs/evidence/v0.2/followup-3987193/" + name for name in (
+        "README.md", "core-final.command.json", "core-final.stdout.txt", "core-final.stderr.txt",
+        "validation.json", "input-verification.json", "restore-independent-review.md",
+        "byte-audit.json", "protection-record-audit.json", "supervisor-mock-fix-review.md",
+        "archive-diagnostic-review.md",
+    )),
     "docs/native-repair-02c922d.md", "docs/native-repair-recheck-v0.2.md",
     *("docs/evidence/v0.2/repair-02c922d/" + name for name in (
         "README.md", "core-first.log", "core-command-observation.json", "validation.json",

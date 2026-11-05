@@ -14,13 +14,19 @@ from create_demo import seed
 
 
 class CourseCase(unittest.TestCase):
+    def make_test_directory(self):
+        return tempfile.TemporaryDirectory()
+
+    def seed_test_library(self):
+        seed(self.library)
+
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
+        self.temp = self.make_test_directory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.library = Library(self.root / "sample-library")
         self.library.initialize()
-        seed(self.library)
+        self.seed_test_library()
         self.engine = Engine(self.library)
         self.context = {"chapter_id": "chapter-1", "content_version": "v1",
                         "question_id": "q1", "question_version": "qv1"}

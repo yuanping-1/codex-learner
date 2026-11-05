@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "record_entries": 13837,
+  "before_after_record_bytes_equal": true,
+  "parsed_records_equal": true,
+  "scope": "Independent comparison of supplied snapshots only; no access to live native filesystem."
+}

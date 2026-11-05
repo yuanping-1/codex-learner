@@ -13,10 +13,10 @@ from create_recheck_task import create
 class RecheckTaskTests(unittest.TestCase):
     def package(self, directory, *, corrupt=False):
         files = {"BUILD.json": json.dumps({"commit": "a" * 40}).encode(),
-                 "docs/native-repair-recheck-v0.2.md": "# 隔离验收\n保留正式课程。\n".encode()}
+                 "docs/native-followup-recheck-v0.2.md": "# 隔离验收\n保留正式课程。\n".encode()}
         manifest = {name: hashlib.sha256(value).hexdigest() for name, value in files.items()}
         if corrupt:
-            files["docs/native-repair-recheck-v0.2.md"] += b"tampered"
+            files["docs/native-followup-recheck-v0.2.md"] += b"tampered"
         package = directory / "candidate.zip"
         with zipfile.ZipFile(package, "w") as archive:
             for name, value in files.items():

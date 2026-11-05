@@ -1,0 +1,16 @@
+{
+  "archive_sha256": "4352fbad3b8b613b385fce0e94e43561795fe8a26a224a7d9400f087ee74de06",
+  "archive_bytes": 16049601,
+  "members": 9145,
+  "verified_evidence_files": 9143,
+  "expanded_bytes": 47423184,
+  "separate_attachments_match_archive": [
+    "recheck-report.md",
+    "recheck-results.json",
+    "supervisor-mock-call-diagnostic.json",
+    "performance-decision.json",
+    "evidence-manifest.json"
+  ],
+  "all_crc_sizes_hashes_paths": "PASS",
+  "uploaded_scripts_executed": false
+}

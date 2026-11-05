@@ -5,6 +5,8 @@ import io
 import json
 from pathlib import Path
 import subprocess
+import sys
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from support import CourseCase, ROOT
@@ -140,8 +142,27 @@ class RestoreBenchmarkTests(CourseCase):
             benchmark.offline_verify(Library(case / "library"), manifest, case)
 
     def test_supervisor_keeps_success_failure_timeout_and_raw_outputs_without_retry(self):
+        self.assert_supervisor_records()
+
+    def test_cold_platform_subprocess_is_not_counted_as_a_restore_worker(self):
+        self.assert_supervisor_records(cold_platform_query=True)
+
+    def assert_supervisor_records(self, *, cold_platform_query=False):
         archive = self.fixture()
         calls = []
+        metadata_calls = []
+        original_run = subprocess.run
+        original_system = benchmark.platform.system
+
+        def query_system():
+            if not metadata_calls:
+                self.assertIsNone(benchmark.platform._uname_cache)
+                # Exercise the same check_output -> subprocess.run boundary as
+                # Windows' cold-cache `ver`, using a portable real subprocess.
+                metadata_calls.append(subprocess.check_output(
+                    [sys.executable, "-c", "print('metadata-query')"],
+                    text=True, encoding="utf-8").strip())
+            return original_system()
 
         def worker(command, **kwargs):
             calls.append(command)
@@ -159,10 +180,21 @@ class RestoreBenchmarkTests(CourseCase):
         argv = ["--scripts-root", str(ROOT / "skills/codex-learner/scripts"),
                 "--f06-archive", archive["path"], "--s05-archive", archive["path"],
                 "--output-dir", str(output), "--repeat", "2"]
-        with patch.dict(benchmark.FIXTURE_SHA256, {"F06": archive["sha256"], "S05": archive["sha256"]}), \
-                patch.object(benchmark.subprocess, "run", side_effect=worker), \
-                contextlib.redirect_stdout(io.StringIO()):
+        # Replace only this module's dependency reference. Patching run on the
+        # shared subprocess module also captures platform's auxiliary queries.
+        worker_process = SimpleNamespace(run=worker, TimeoutExpired=subprocess.TimeoutExpired)
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(patch.dict(benchmark.FIXTURE_SHA256,
+                                           {"F06": archive["sha256"], "S05": archive["sha256"]}))
+            stack.enter_context(patch.object(benchmark, "subprocess", worker_process))
+            stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
+            if cold_platform_query:
+                stack.enter_context(patch.object(benchmark.platform, "_uname_cache", None))
+                stack.enter_context(patch.object(benchmark.platform, "system", query_system))
             status = benchmark.main(argv)
+        self.assertIs(benchmark.subprocess, subprocess)
+        self.assertIs(subprocess.run, original_run)
+        self.assertEqual(metadata_calls, ["metadata-query"] if cold_platform_query else [])
         self.assertEqual(status, 1)
         report = json.loads((output / "results.json").read_text(encoding="utf-8"))
         self.assertTrue(report["complete"])

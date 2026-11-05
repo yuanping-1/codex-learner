@@ -34,10 +34,10 @@ def create(package, output):
         commit = build.get("commit", "")
         if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
             raise ValueError("The candidate must identify a complete source commit.")
-        template = archive.read(prefix + "docs/native-repair-recheck-v0.2.md").decode("utf-8")
+        template = archive.read(prefix + "docs/native-followup-recheck-v0.2.md").decode("utf-8")
     if file_hash(package) != checksum:
         raise ValueError("Candidate changed during task generation.")
-    text = ("# 本轮性能候选：固定包身份\n\n"
+    text = ("# 本轮定向复验候选：固定包身份\n\n"
             f"- 候选文件：`{package.name}`\n"
             f"- 完整源提交：`{commit}`\n"
             f"- ZIP SHA-256：`{checksum}`\n"

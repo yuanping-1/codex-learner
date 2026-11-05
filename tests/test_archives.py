@@ -1,5 +1,6 @@
 """Archive tests use isolated local folders, never a real Drive upload."""
 
+import errno
 import hashlib
 import json
 import os
@@ -99,19 +100,59 @@ class ArchiveTests(CourseCase):
                              archive_path=result["path"])
         self.assertEqual(error.exception.code, "download_not_independent")
 
-    def test_download_requires_explicit_declaration_and_distinct_file(self):
+    def test_download_requires_explicit_declaration_and_distinct_path(self):
         result = self.archive()
-        with self.assertRaises(LearnerError):
+        with self.assertRaises(LearnerError) as error:
             confirm_download(result["path"], result["sha256"], source_declaration="sync_folder",
                              archive_path=result["path"])
-        with self.assertRaises(LearnerError):
+        self.assertEqual(error.exception.code, "download_declaration_required")
+        with self.assertRaises(LearnerError) as error:
             confirm_download(result["path"], result["sha256"], source_declaration="web_download",
                              archive_path=result["path"])
+        self.assertEqual(error.exception.code, "download_not_independent")
+
+    def test_download_rejects_hard_link_to_original_file(self):
+        result = self.archive()
         linked = self.root / "hard-linked.zip"
+        # Probe ordinary files across the same source/target directories. This
+        # diagnoses this fixture's ability to create links, not the whole volume
+        # or the cause of a past WinError 5. Other download checks remain separate.
+        probe_source = Path(result["path"]).parent / "hardlink-capability-source"
+        probe_target = linked.parent / "hardlink-capability-target"
+        probe_source.write_bytes(b"isolated hard-link capability probe\n")
+        try:
+            try:
+                os.link(probe_source, probe_target)
+            except OSError as error:
+                unavailable_codes = {getattr(errno, name, None) for name in
+                                     ("EACCES", "EPERM", "ENOSYS", "ENOTSUP", "EOPNOTSUPP")}
+                unavailable_codes.discard(None)
+                unavailable = (error.errno in unavailable_codes
+                               or getattr(error, "winerror", None) in {1, 5, 50, 1314})
+                # A target appearing despite the error is an uncertain outcome,
+                # not proof of unavailable fixture capability.
+                if not unavailable:
+                    raise
+                try:
+                    probe_target.lstat()
+                except FileNotFoundError:
+                    self.skipTest("Hard-link creation unavailable for this fixture; "
+                                  f"errno={error.errno}, winerror={getattr(error, 'winerror', None)}: {error}")
+                # Existing or unreadable target means an uncertain outcome.
+                # Only a confirmed missing target permits the capability skip.
+                raise
+            self.assertTrue(os.path.samefile(probe_source, probe_target))
+        finally:
+            probe_target.unlink(missing_ok=True)
+            probe_source.unlink(missing_ok=True)
+        # Once the ordinary-file probe succeeds, an archive-specific link error
+        # must remain ERROR; never convert it to a capability skip.
         os.link(result["path"], linked)
-        with self.assertRaises(LearnerError):
+        self.assertTrue(os.path.samefile(result["path"], linked))
+        with self.assertRaises(LearnerError) as error:
             confirm_download(linked, result["sha256"], source_declaration="web_download",
                              archive_path=result["path"])
+        self.assertEqual(error.exception.code, "download_not_independent")
 
     def test_pending_assessment_and_running_task_prevent_release(self):
         self.submit(sid="pending")
@@ -356,19 +397,57 @@ class ArchiveTests(CourseCase):
         restore_archive(self.library, result["path"], confirmed=True)
         self.assertTrue((self.library.root / "sample-course/course.json").is_file())
 
-    def test_release_failure_before_first_unlink_can_restore_matching_residue(self):
+    def assert_interrupted_release_restores_matching_residue(self, *, before_first_member):
         result = self.archive()
         verification = self.retrieved(result)
         directory = self.library.course_dir("sample-course")
+        manifest = inspect_archive(result["path"])["manifest"]
+        ordered_members = list(manifest["files"])
+        target_member = ordered_members[0] if before_first_member else "course.json"
+        target_index = ordered_members.index(target_member)
+        expected_deleted = ordered_members[:target_index]
+        expected_remaining = {relative: metadata for relative, metadata in manifest["files"].items()
+                              if relative not in expected_deleted}
         unlink = Path.unlink
+        injected_error = OSError("simulated release interruption before " + target_member)
+        hits, deleted = [], []
 
         def interrupted(path, *args, **kwargs):
-            if path == directory / "course.json":
-                raise OSError("simulated failure before first deletion")
-            return unlink(path, *args, **kwargs)
+            if path == directory / target_member:
+                hits.append(target_member)
+                raise injected_error
+            value = unlink(path, *args, **kwargs)
+            if path.is_relative_to(directory):
+                deleted.append(path.relative_to(directory).as_posix())
+            return value
 
-        with patch.object(Path, "unlink", interrupted), self.assertRaises(OSError):
+        with patch.object(Path, "unlink", interrupted), self.assertRaises(OSError) as error:
             release_course(self.library, "sample-course", result["path"], verification, confirmed=True)
+        self.assertIs(error.exception, injected_error)
+        self.assertEqual(hits, [target_member])
+        self.assertEqual(deleted, expected_deleted)
+        if before_first_member:
+            self.assertEqual(deleted, [])
+            self.assertEqual(len(expected_remaining), len(ordered_members))
+        else:
+            self.assertGreater(len(deleted), 0)
+            self.assertLess(len(expected_remaining), len(ordered_members))
+
+        def actual_files():
+            return {path.relative_to(directory).as_posix(): {
+                "bytes": path.stat().st_size, "sha256": archives._sha(path),
+            } for path in directory.rglob("*") if path.is_file() and path.name != ".lock"}
+
+        expected = {relative: {"bytes": metadata["bytes"], "sha256": metadata["sha256"]}
+                    for relative, metadata in expected_remaining.items()}
+        actual = actual_files()
+        self.assertEqual(actual, expected)
+        print("Release interruption evidence: " + json.dumps({
+            "target_member": target_member, "injection_hits": hits,
+            "manifest_files": len(ordered_members), "deleted_files": deleted,
+            "remaining_files": len(actual),
+            "remaining_lengths_sha256": actual,
+        }, sort_keys=True))
         self.assertTrue((directory / "course.json").exists())
         self.assertEqual(len(archived_courses(self.library)), 1)
         with self.assertRaises(LearnerError) as error:
@@ -377,6 +456,15 @@ class ArchiveTests(CourseCase):
         restore_archive(self.library, result["path"], confirmed=True)
         self.assertEqual(archived_courses(self.library), [])
         self.assertEqual(self.library.load_manifest("sample-course")["state_revision"], result["state_revision"])
+        self.assertEqual(actual_files(), {
+            relative: {"bytes": metadata["bytes"], "sha256": metadata["sha256"]}
+            for relative, metadata in manifest["files"].items()})
+
+    def test_release_failure_before_course_manifest_unlink_can_restore_matching_residue(self):
+        self.assert_interrupted_release_restores_matching_residue(before_first_member=False)
+
+    def test_release_failure_before_first_manifest_member_unlink_can_restore_matching_residue(self):
+        self.assert_interrupted_release_restores_matching_residue(before_first_member=True)
 
     def test_preserved_damaged_original_is_archived_as_opaque_evidence(self):
         directory = self.library.course_dir("sample-course")
