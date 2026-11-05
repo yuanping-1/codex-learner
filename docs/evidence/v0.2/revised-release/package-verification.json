@@ -1,0 +1,132 @@
+{
+  "package": "/workspace/codex-learner/artifacts/revised/codex-learner-0.2.0.zip",
+  "sha256": "1eb92400cc2858e86c529813c4eedf50099c17ab6083ca2fed79e06161de0df2",
+  "platform": "linux",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "checks": {
+    "manifest_members_verified": 74,
+    "clean_linux_install_manifest": true,
+    "exact_answer_and_idempotent_retry": true,
+    "different_cwd_cross_process_pending_read": true,
+    "native_codex_chat_executed": false,
+    "repeat_install_preserves_configuration_and_library": true
+  },
+  "commands": [
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/codex-learner/scripts/install_skill.py",
+        "--destination",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/scripts/learner.py",
+        "--config",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/config.json",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library",
+        "doctor"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/codex-learner/scripts/create_demo.py",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/scripts/learner.py",
+        "--config",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/config.json",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library",
+        "apply",
+        "--request",
+        "/tmp/learner-revised-install-nxvr907_/request.json"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/scripts/learner.py",
+        "--config",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/config.json",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library",
+        "read",
+        "--course",
+        "sample-course",
+        "--submission",
+        "revised-package-answer"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/scripts/learner.py",
+        "--config",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/config.json",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library",
+        "apply",
+        "--request",
+        "/tmp/learner-revised-install-nxvr907_/request.json"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/scripts/learner.py",
+        "--config",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill/config.json",
+        "--library",
+        "/tmp/learner-revised-install-nxvr907_/isolated-library",
+        "review",
+        "--course",
+        "sample-course"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "/tmp/learner-revised-install-nxvr907_/codex-learner/scripts/install_skill.py",
+        "--destination",
+        "/tmp/learner-revised-install-nxvr907_/installed-skill",
+        "--backup-and-replace"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    }
+  ],
+  "build": {
+    "commit": "1c2565465dbdb43a10fc25a93b034011613d71bd",
+    "manifest_version": 1,
+    "protocol": "codex-learner-course",
+    "read_schemas": [
+      1,
+      2
+    ],
+    "source_manifest_sha256": "9aa7a33bcbdc3aa8b4e2820780fe16e3b524932681c9fe81080651ceb45a7f12",
+    "validation": "See external acceptance evidence bound to this ZIP SHA-256; packaging is not acceptance.",
+    "version": "0.2.0",
+    "write_schema": 2
+  },
+  "installation_manifest_sha256": "a04afab3bd2012e0807738edf8587f73f40b6f5cab2fadff69f69568d86aafa5",
+  "answer_sha256": "a6eb88c10238cc5fdb8015bfc407e59e8115eb41a187b30c59a806ed50dcc635",
+  "complete": true
+}

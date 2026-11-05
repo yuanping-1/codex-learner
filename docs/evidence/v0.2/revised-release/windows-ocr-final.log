@@ -1,0 +1,324 @@
+﻿2026-11-05T02:20:40.2324550Z Current runner version: '2.338.2'
+2026-11-05T02:20:40.2362905Z ##[group]Runner Image Provisioner
+2026-11-05T02:20:40.2364130Z Hosted Compute Agent
+2026-11-05T02:20:40.2365097Z Version: 20261103.629
+2026-11-05T02:20:40.2366192Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-05T02:20:40.2367424Z Build Date: 2026-11-03T17:26:59Z
+2026-11-05T02:20:40.2368650Z Worker ID: {4042c6e4-43b3-4869-8852-9a2e578208a8}
+2026-11-05T02:20:40.2369854Z Region: eastus2
+2026-11-05T02:20:40.2370735Z Cloud: Azure
+2026-11-05T02:20:40.2371647Z ##[endgroup]
+2026-11-05T02:20:40.2373966Z ##[group]Operating System
+2026-11-05T02:20:40.2375327Z Microsoft Windows Server 2025
+2026-11-05T02:20:40.2376706Z 10.0.26100
+2026-11-05T02:20:40.2377247Z Datacenter
+2026-11-05T02:20:40.2377843Z ##[endgroup]
+2026-11-05T02:20:40.2378647Z ##[group]Runner Image
+2026-11-05T02:20:40.2379546Z Image: windows-2025-vs2026
+2026-11-05T02:20:40.2380439Z Version: 20261103.298.1
+2026-11-05T02:20:40.2382961Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261103.298/images/windows/Windows2025-VS2026-Readme.md
+2026-11-05T02:20:40.2385870Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261103.298
+2026-11-05T02:20:40.2387865Z ##[endgroup]
+2026-11-05T02:20:40.2389990Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T02:20:40.2392464Z Contents: read
+2026-11-05T02:20:40.2393570Z Metadata: read
+2026-11-05T02:20:40.2396451Z Packages: read
+2026-11-05T02:20:40.2397084Z ##[endgroup]
+2026-11-05T02:20:40.2399175Z Secret source: Actions
+2026-11-05T02:20:40.2400064Z Cache mode: write
+2026-11-05T02:20:40.2400727Z Prepare workflow directory
+2026-11-05T02:20:40.2797332Z Prepare all required actions
+2026-11-05T02:20:40.2844474Z Getting action download info
+2026-11-05T02:20:40.4585185Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-05T02:20:40.5992515Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-05T02:20:40.8722441Z Complete job name: ocr-smoke (windows-latest)
+2026-11-05T02:20:41.0244470Z ##[group]Run actions/checkout@v4
+2026-11-05T02:20:41.0245479Z with:
+2026-11-05T02:20:41.0245918Z   repository: yuanping-1/codex-learner
+2026-11-05T02:20:41.0250047Z   token: ***
+2026-11-05T02:20:41.0250456Z   ssh-strict: true
+2026-11-05T02:20:41.0250860Z   ssh-user: git
+2026-11-05T02:20:41.0251277Z   persist-credentials: true
+2026-11-05T02:20:41.0251738Z   clean: true
+2026-11-05T02:20:41.0252158Z   sparse-checkout-cone-mode: true
+2026-11-05T02:20:41.0252657Z   fetch-depth: 1
+2026-11-05T02:20:41.0253056Z   fetch-tags: false
+2026-11-05T02:20:41.0253486Z   show-progress: true
+2026-11-05T02:20:41.0253909Z   lfs: false
+2026-11-05T02:20:41.0254288Z   submodules: false
+2026-11-05T02:20:41.0254705Z   set-safe-directory: true
+2026-11-05T02:20:41.0255187Z   allow-unsafe-pr-checkout: false
+2026-11-05T02:20:41.0255890Z ##[endgroup]
+2026-11-05T02:20:41.1714768Z Syncing repository: yuanping-1/codex-learner
+2026-11-05T02:20:41.1716525Z ##[group]Getting Git version info
+2026-11-05T02:20:41.1717242Z Working directory is 'D:\a\codex-learner\codex-learner'
+2026-11-05T02:20:41.2816069Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-05T02:20:41.6586688Z git version 2.56.0.windows.4
+2026-11-05T02:20:41.6642355Z ##[endgroup]
+2026-11-05T02:20:41.6667130Z Temporarily overriding HOME='D:\a\_temp\828be838-2887-44dc-be17-7ae24184cab2' before making global git config changes
+2026-11-05T02:20:41.6669862Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T02:20:41.6679165Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\codex-learner\codex-learner
+2026-11-05T02:20:41.7308506Z Deleting the contents of 'D:\a\codex-learner\codex-learner'
+2026-11-05T02:20:41.7314841Z ##[group]Initializing the repository
+2026-11-05T02:20:41.7323808Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\codex-learner\codex-learner
+2026-11-05T02:20:41.8153408Z Initialized empty Git repository in D:/a/codex-learner/codex-learner/.git/
+2026-11-05T02:20:41.8196017Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/yuanping-1/codex-learner
+2026-11-05T02:20:41.8928323Z ##[endgroup]
+2026-11-05T02:20:41.8929520Z ##[group]Disabling automatic garbage collection
+2026-11-05T02:20:41.8936834Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-05T02:20:41.9299899Z ##[endgroup]
+2026-11-05T02:20:41.9300965Z ##[group]Setting up auth
+2026-11-05T02:20:41.9311120Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T02:20:41.9677013Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-05T02:20:43.4371646Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T02:20:43.4735909Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-05T02:20:44.0466688Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T02:20:44.0846010Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-05T02:20:44.6388202Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-05T02:20:44.6804853Z ##[endgroup]
+2026-11-05T02:20:44.6805579Z ##[group]Fetching the repository
+2026-11-05T02:20:44.6825578Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1c2565465dbdb43a10fc25a93b034011613d71bd:refs/remotes/origin/codex/learner-v0.1.0
+2026-11-05T02:20:45.7545624Z From https://github.com/yuanping-1/codex-learner
+2026-11-05T02:20:45.7546705Z  * [new ref]         1c2565465dbdb43a10fc25a93b034011613d71bd -> origin/codex/learner-v0.1.0
+2026-11-05T02:20:45.7584445Z ##[endgroup]
+2026-11-05T02:20:45.7585104Z ##[group]Determining the checkout info
+2026-11-05T02:20:45.7587623Z ##[endgroup]
+2026-11-05T02:20:45.7597673Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-05T02:20:45.8175757Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-05T02:20:45.8558273Z ##[group]Checking out the ref
+2026-11-05T02:20:45.8569613Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B codex/learner-v0.1.0 refs/remotes/origin/codex/learner-v0.1.0
+2026-11-05T02:20:45.9506184Z Switched to a new branch 'codex/learner-v0.1.0'
+2026-11-05T02:20:45.9639466Z branch 'codex/learner-v0.1.0' set up to track 'origin/codex/learner-v0.1.0'.
+2026-11-05T02:20:45.9682222Z ##[endgroup]
+2026-11-05T02:20:46.0219138Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-05T02:20:46.0577493Z 1c2565465dbdb43a10fc25a93b034011613d71bd
+2026-11-05T02:20:46.1051892Z ##[group]Run actions/setup-python@v5
+2026-11-05T02:20:46.1052249Z with:
+2026-11-05T02:20:46.1052445Z   python-version: 3.12
+2026-11-05T02:20:46.1052679Z   check-latest: false
+2026-11-05T02:20:46.1057597Z   token: ***
+2026-11-05T02:20:46.1057878Z   update-environment: true
+2026-11-05T02:20:46.1058170Z   allow-prereleases: false
+2026-11-05T02:20:46.1058442Z   freethreaded: false
+2026-11-05T02:20:46.1058684Z ##[endgroup]
+2026-11-05T02:20:46.2602350Z ##[group]Installed versions
+2026-11-05T02:20:46.2830642Z (node:8208) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-05T02:20:46.2832575Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-05T02:20:46.2833544Z Successfully set up CPython (3.12.10)
+2026-11-05T02:20:46.2834205Z ##[endgroup]
+2026-11-05T02:20:46.3112577Z ##[group]Run python -m venv .ocr-ci
+2026-11-05T02:20:46.3112990Z [36;1mpython -m venv .ocr-ci[0m
+2026-11-05T02:20:46.3849924Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-05T02:20:46.3913774Z env:
+2026-11-05T02:20:46.3914429Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:46.3915122Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-05T02:20:46.3915939Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:46.3916659Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:46.3917414Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:46.3917978Z ##[endgroup]
+2026-11-05T02:20:53.0915807Z ##[group]Run if [ "$RUNNER_OS" = "Windows" ]; then
+2026-11-05T02:20:53.0916316Z [36;1mif [ "$RUNNER_OS" = "Windows" ]; then[0m
+2026-11-05T02:20:53.0916645Z [36;1m  ocr_python=".ocr-ci/Scripts/python.exe"[0m
+2026-11-05T02:20:53.0916922Z [36;1melse[0m
+2026-11-05T02:20:53.0917118Z [36;1m  ocr_python=".ocr-ci/bin/python"[0m
+2026-11-05T02:20:53.0917373Z [36;1mfi[0m
+2026-11-05T02:20:53.0917692Z [36;1m"$ocr_python" -m pip install -r requirements-base.txt -r requirements-ocr.txt[0m
+2026-11-05T02:20:53.0918660Z [36;1m"$ocr_python" -c "import rapidocr, pypdfium2, onnxruntime, psutil; from importlib.metadata import version; print({name:version(name) for name in ('rapidocr','pypdfium2','onnxruntime','psutil')})"[0m
+2026-11-05T02:20:53.0919551Z [36;1m"$ocr_python" -m unittest discover -s tests -p test_ocr.py -v[0m
+2026-11-05T02:20:53.0920013Z [36;1m"$ocr_python" -m unittest discover -s tests -p test_benchmark_ocr.py -v[0m
+2026-11-05T02:20:53.0920543Z [36;1m"$ocr_python" -m unittest discover -s tests -p test_resource_limits.py -v[0m
+2026-11-05T02:20:53.0941031Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-05T02:20:53.0941409Z env:
+2026-11-05T02:20:53.0941673Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:53.0942125Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-05T02:20:53.0942586Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:53.0942978Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:53.0943368Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-05T02:20:53.0943667Z ##[endgroup]
+2026-11-05T02:20:55.1452475Z Collecting pypdf==6.10.0 (from -r D:\a\codex-learner\codex-learner\requirements-pdf.txt (line 2))
+2026-11-05T02:20:55.2723549Z   Downloading pypdf-6.10.0-py3-none-any.whl.metadata (7.1 kB)
+2026-11-05T02:20:55.3823940Z Collecting beautifulsoup4==4.14.3 (from -r requirements-base.txt (line 4))
+2026-11-05T02:20:55.4296042Z   Downloading beautifulsoup4-4.14.3-py3-none-any.whl.metadata (3.8 kB)
+2026-11-05T02:20:55.5346890Z Collecting markdown-it-py==4.0.0 (from -r requirements-base.txt (line 5))
+2026-11-05T02:20:55.5733010Z   Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+2026-11-05T02:20:55.8488754Z Collecting psutil==7.2.2 (from -r requirements-base.txt (line 8))
+2026-11-05T02:20:55.8886078Z   Downloading psutil-7.2.2-cp37-abi3-win_amd64.whl.metadata (22 kB)
+2026-11-05T02:20:56.0894605Z Collecting ijson==3.4.0.post0 (from -r requirements-base.txt (line 11))
+2026-11-05T02:20:56.1330948Z   Downloading ijson-3.4.0.post0-cp312-cp312-win_amd64.whl.metadata (24 kB)
+2026-11-05T02:20:56.3231985Z Collecting pypdfium2==5.14.0 (from -r requirements-ocr.txt (line 3))
+2026-11-05T02:20:56.3629631Z   Downloading pypdfium2-5.14.0-py3-none-win_amd64.whl.metadata (63 kB)
+2026-11-05T02:20:56.4996274Z Collecting rapidocr==3.10.0 (from -r requirements-ocr.txt (line 4))
+2026-11-05T02:20:56.5385184Z   Downloading rapidocr-3.10.0-py3-none-any.whl.metadata (1.3 kB)
+2026-11-05T02:20:56.6903735Z Collecting onnxruntime==1.23.2 (from -r requirements-ocr.txt (line 5))
+2026-11-05T02:20:56.7297500Z   Downloading onnxruntime-1.23.2-cp312-cp312-win_amd64.whl.metadata (5.3 kB)
+2026-11-05T02:20:56.8346990Z Collecting soupsieve>=1.6.1 (from beautifulsoup4==4.14.3->-r requirements-base.txt (line 4))
+2026-11-05T02:20:56.8786555Z   Downloading soupsieve-2.8.3-py3-none-any.whl.metadata (4.6 kB)
+2026-11-05T02:20:56.9822674Z Collecting typing-extensions>=4.0.0 (from beautifulsoup4==4.14.3->-r requirements-base.txt (line 4))
+2026-11-05T02:20:57.0261993Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-11-05T02:20:57.1251850Z Collecting mdurl~=0.1 (from markdown-it-py==4.0.0->-r requirements-base.txt (line 5))
+2026-11-05T02:20:57.1653044Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+2026-11-05T02:20:57.2849792Z Collecting pyclipper>=1.2.0 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:57.3368058Z   Downloading pyclipper-1.4.0-cp312-cp312-win_amd64.whl.metadata (8.8 kB)
+2026-11-05T02:20:57.4757767Z Collecting opencv-python-headless>=4.5.1.48 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:57.5139913Z   Downloading opencv_python_headless-5.0.0.93-cp37-abi3-win_amd64.whl.metadata (20 kB)
+2026-11-05T02:20:57.8750072Z Collecting numpy<3.0.0,>=1.19.5 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:57.9218610Z   Downloading numpy-2.3.5-cp312-cp312-win_amd64.whl.metadata (60 kB)
+2026-11-05T02:20:58.0349227Z Collecting six>=1.15.0 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:58.0745664Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-11-05T02:20:58.2372486Z Collecting Shapely!=2.0.4,>=1.7.1 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:58.2762338Z   Downloading shapely-2.2.0-cp312-cp312-win_amd64.whl.metadata (6.8 kB)
+2026-11-05T02:20:58.3933735Z Collecting PyYAML (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:58.4316207Z   Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl.metadata (2.4 kB)
+2026-11-05T02:20:58.7048070Z Collecting Pillow (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:58.7480301Z   Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl.metadata (9.3 kB)
+2026-11-05T02:20:58.8661138Z Collecting tqdm (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:58.9070610Z   Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+2026-11-05T02:20:59.0360922Z Collecting omegaconf!=2.2.1 (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:59.0743226Z   Downloading omegaconf-2.4.0-py3-none-any.whl.metadata (4.9 kB)
+2026-11-05T02:20:59.1909872Z Collecting requests (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:59.2305589Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-11-05T02:20:59.3392978Z Collecting colorlog (from rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:20:59.3784736Z   Downloading colorlog-6.12.0-py3-none-any.whl.metadata (11 kB)
+2026-11-05T02:20:59.4800288Z Collecting coloredlogs (from onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:20:59.5207680Z   Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)
+2026-11-05T02:20:59.6206445Z Collecting flatbuffers (from onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:20:59.6606356Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+2026-11-05T02:20:59.7757517Z Collecting packaging (from onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:20:59.8174207Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-11-05T02:21:00.0554307Z Collecting protobuf (from onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:21:00.0958427Z   Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+2026-11-05T02:21:00.2006942Z Collecting sympy (from onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:21:00.2411129Z   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+2026-11-05T02:21:00.3869698Z Collecting humanfriendly>=9.1 (from coloredlogs->onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:21:00.4285773Z   Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)
+2026-11-05T02:21:00.5335496Z Collecting colorama (from colorlog->rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:21:00.5729475Z   Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+2026-11-05T02:21:00.8161842Z Collecting charset_normalizer<4,>=2 (from requests->rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:21:00.8584108Z   Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl.metadata (47 kB)
+2026-11-05T02:21:00.9672891Z Collecting idna<4,>=2.5 (from requests->rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:21:01.0860123Z   Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+2026-11-05T02:21:01.2014527Z Collecting urllib3<3,>=1.26 (from requests->rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:21:01.2491963Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+2026-11-05T02:21:01.3555628Z Collecting certifi>=2023.5.7 (from requests->rapidocr==3.10.0->-r requirements-ocr.txt (line 4))
+2026-11-05T02:21:01.3937954Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-11-05T02:21:01.4956748Z Collecting mpmath<1.4,>=1.1.0 (from sympy->onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:21:01.5338069Z   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+2026-11-05T02:21:01.6971461Z Collecting pyreadline3 (from humanfriendly>=9.1->coloredlogs->onnxruntime==1.23.2->-r requirements-ocr.txt (line 5))
+2026-11-05T02:21:01.7386666Z   Downloading pyreadline3-3.5.4-py3-none-any.whl.metadata (4.7 kB)
+2026-11-05T02:21:01.8277339Z Downloading pypdf-6.10.0-py3-none-any.whl (334 kB)
+2026-11-05T02:21:01.9441279Z Downloading beautifulsoup4-4.14.3-py3-none-any.whl (107 kB)
+2026-11-05T02:21:02.0037860Z Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+2026-11-05T02:21:02.0642693Z Downloading psutil-7.2.2-cp37-abi3-win_amd64.whl (137 kB)
+2026-11-05T02:21:02.1252525Z Downloading ijson-3.4.0.post0-cp312-cp312-win_amd64.whl (54 kB)
+2026-11-05T02:21:02.1874354Z Downloading pypdfium2-5.14.0-py3-none-win_amd64.whl (3.9 MB)
+2026-11-05T02:21:02.3371376Z    ---------------------------------------- 3.9/3.9 MB 26.1 MB/s eta 0:00:00
+2026-11-05T02:21:02.3753981Z Downloading rapidocr-3.10.0-py3-none-any.whl (27.3 MB)
+2026-11-05T02:21:02.7639919Z    ---------------------------------------- 27.3/27.3 MB 72.1 MB/s eta 0:00:00
+2026-11-05T02:21:02.8089205Z Downloading onnxruntime-1.23.2-cp312-cp312-win_amd64.whl (13.5 MB)
+2026-11-05T02:21:02.9733501Z    ---------------------------------------- 13.5/13.5 MB 76.8 MB/s eta 0:00:00
+2026-11-05T02:21:03.0113185Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+2026-11-05T02:21:03.0754942Z Downloading numpy-2.3.5-cp312-cp312-win_amd64.whl (12.8 MB)
+2026-11-05T02:21:03.2618037Z    ---------------------------------------- 12.8/12.8 MB 67.0 MB/s eta 0:00:00
+2026-11-05T02:21:03.3033779Z Downloading omegaconf-2.4.0-py3-none-any.whl (254 kB)
+2026-11-05T02:21:03.3752821Z Downloading opencv_python_headless-5.0.0.93-cp37-abi3-win_amd64.whl (43.8 MB)
+2026-11-05T02:21:04.3150150Z    ---------------------------------------- 43.8/43.8 MB 46.4 MB/s eta 0:00:00
+2026-11-05T02:21:04.3533247Z Downloading pyclipper-1.4.0-cp312-cp312-win_amd64.whl (104 kB)
+2026-11-05T02:21:04.4125599Z Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl (154 kB)
+2026-11-05T02:21:04.4745104Z Downloading shapely-2.2.0-cp312-cp312-win_amd64.whl (1.8 MB)
+2026-11-05T02:21:04.5215795Z    ---------------------------------------- 1.8/1.8 MB 32.5 MB/s eta 0:00:00
+2026-11-05T02:21:04.5601310Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-11-05T02:21:04.6133973Z Downloading soupsieve-2.8.3-py3-none-any.whl (37 kB)
+2026-11-05T02:21:04.6687419Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-11-05T02:21:04.7304310Z Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)
+2026-11-05T02:21:04.7862138Z Downloading colorlog-6.12.0-py3-none-any.whl (12 kB)
+2026-11-05T02:21:05.0405084Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+2026-11-05T02:21:05.0959342Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-11-05T02:21:05.1598364Z Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl (7.2 MB)
+2026-11-05T02:21:05.2668794Z    ---------------------------------------- 7.2/7.2 MB 74.9 MB/s eta 0:00:00
+2026-11-05T02:21:05.3068216Z Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl (456 kB)
+2026-11-05T02:21:05.3674315Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+2026-11-05T02:21:05.4213046Z Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+2026-11-05T02:21:05.4794998Z    ---------------------------------------- 6.3/6.3 MB 128.5 MB/s eta 0:00:00
+2026-11-05T02:21:05.5188496Z Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+2026-11-05T02:21:05.5791186Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-11-05T02:21:05.6657558Z Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl (207 kB)
+2026-11-05T02:21:05.7251883Z Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+2026-11-05T02:21:05.7844858Z Downloading idna-3.18-py3-none-any.whl (65 kB)
+2026-11-05T02:21:05.8387029Z Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+2026-11-05T02:21:05.8633505Z    ---------------------------------------- 536.2/536.2 kB 8.8 MB/s eta 0:00:00
+2026-11-05T02:21:05.9030195Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+2026-11-05T02:21:05.9583419Z Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+2026-11-05T02:21:06.0137031Z Downloading pyreadline3-3.5.4-py3-none-any.whl (83 kB)
+2026-11-05T02:21:06.3285179Z Installing collected packages: mpmath, flatbuffers, urllib3, typing-extensions, sympy, soupsieve, six, PyYAML, pyreadline3, pypdfium2, pypdf, pyclipper, psutil, protobuf, Pillow, packaging, numpy, mdurl, ijson, idna, colorama, charset_normalizer, certifi, tqdm, Shapely, requests, opencv-python-headless, omegaconf, markdown-it-py, humanfriendly, colorlog, beautifulsoup4, rapidocr, coloredlogs, onnxruntime
+2026-11-05T02:21:20.9679244Z Successfully installed Pillow-12.3.0 PyYAML-6.0.3 Shapely-2.2.0 beautifulsoup4-4.14.3 certifi-2026.7.22 charset_normalizer-3.5.2 colorama-0.4.6 coloredlogs-15.0.1 colorlog-6.12.0 flatbuffers-25.12.19 humanfriendly-10.0 idna-3.18 ijson-3.4.0.post0 markdown-it-py-4.0.0 mdurl-0.1.2 mpmath-1.3.0 numpy-2.3.5 omegaconf-2.4.0 onnxruntime-1.23.2 opencv-python-headless-5.0.0.93 packaging-26.3 protobuf-7.36.2 psutil-7.2.2 pyclipper-1.4.0 pypdf-6.10.0 pypdfium2-5.14.0 pyreadline3-3.5.4 rapidocr-3.10.0 requests-2.34.2 six-1.17.0 soupsieve-2.8.3 sympy-1.14.0 tqdm-4.70.1 typing-extensions-4.16.0 urllib3-2.8.0
+2026-11-05T02:21:21.4776945Z 
+2026-11-05T02:21:21.4778886Z [notice] A new release of pip is available: 25.0.1 -> 26.3
+2026-11-05T02:21:21.4779927Z [notice] To update, run: D:\a\codex-learner\codex-learner\.ocr-ci\Scripts\python.exe -m pip install --upgrade pip
+2026-11-05T02:21:21.9165209Z D:\a\codex-learner\codex-learner\.ocr-ci\Lib\site-packages\onnxruntime\capi\onnxruntime_validation.py:27: UserWarning: Unsupported Windows version (2025server). ONNX Runtime supports Windows 10 and above, only.
+2026-11-05T02:21:21.9166346Z   warnings.warn(
+2026-11-05T02:21:21.9565747Z {'rapidocr': '3.10.0', 'pypdfium2': '5.14.0', 'onnxruntime': '1.23.2', 'psutil': '7.2.2'}
+2026-11-05T02:21:22.9218077Z test_crop_is_rendered_from_original_with_rotation_and_pdf_coordinates (test_ocr.NativePdfWorkerTests.test_crop_is_rendered_from_original_with_rotation_and_pdf_coordinates) ... ok
+2026-11-05T02:21:22.9684368Z test_native_text_prefers_original_page_numbers_and_resumes_without_models (test_ocr.NativePdfWorkerTests.test_native_text_prefers_original_page_numbers_and_resumes_without_models) ... ok
+2026-11-05T02:21:22.9719859Z test_out_of_range_page_fails_instead_of_renumbering (test_ocr.NativePdfWorkerTests.test_out_of_range_page_fails_instead_of_renumbering) ... ok
+2026-11-05T02:21:22.9992729Z test_low_available_memory_reports_budget_without_starting_worker (test_ocr.OcrConfigurationTests.test_low_available_memory_reports_budget_without_starting_worker) ... ok
+2026-11-05T02:21:23.0051871Z test_models_require_correct_hash_and_cannot_escape_the_model_root (test_ocr.OcrConfigurationTests.test_models_require_correct_hash_and_cannot_escape_the_model_root) ... ok
+2026-11-05T02:21:23.0077944Z test_providers_with_different_caches_share_one_worker_lock (test_ocr.OcrConfigurationTests.test_providers_with_different_caches_share_one_worker_lock) ... ok
+2026-11-05T02:21:23.0079627Z test_render_size_is_bounded_before_raster_allocation (test_ocr.OcrConfigurationTests.test_render_size_is_bounded_before_raster_allocation) ... ok
+2026-11-05T02:21:23.0097685Z test_shared_cache_rejects_a_second_worker_before_writing_request (test_ocr.OcrConfigurationTests.test_shared_cache_rejects_a_second_worker_before_writing_request) ... ok
+2026-11-05T02:21:23.0099832Z test_unconfigured_provider_does_not_start_any_process (test_ocr.OcrConfigurationTests.test_unconfigured_provider_does_not_start_any_process) ... ok
+2026-11-05T02:21:23.0100787Z 
+2026-11-05T02:21:23.0101059Z ----------------------------------------------------------------------
+2026-11-05T02:21:23.0101588Z Ran 9 tests in 0.422s
+2026-11-05T02:21:23.0101793Z 
+2026-11-05T02:21:23.0101907Z OK
+2026-11-05T02:21:23.4701400Z test_10_and_100_page_fixtures_need_no_pypdf_and_release_handles (test_benchmark_ocr.OcrBenchmarkTests.test_10_and_100_page_fixtures_need_no_pypdf_and_release_handles) ... ok
+2026-11-05T02:21:23.7649450Z test_memory_preflight_failure_is_reported_without_hiding_it_as_dependency_error (test_benchmark_ocr.OcrBenchmarkTests.test_memory_preflight_failure_is_reported_without_hiding_it_as_dependency_error) ... ok
+2026-11-05T02:21:23.7650639Z 
+2026-11-05T02:21:23.7650806Z ----------------------------------------------------------------------
+2026-11-05T02:21:23.7651172Z Ran 2 tests in 0.613s
+2026-11-05T02:21:23.7651310Z 
+2026-11-05T02:21:23.7651385Z OK
+2026-11-05T02:21:23.9352814Z test_broken_startup_gate_still_cleans_process_and_handles (test_resource_limits.ResourceLimitTests.test_broken_startup_gate_still_cleans_process_and_handles) ... ok
+2026-11-05T02:21:24.5584699Z test_normal_exit_cleans_background_child (test_resource_limits.ResourceLimitTests.test_normal_exit_cleans_background_child) ... ok
+2026-11-05T02:21:24.6643057Z test_output_returned_as_bounded_tail (test_resource_limits.ResourceLimitTests.test_output_returned_as_bounded_tail) ... ok
+2026-11-05T02:21:24.6644686Z test_rejects_shell_text_before_execution (test_resource_limits.ResourceLimitTests.test_rejects_shell_text_before_execution) ... ok
+2026-11-05T02:21:24.7705700Z test_return_code_and_separate_logs (test_resource_limits.ResourceLimitTests.test_return_code_and_separate_logs) ... ok
+2026-11-05T02:21:24.7707186Z test_rss_budget_terminates_large_allocation (test_resource_limits.ResourceLimitTests.test_rss_budget_terminates_large_allocation) ... skipped 'Windows has a commit hard limit; Linux test exercises RSS watchdog'
+2026-11-05T02:21:25.8101247Z test_timeout_kills_descendant (test_resource_limits.ResourceLimitTests.test_timeout_kills_descendant) ... ok
+2026-11-05T02:21:25.8143480Z test_windows_failed_job_setup_does_not_start_command (test_resource_limits.ResourceLimitTests.test_windows_failed_job_setup_does_not_start_command) ... ok
+2026-11-05T02:21:25.8181655Z test_windows_failed_limit_readback_does_not_start_command (test_resource_limits.ResourceLimitTests.test_windows_failed_limit_readback_does_not_start_command) ... ok
+2026-11-05T02:21:25.8250457Z test_windows_failed_membership_and_resume_close_all_owned_handles (test_resource_limits.ResourceLimitTests.test_windows_failed_membership_and_resume_close_all_owned_handles) ... ok
+2026-11-05T02:21:26.5484234Z test_windows_job_rejects_over_budget_allocation (test_resource_limits.ResourceLimitTests.test_windows_job_rejects_over_budget_allocation) ... ok
+2026-11-05T02:21:26.5487046Z test_windows_termination_access_denied_requires_confirmed_exit (test_resource_limits.ResourceLimitTests.test_windows_termination_access_denied_requires_confirmed_exit) ... ok
+2026-11-05T02:21:26.5538501Z test_windows_venv_redirector_cannot_escape_delayed_job_assignment (test_resource_limits.ResourceLimitTests.test_windows_venv_redirector_cannot_escape_delayed_job_assignment) ... Actual environment location may have moved due to redirects, links or junctions.
+2026-11-05T02:21:26.5540109Z   Requested location: "C:\Users\RUNNER~1\AppData\Local\Temp\tmph5enxzvh\venv\Scripts\python.exe"
+2026-11-05T02:21:26.5540903Z   Actual location:    "C:\Users\runneradmin\AppData\Local\Temp\tmph5enxzvh\venv\Scripts\python.exe"
+2026-11-05T02:21:29.6128352Z Windows Job Object evidence: {"after_rejection_private_bytes": 26984448, "allocation_denied": true, "allocation_error": 1455, "baseline_private_bytes": 10174464, "before_rejection_private_bytes": 26984448, "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_memory_limit_bytes": 134217728, "last_sampled_private_commit_bytes": 36839424, "peak_job_memory_used_bytes": 305799168, "peak_sampled_private_commit_bytes": 36839424, "private_commit_sample_count": 7, "small_allocation_succeeded": true}
+2026-11-05T02:21:29.6172697Z Windows suspended venv evidence: {"closed_pipe_wrapper_probe": {"before": 178, "closed_wrapper_retained": 179, "wrapper_released": 178}, "measurements": [{"delay_seconds": 0.0, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 0, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.3129999999999882, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 503808, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 34091008, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [1344, 2392, 6416, 9160], "output_truncated": false, "peak_commit_bytes": 235814912, "peak_job_memory_used_bytes": 235814912, "peak_rss_bytes": 35622912, "peak_sampled_private_commit_bytes": 34091008, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 9160, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.0, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 1, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.3280000000000314, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 495616, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33878016, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [3764, 6056, 7208, 9116], "output_truncated": false, "peak_commit_bytes": 235597824, "peak_job_memory_used_bytes": 235597824, "peak_rss_bytes": 35442688, "peak_sampled_private_commit_bytes": 33878016, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 3764, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.0, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 2, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.3120000000000118, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 503808, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 34000896, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [7288, 7392, 8784, 8816], "output_truncated": false, "peak_commit_bytes": 235724800, "peak_job_memory_used_bytes": 235724800, "peak_rss_bytes": 35528704, "peak_sampled_private_commit_bytes": 34000896, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 8816, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}], "warmup": {"handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 175, "owned_handles_closed": true, "phases": [{"handles": 179, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.32799999999997453, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 15577088, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [844, 6216, 7236, 7252], "output_truncated": false, "peak_commit_bytes": 15585280, "peak_job_memory_used_bytes": 15585280, "peak_rss_bytes": 31232000, "peak_sampled_private_commit_bytes": 15577088, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "", "surviving_process_ids": []}}}
+2026-11-05T02:21:31.8875144Z ok
+2026-11-05T02:21:31.8875364Z 
+2026-11-05T02:21:31.8875612Z ----------------------------------------------------------------------
+2026-11-05T02:21:31.8876132Z Ran 13 tests in 7.962s
+2026-11-05T02:21:31.8876357Z 
+2026-11-05T02:21:31.8876469Z OK (skipped=1)
+2026-11-05T02:21:31.8900991Z Windows suspended venv evidence: {"closed_pipe_wrapper_probe": {"before": 178, "closed_wrapper_retained": 179, "wrapper_released": 178}, "measurements": [{"delay_seconds": 0.1, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 0, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.42099999999999227, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 503808, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33976320, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [3492, 7192, 7504, 8900], "output_truncated": false, "peak_commit_bytes": 235696128, "peak_job_memory_used_bytes": 235696128, "peak_rss_bytes": 35536896, "peak_sampled_private_commit_bytes": 33976320, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 3492, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.1, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 1, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.42200000000002547, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33980416, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [5040, 6612, 6664, 6688], "output_truncated": false, "peak_commit_bytes": 235700224, "peak_job_memory_used_bytes": 235700224, "peak_rss_bytes": 35540992, "peak_sampled_private_commit_bytes": 33980416, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 6688, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.1, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 2, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.4219999999999686, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 503808, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 34029568, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [2316, 6696, 8444, 9056], "output_truncated": false, "peak_commit_bytes": 235749376, "peak_job_memory_used_bytes": 235749376, "peak_rss_bytes": 35565568, "peak_sampled_private_commit_bytes": 34029568, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 2316, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}], "warmup": {"handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 175, "owned_handles_closed": true, "phases": [{"handles": 179, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.3129999999999882, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 15613952, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [2952, 5904, 6768, 7584], "output_truncated": false, "peak_commit_bytes": 15622144, "peak_job_memory_used_bytes": 15622144, "peak_rss_bytes": 31277056, "peak_sampled_private_commit_bytes": 15613952, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "", "surviving_process_ids": []}}}
+2026-11-05T02:21:31.8947946Z Windows suspended venv evidence: {"closed_pipe_wrapper_probe": {"before": 178, "closed_wrapper_retained": 179, "wrapper_released": 178}, "measurements": [{"delay_seconds": 0.3, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 0, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.625, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33972224, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [744, 1200, 3648, 7444], "output_truncated": false, "peak_commit_bytes": 235692032, "peak_job_memory_used_bytes": 235692032, "peak_rss_bytes": 35487744, "peak_sampled_private_commit_bytes": 33972224, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 7444, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.3, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 1, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.625, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33939456, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [2800, 6392, 6852, 7304], "output_truncated": false, "peak_commit_bytes": 235659264, "peak_job_memory_used_bytes": 235659264, "peak_rss_bytes": 35508224, "peak_sampled_private_commit_bytes": 33939456, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 6392, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}, {"delay_seconds": 0.3, "descendants_before_assignment": [], "handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 178, "iteration": 2, "owned_handles_closed": true, "phases": [{"handles": 182, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.6100000000000136, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 503808, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 33890304, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [2856, 5152, 8488, 8860], "output_truncated": false, "peak_commit_bytes": 235610112, "peak_job_memory_used_bytes": 235610112, "peak_rss_bytes": 35389440, "peak_sampled_private_commit_bytes": 33890304, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "{\"worker_pid\": 8860, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n", "surviving_process_ids": []}}], "warmup": {"handles_after": 179, "handles_after_releasing_captured_instances": 178, "handles_before": 175, "owned_handles_closed": true, "phases": [{"handles": 179, "phase": "before_process_create"}, {"handles": 186, "phase": "after_process_create"}, {"handles": 187, "phase": "before_job_create"}, {"handles": 188, "phase": "after_job_create"}, {"handles": 188, "phase": "before_resume"}, {"handles": 187, "phase": "after_resume"}, {"handles": 189, "phase": "before_stop"}, {"handles": 189, "phase": "after_stop"}, {"handles": 189, "phase": "before_job_close"}, {"handles": 188, "phase": "after_job_close"}, {"handles": 188, "phase": "before_process_close"}, {"handles": 187, "phase": "after_process_close"}], "run": {"cleanup_verified": true, "detail": null, "elapsed_seconds": 0.3120000000000118, "hard_limit_enforced": true, "hard_limit_kind": "windows_job_commit", "initial_peak_job_memory_used_bytes": 499712, "job_limit_flags": 8704, "job_limit_verified": true, "job_membership_verified": true, "job_memory_limit_bytes": 134217728, "job_query_error": null, "last_sampled_private_commit_bytes": 15527936, "launcher_created_suspended": true, "launcher_resumed_after_job_verification": true, "memory_limit_bytes": 134217728, "observed_process_ids": [2812, 2872, 3440, 7688], "output_truncated": false, "peak_commit_bytes": 15536128, "peak_job_memory_used_bytes": 15536128, "peak_rss_bytes": 31154176, "peak_sampled_private_commit_bytes": 15527936, "private_commit_sample_count": 3, "returncode": 0, "status": "completed", "stderr": "", "stdout": "", "surviving_process_ids": []}}}
+2026-11-05T02:21:31.9322561Z Post job cleanup.
+2026-11-05T02:21:32.0749903Z (node:7672) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-05T02:21:32.0750910Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-05T02:21:32.1095510Z Post job cleanup.
+2026-11-05T02:21:32.3033834Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-05T02:21:32.3382035Z git version 2.56.0.windows.4
+2026-11-05T02:21:32.3455560Z Temporarily overriding HOME='D:\a\_temp\828b6c9f-c9f2-4049-bad2-e9125b3c052b' before making global git config changes
+2026-11-05T02:21:32.3456661Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T02:21:32.3468049Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\codex-learner\codex-learner
+2026-11-05T02:21:32.3876080Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T02:21:32.4293899Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-05T02:21:33.0146660Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T02:21:33.0473637Z http.https://github.com/.extraheader
+2026-11-05T02:21:33.0517395Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-11-05T02:21:33.0902021Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-05T02:21:33.6426363Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T02:21:33.6805058Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-05T02:21:34.2357825Z Cleaning up orphan processes
+2026-11-05T02:21:34.2596208Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

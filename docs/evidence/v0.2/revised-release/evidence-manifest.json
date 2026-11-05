@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "snapshot_date": "2026-11-05",
+  "date_timezone": "Asia/Shanghai",
+  "purpose": "Byte-identical preservation of existing evidence; no tests re-executed.",
+  "source_commit": "1c2565465dbdb43a10fc25a93b034011613d71bd",
+  "package_sha256": "1eb92400cc2858e86c529813c4eedf50099c17ab6083ca2fed79e06161de0df2",
+  "ci_run_id": 41954569713,
+  "revised_user_native_acceptance": "PENDING",
+  "full_delivery": "PARTIAL",
+  "files": [
+    {
+      "source_path": "artifacts/revised/release-verification.json",
+      "snapshot_path": "release-verification.json",
+      "bytes": 21597,
+      "sha256": "7b17a9d2f0cba05194d5a912cd10b07655a3e698c9713a6287da86aeaa1c417c"
+    },
+    {
+      "source_path": "artifacts/revised/windows-job-validation.json",
+      "snapshot_path": "windows-job-validation.json",
+      "bytes": 127579,
+      "sha256": "3a07459c5861793d6b726d8f5268dff3320e508bff038e51b14c91ef54968ba4"
+    },
+    {
+      "source_path": "artifacts/revised/package-verification.json",
+      "snapshot_path": "package-verification.json",
+      "bytes": 4292,
+      "sha256": "c856c0311e48b40a002429912f7c1dee5a4f34048eef7866d7a3c2498b4eace4"
+    },
+    {
+      "source_path": "artifacts/revised/recheck-task.md",
+      "snapshot_path": "recheck-task.md",
+      "bytes": 5647,
+      "sha256": "3961169c21cd0a3e91fe515711cebea89021e45f43259facf93a2fb0a73b11d2"
+    },
+    {
+      "source_path": "artifacts/revised-final-core.log",
+      "snapshot_path": "revised-final-core.log",
+      "bytes": 25041,
+      "sha256": "2734dba38147a22844ac98016d14566dc26979f0d1def8b5734aaca494b99b11"
+    },
+    {
+      "source_path": "artifacts/revised-browser.log",
+      "snapshot_path": "revised-browser.log",
+      "bytes": 2856,
+      "sha256": "5a3f4ec40fc23dc774ec96e0b1b247477e7e20f0184fde5b0f573fa63fbf0672"
+    },
+    {
+      "source_path": "artifacts/revised-ocr.log",
+      "snapshot_path": "revised-ocr.log",
+      "bytes": 1952,
+      "sha256": "40c7e04d79616cdaa131e2f588aa41c31820d5683f0eaa79cb0186c27158e843"
+    },
+    {
+      "source_path": "artifacts/revised/windows310-core-final.log",
+      "snapshot_path": "windows310-core-final.log",
+      "bytes": 64092,
+      "sha256": "092cf2bf9ac019d2042edaa9a98e7a61d8b824ef7ae21160fdd7a6a5b9fcb55b"
+    },
+    {
+      "source_path": "artifacts/revised/windows312-core-final.log",
+      "snapshot_path": "windows312-core-final.log",
+      "bytes": 69709,
+      "sha256": "46b53320ccc6440ab6f9e8ab06fbc321f1ccd69c8bc9ce5420d1c44d68e1e1b8"
+    },
+    {
+      "source_path": "artifacts/revised/windows-ocr-final.log",
+      "snapshot_path": "windows-ocr-final.log",
+      "bytes": 54694,
+      "sha256": "8e70d15d450580f25ed2b82c3721de68dfdd986c21482b9f07ae7d7435a5325f"
+    },
+    {
+      "source_path": "docs/evidence/v0.2/revised-ocr-linux-validation.json",
+      "snapshot_path": "revised-ocr-linux-validation.json",
+      "bytes": 15926,
+      "sha256": "fad82e6c8dd9496352e3b902f3af13ca72b53e3527214f3a92e6ae52ddf76246"
+    }
+  ],
+  "coverage_note": "This manifest covers the listed original evidence files, not itself or README.md. The original user-local acceptance archive and candidate ZIP are not included."
+}

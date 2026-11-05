@@ -1,0 +1,3706 @@
+{
+  "source_commit": "1c2565465dbdb43a10fc25a93b034011613d71bd",
+  "ci_run_id": 41954569713,
+  "total_passed_repetitions": 27,
+  "environments": [
+    {
+      "environment": "Windows Python 3.12 OCR venv",
+      "job_id": 127006260367,
+      "log_sha256": "8e70d15d450580f25ed2b82c3721de68dfdd986c21482b9f07ae7d7435a5325f",
+      "repetitions": [
+        {
+          "delay_seconds": 0.0,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        }
+      ],
+      "raw_records": [
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3129999999999882,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 34091008,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1344,
+                  2392,
+                  6416,
+                  9160
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235814912,
+                "peak_job_memory_used_bytes": 235814912,
+                "peak_rss_bytes": 35622912,
+                "peak_sampled_private_commit_bytes": 34091008,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 9160, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3280000000000314,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 495616,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33878016,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  3764,
+                  6056,
+                  7208,
+                  9116
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235597824,
+                "peak_job_memory_used_bytes": 235597824,
+                "peak_rss_bytes": 35442688,
+                "peak_sampled_private_commit_bytes": 33878016,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 3764, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3120000000000118,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 34000896,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  7288,
+                  7392,
+                  8784,
+                  8816
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235724800,
+                "peak_job_memory_used_bytes": 235724800,
+                "peak_rss_bytes": 35528704,
+                "peak_sampled_private_commit_bytes": 34000896,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 8816, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.32799999999997453,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 499712,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15577088,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                844,
+                6216,
+                7236,
+                7252
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15585280,
+              "peak_job_memory_used_bytes": 15585280,
+              "peak_rss_bytes": 31232000,
+              "peak_sampled_private_commit_bytes": 15577088,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.42099999999999227,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33976320,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  3492,
+                  7192,
+                  7504,
+                  8900
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235696128,
+                "peak_job_memory_used_bytes": 235696128,
+                "peak_rss_bytes": 35536896,
+                "peak_sampled_private_commit_bytes": 33976320,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 3492, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.42200000000002547,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33980416,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  5040,
+                  6612,
+                  6664,
+                  6688
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235700224,
+                "peak_job_memory_used_bytes": 235700224,
+                "peak_rss_bytes": 35540992,
+                "peak_sampled_private_commit_bytes": 33980416,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 6688, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.4219999999999686,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 34029568,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2316,
+                  6696,
+                  8444,
+                  9056
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235749376,
+                "peak_job_memory_used_bytes": 235749376,
+                "peak_rss_bytes": 35565568,
+                "peak_sampled_private_commit_bytes": 34029568,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 2316, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3129999999999882,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 499712,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15613952,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                2952,
+                5904,
+                6768,
+                7584
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15622144,
+              "peak_job_memory_used_bytes": 15622144,
+              "peak_rss_bytes": 31277056,
+              "peak_sampled_private_commit_bytes": 15613952,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33972224,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  744,
+                  1200,
+                  3648,
+                  7444
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235692032,
+                "peak_job_memory_used_bytes": 235692032,
+                "peak_rss_bytes": 35487744,
+                "peak_sampled_private_commit_bytes": 33972224,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 7444, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33939456,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2800,
+                  6392,
+                  6852,
+                  7304
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235659264,
+                "peak_job_memory_used_bytes": 235659264,
+                "peak_rss_bytes": 35508224,
+                "peak_sampled_private_commit_bytes": 33939456,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 6392, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.6100000000000136,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33890304,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2856,
+                  5152,
+                  8488,
+                  8860
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235610112,
+                "peak_job_memory_used_bytes": 235610112,
+                "peak_rss_bytes": 35389440,
+                "peak_sampled_private_commit_bytes": 33890304,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 8860, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3120000000000118,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 499712,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15527936,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                2812,
+                2872,
+                3440,
+                7688
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15536128,
+              "peak_job_memory_used_bytes": 15536128,
+              "peak_rss_bytes": 31154176,
+              "peak_sampled_private_commit_bytes": 15527936,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "environment": "Windows Python 3.12 core",
+      "job_id": 127006260495,
+      "log_sha256": "46b53320ccc6440ab6f9e8ab06fbc321f1ccd69c8bc9ce5420d1c44d68e1e1b8",
+      "repetitions": [
+        {
+          "delay_seconds": 0.0,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 178,
+          "handles_after": 178,
+          "cleanup_verified": true
+        }
+      ],
+      "raw_records": [
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3120000000000118,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 507904,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33865728,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2236,
+                  3132,
+                  4036,
+                  6896
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235585536,
+                "peak_job_memory_used_bytes": 235585536,
+                "peak_rss_bytes": 35422208,
+                "peak_sampled_private_commit_bytes": 33865728,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 2236, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.32900000000000773,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 507904,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33730560,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2420,
+                  7360,
+                  7700,
+                  8360
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235454464,
+                "peak_job_memory_used_bytes": 235454464,
+                "peak_rss_bytes": 35282944,
+                "peak_sampled_private_commit_bytes": 33730560,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 8360, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3120000000000118,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 507904,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33746944,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1236,
+                  4604,
+                  6356,
+                  8320
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235470848,
+                "peak_job_memory_used_bytes": 235470848,
+                "peak_rss_bytes": 35295232,
+                "peak_sampled_private_commit_bytes": 33746944,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 4604, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3120000000000118,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 507904,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15552512,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                1056,
+                1532,
+                4996,
+                6584
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15560704,
+              "peak_job_memory_used_bytes": 15560704,
+              "peak_rss_bytes": 31174656,
+              "peak_sampled_private_commit_bytes": 15552512,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.4060000000000059,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33677312,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  3192,
+                  6396,
+                  8312,
+                  8596
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235397120,
+                "peak_job_memory_used_bytes": 235397120,
+                "peak_rss_bytes": 35241984,
+                "peak_sampled_private_commit_bytes": 33677312,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 8596, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.4060000000000059,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33906688,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  612,
+                  2168,
+                  9088,
+                  9148
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235626496,
+                "peak_job_memory_used_bytes": 235626496,
+                "peak_rss_bytes": 35450880,
+                "peak_sampled_private_commit_bytes": 33906688,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 2168, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.4219999999999686,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 507904,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33955840,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  5104,
+                  5144,
+                  8532,
+                  9192
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235679744,
+                "peak_job_memory_used_bytes": 235679744,
+                "peak_rss_bytes": 35471360,
+                "peak_sampled_private_commit_bytes": 33955840,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 9192, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3120000000000118,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 507904,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15482880,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                5204,
+                6392,
+                7036,
+                7144
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15491072,
+              "peak_job_memory_used_bytes": 15491072,
+              "peak_rss_bytes": 31121408,
+              "peak_sampled_private_commit_bytes": 15482880,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 178,
+            "closed_wrapper_retained": 179,
+            "wrapper_released": 178
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.6089999999999804,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33697792,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1544,
+                  1568,
+                  8156,
+                  8892
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235417600,
+                "peak_job_memory_used_bytes": 235417600,
+                "peak_rss_bytes": 35278848,
+                "peak_sampled_private_commit_bytes": 33697792,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 8892, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33619968,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2020,
+                  5548,
+                  6912,
+                  8436
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235343872,
+                "peak_job_memory_used_bytes": 235343872,
+                "peak_rss_bytes": 35176448,
+                "peak_sampled_private_commit_bytes": 33619968,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 5548, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 179,
+              "handles_after_releasing_captured_instances": 178,
+              "handles_before": 178,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 182,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 186,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 187,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 189,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 188,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 187,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 507904,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 33841152,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  6140,
+                  6976,
+                  7008,
+                  8992
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 235560960,
+                "peak_job_memory_used_bytes": 235560960,
+                "peak_rss_bytes": 35393536,
+                "peak_sampled_private_commit_bytes": 33841152,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 6976, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 179,
+            "handles_after_releasing_captured_instances": 178,
+            "handles_before": 175,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 179,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 186,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 187,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 188,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 187,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 189,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 189,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 188,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 187,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3120000000000118,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 503808,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 15446016,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                1400,
+                1612,
+                7524,
+                8240
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 15454208,
+              "peak_job_memory_used_bytes": 15454208,
+              "peak_rss_bytes": 31059968,
+              "peak_sampled_private_commit_bytes": 15446016,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "environment": "Windows Python 3.10 core",
+      "job_id": 127006260430,
+      "log_sha256": "092cf2bf9ac019d2042edaa9a98e7a61d8b824ef7ae21160fdd7a6a5b9fcb55b",
+      "repetitions": [
+        {
+          "delay_seconds": 0.0,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.0,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.1,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 0,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 1,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        },
+        {
+          "delay_seconds": 0.3,
+          "iteration": 2,
+          "job_member": true,
+          "small_allocation_succeeded": true,
+          "large_allocation_denied": true,
+          "handles_before": 173,
+          "handles_after": 173,
+          "cleanup_verified": true
+        }
+      ],
+      "raw_records": [
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 173,
+            "closed_wrapper_retained": 174,
+            "wrapper_released": 173
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.32800000000000296,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31084544,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  2612,
+                  2672,
+                  6288,
+                  6556
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232804352,
+                "peak_job_memory_used_bytes": 232804352,
+                "peak_rss_bytes": 32899072,
+                "peak_sampled_private_commit_bytes": 31084544,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 6556, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3130000000000166,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31223808,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  732,
+                  6000,
+                  7304,
+                  7476
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232943616,
+                "peak_job_memory_used_bytes": 232943616,
+                "peak_rss_bytes": 33017856,
+                "peak_sampled_private_commit_bytes": 31223808,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 7304, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.0,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.3119999999999834,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 495616,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31039488,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  6540,
+                  6920,
+                  7088,
+                  7860
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232759296,
+                "peak_job_memory_used_bytes": 232759296,
+                "peak_rss_bytes": 32841728,
+                "peak_sampled_private_commit_bytes": 31039488,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 7088, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 174,
+            "handles_after_releasing_captured_instances": 173,
+            "handles_before": 170,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 174,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 181,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 182,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 182,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 184,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 182,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.32799999999997453,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 495616,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 12001280,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                2464,
+                2852,
+                6032,
+                8296
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 12001280,
+              "peak_job_memory_used_bytes": 12001280,
+              "peak_rss_bytes": 29007872,
+              "peak_sampled_private_commit_bytes": 12001280,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 173,
+            "closed_wrapper_retained": 174,
+            "wrapper_released": 173
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.42199999999999704,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 503808,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31055872,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1316,
+                  8152,
+                  8172,
+                  8376
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232775680,
+                "peak_job_memory_used_bytes": 232775680,
+                "peak_rss_bytes": 32845824,
+                "peak_sampled_private_commit_bytes": 31055872,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 1316, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.42199999999999704,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 30949376,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1224,
+                  1292,
+                  1480,
+                  7360
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232673280,
+                "peak_job_memory_used_bytes": 232673280,
+                "peak_rss_bytes": 32759808,
+                "peak_sampled_private_commit_bytes": 30949376,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 1224, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.1,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.42099999999999227,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 495616,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31088640,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  1232,
+                  1236,
+                  7724,
+                  8956
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232808448,
+                "peak_job_memory_used_bytes": 232808448,
+                "peak_rss_bytes": 32894976,
+                "peak_sampled_private_commit_bytes": 31088640,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 7724, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 174,
+            "handles_after_releasing_captured_instances": 173,
+            "handles_before": 170,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 174,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 181,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 182,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 182,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 184,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 182,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.32800000000000296,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 495616,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 12095488,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                828,
+                2232,
+                5940,
+                7396
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 12095488,
+              "peak_job_memory_used_bytes": 12095488,
+              "peak_rss_bytes": 29167616,
+              "peak_sampled_private_commit_bytes": 12095488,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        },
+        {
+          "closed_pipe_wrapper_probe": {
+            "before": 173,
+            "closed_wrapper_retained": 174,
+            "wrapper_released": 173
+          },
+          "measurements": [
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 0,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.6410000000000196,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 495616,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31039488,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  5040,
+                  5300,
+                  5804,
+                  6384
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232759296,
+                "peak_job_memory_used_bytes": 232759296,
+                "peak_rss_bytes": 32845824,
+                "peak_sampled_private_commit_bytes": 31039488,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 5804, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 1,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 31125504,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  3700,
+                  5592,
+                  7868,
+                  8564
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232845312,
+                "peak_job_memory_used_bytes": 232845312,
+                "peak_rss_bytes": 32903168,
+                "peak_sampled_private_commit_bytes": 31125504,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 5592, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            },
+            {
+              "delay_seconds": 0.3,
+              "descendants_before_assignment": [],
+              "handles_after": 174,
+              "handles_after_releasing_captured_instances": 173,
+              "handles_before": 173,
+              "iteration": 2,
+              "owned_handles_closed": true,
+              "phases": [
+                {
+                  "handles": 177,
+                  "phase": "before_process_create"
+                },
+                {
+                  "handles": 181,
+                  "phase": "after_process_create"
+                },
+                {
+                  "handles": 182,
+                  "phase": "before_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_create"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_resume"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_resume"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "after_stop"
+                },
+                {
+                  "handles": 184,
+                  "phase": "before_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "after_job_close"
+                },
+                {
+                  "handles": 183,
+                  "phase": "before_process_close"
+                },
+                {
+                  "handles": 182,
+                  "phase": "after_process_close"
+                }
+              ],
+              "run": {
+                "cleanup_verified": true,
+                "detail": null,
+                "elapsed_seconds": 0.625,
+                "hard_limit_enforced": true,
+                "hard_limit_kind": "windows_job_commit",
+                "initial_peak_job_memory_used_bytes": 499712,
+                "job_limit_flags": 8704,
+                "job_limit_verified": true,
+                "job_membership_verified": true,
+                "job_memory_limit_bytes": 134217728,
+                "job_query_error": null,
+                "last_sampled_private_commit_bytes": 30978048,
+                "launcher_created_suspended": true,
+                "launcher_resumed_after_job_verification": true,
+                "memory_limit_bytes": 134217728,
+                "observed_process_ids": [
+                  4292,
+                  4476,
+                  4716,
+                  6092
+                ],
+                "output_truncated": false,
+                "peak_commit_bytes": 232697856,
+                "peak_job_memory_used_bytes": 232697856,
+                "peak_rss_bytes": 32792576,
+                "peak_sampled_private_commit_bytes": 30978048,
+                "private_commit_sample_count": 3,
+                "returncode": 0,
+                "status": "completed",
+                "stderr": "",
+                "stdout": "{\"worker_pid\": 4292, \"target_job_member\": true, \"small_allocation_succeeded\": true, \"large_allocation_denied\": true, \"allocation_error\": 1455}\r\n",
+                "surviving_process_ids": []
+              }
+            }
+          ],
+          "warmup": {
+            "handles_after": 174,
+            "handles_after_releasing_captured_instances": 173,
+            "handles_before": 170,
+            "owned_handles_closed": true,
+            "phases": [
+              {
+                "handles": 174,
+                "phase": "before_process_create"
+              },
+              {
+                "handles": 181,
+                "phase": "after_process_create"
+              },
+              {
+                "handles": 182,
+                "phase": "before_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_create"
+              },
+              {
+                "handles": 183,
+                "phase": "before_resume"
+              },
+              {
+                "handles": 182,
+                "phase": "after_resume"
+              },
+              {
+                "handles": 184,
+                "phase": "before_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "after_stop"
+              },
+              {
+                "handles": 184,
+                "phase": "before_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "after_job_close"
+              },
+              {
+                "handles": 183,
+                "phase": "before_process_close"
+              },
+              {
+                "handles": 182,
+                "phase": "after_process_close"
+              }
+            ],
+            "run": {
+              "cleanup_verified": true,
+              "detail": null,
+              "elapsed_seconds": 0.3130000000000166,
+              "hard_limit_enforced": true,
+              "hard_limit_kind": "windows_job_commit",
+              "initial_peak_job_memory_used_bytes": 499712,
+              "job_limit_flags": 8704,
+              "job_limit_verified": true,
+              "job_membership_verified": true,
+              "job_memory_limit_bytes": 134217728,
+              "job_query_error": null,
+              "last_sampled_private_commit_bytes": 11898880,
+              "launcher_created_suspended": true,
+              "launcher_resumed_after_job_verification": true,
+              "memory_limit_bytes": 134217728,
+              "observed_process_ids": [
+                3376,
+                4044,
+                6976,
+                8868
+              ],
+              "output_truncated": false,
+              "peak_commit_bytes": 11964416,
+              "peak_job_memory_used_bytes": 11964416,
+              "peak_rss_bytes": 28979200,
+              "peak_sampled_private_commit_bytes": 11898880,
+              "private_commit_sample_count": 3,
+              "returncode": 0,
+              "status": "completed",
+              "stderr": "",
+              "stdout": "",
+              "surviving_process_ids": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+test_10_and_100_page_fixtures_need_no_pypdf_and_release_handles (test_benchmark_ocr.OcrBenchmarkTests.test_10_and_100_page_fixtures_need_no_pypdf_and_release_handles) ... ok
+test_memory_preflight_failure_is_reported_without_hiding_it_as_dependency_error (test_benchmark_ocr.OcrBenchmarkTests.test_memory_preflight_failure_is_reported_without_hiding_it_as_dependency_error) ... ok
+test_crop_is_rendered_from_original_with_rotation_and_pdf_coordinates (test_ocr.NativePdfWorkerTests.test_crop_is_rendered_from_original_with_rotation_and_pdf_coordinates) ... ok
+test_native_text_prefers_original_page_numbers_and_resumes_without_models (test_ocr.NativePdfWorkerTests.test_native_text_prefers_original_page_numbers_and_resumes_without_models) ... ok
+test_out_of_range_page_fails_instead_of_renumbering (test_ocr.NativePdfWorkerTests.test_out_of_range_page_fails_instead_of_renumbering) ... ok
+test_low_available_memory_reports_budget_without_starting_worker (test_ocr.OcrConfigurationTests.test_low_available_memory_reports_budget_without_starting_worker) ... ok
+test_models_require_correct_hash_and_cannot_escape_the_model_root (test_ocr.OcrConfigurationTests.test_models_require_correct_hash_and_cannot_escape_the_model_root) ... ok
+test_providers_with_different_caches_share_one_worker_lock (test_ocr.OcrConfigurationTests.test_providers_with_different_caches_share_one_worker_lock) ... ok
+test_render_size_is_bounded_before_raster_allocation (test_ocr.OcrConfigurationTests.test_render_size_is_bounded_before_raster_allocation) ... ok
+test_shared_cache_rejects_a_second_worker_before_writing_request (test_ocr.OcrConfigurationTests.test_shared_cache_rejects_a_second_worker_before_writing_request) ... ok
+test_unconfigured_provider_does_not_start_any_process (test_ocr.OcrConfigurationTests.test_unconfigured_provider_does_not_start_any_process) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.721s
+
+OK
